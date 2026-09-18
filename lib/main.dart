@@ -4,6 +4,7 @@ import 'screens/dashboard_screen.dart';
 import 'screens/learn_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/challenge_screen.dart';
+import 'screens/profile_screen.dart';
 
 void main() {
   runApp(const TechStepApp());
@@ -57,9 +58,14 @@ class _TechStepHomeState extends State<TechStepHome> {
         });
       },
     ),
+
     const LearnScreen(),
+
     const QuizScreen(),
+
     const ChallengeScreen(),
+
+    const ProfileScreen(),
   ];
 
   @override
@@ -71,33 +77,45 @@ class _TechStepHomeState extends State<TechStepHome> {
           children: pages,
         ),
       ),
+
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
+
         onDestinationSelected: (index) {
           setState(() {
             currentIndex = index;
           });
         },
+
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home),
             label: 'Home',
           ),
+
           NavigationDestination(
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book),
             label: 'Learn',
           ),
+
           NavigationDestination(
             icon: Icon(Icons.quiz_outlined),
             selectedIcon: Icon(Icons.quiz),
             label: 'Quiz',
           ),
+
           NavigationDestination(
             icon: Icon(Icons.sports_esports_outlined),
             selectedIcon: Icon(Icons.sports_esports),
             label: 'Challenge',
+          ),
+
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person),
+            label: 'Profil',
           ),
         ],
       ),
