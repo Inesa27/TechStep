@@ -148,7 +148,7 @@ class LearnScreen extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha:0.15),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(
@@ -232,7 +232,7 @@ class LearnScreen extends StatelessWidget {
                   width: 54,
                   height: 54,
                   decoration: BoxDecoration(
-                    color: color.withOpacity(0.10),
+                    color: color.withValues(alpha:0.10),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
@@ -517,7 +517,7 @@ class MaterialDetailScreen extends StatelessWidget {
             width: 58,
             height: 58,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha:0.15),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
@@ -582,7 +582,7 @@ class MaterialDetailScreen extends StatelessWidget {
             height: 34,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.10),
+              color: color.withValues(alpha:0.10),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

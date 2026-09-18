@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/learning_analytics_service.dart';
 
 class ChallengeScreen extends StatefulWidget {
   const ChallengeScreen({super.key});
@@ -576,13 +577,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     // JIKA KOTAK TERAKHIR
     // ==========================================================
 
-    if (isLastBox) {
-      setState(() {
-        completedLevels[selectedLevel] = true;
-      });
+ if (isLastBox) {
+  setState(() {
+    completedLevels[selectedLevel] = true;
+  });
 
-      _showLevelComplete();
-    }
+  // Simpan level yang berhasil diselesaikan
+  LearningAnalyticsService.instance.recordChallengeLevel(
+    level: selectedLevel + 1,
+  );
+
+  _showLevelComplete();
+}
 
     // ==========================================================
     // MASIH ADA KOTAK BERIKUTNYA
@@ -752,7 +758,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             height: 52,
             decoration: BoxDecoration(
               color:
-                  Colors.white.withOpacity(0.10),
+                  Colors.white.withValues(alpha:0.10),
               borderRadius:
                   BorderRadius.circular(15),
             ),
@@ -1031,7 +1037,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           colors: [
             levelColors[selectedLevel],
             levelColors[selectedLevel]
-                .withOpacity(0.75),
+                .withValues(alpha:0.75),
           ],
         ),
         borderRadius:
@@ -1278,7 +1284,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       color:
                           levelColors[
                                   selectedLevel]
-                              .withOpacity(
+                              .withValues(alpha:
                         0.20,
                       ),
                       blurRadius: 10,
