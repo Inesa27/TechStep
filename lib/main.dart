@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+
 import 'screens/dashboard_screen.dart';
 import 'screens/learn_screen.dart';
 import 'screens/quiz_screen.dart';
+import 'screens/challenge_screen.dart';
 
 void main() {
   runApp(const TechStepApp());
@@ -49,10 +51,15 @@ class _TechStepHomeState extends State<TechStepHome> {
           currentIndex = 2;
         });
       },
-      onChallenge: () {},
+      onChallenge: () {
+        setState(() {
+          currentIndex = 3;
+        });
+      },
     ),
     const LearnScreen(),
     const QuizScreen(),
+    const ChallengeScreen(),
   ];
 
   @override
@@ -86,6 +93,11 @@ class _TechStepHomeState extends State<TechStepHome> {
             icon: Icon(Icons.quiz_outlined),
             selectedIcon: Icon(Icons.quiz),
             label: 'Quiz',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.sports_esports_outlined),
+            selectedIcon: Icon(Icons.sports_esports),
+            label: 'Challenge',
           ),
         ],
       ),
