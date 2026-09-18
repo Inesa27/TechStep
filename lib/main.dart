@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/learn_screen.dart';
+import 'screens/quiz_screen.dart';
 
 void main() {
   runApp(const TechStepApp());
@@ -36,9 +37,22 @@ class TechStepHome extends StatefulWidget {
 class _TechStepHomeState extends State<TechStepHome> {
   int currentIndex = 0;
 
-  final List<Widget> pages = const [
-    DashboardScreen(),
-    LearnScreen(),
+  late final List<Widget> pages = [
+    DashboardScreen(
+      onLearn: () {
+        setState(() {
+          currentIndex = 1;
+        });
+      },
+      onQuiz: () {
+        setState(() {
+          currentIndex = 2;
+        });
+      },
+      onChallenge: () {},
+    ),
+    const LearnScreen(),
+    const QuizScreen(),
   ];
 
   @override
@@ -67,6 +81,11 @@ class _TechStepHomeState extends State<TechStepHome> {
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book),
             label: 'Learn',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.quiz_outlined),
+            selectedIcon: Icon(Icons.quiz),
+            label: 'Quiz',
           ),
         ],
       ),
