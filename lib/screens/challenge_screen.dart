@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+
+import '../models/learning_content.dart';
 import '../services/learning_analytics_service.dart';
+import '../services/techstep_database.dart';
 
 class ChallengeScreen extends StatefulWidget {
   const ChallengeScreen({super.key});
@@ -9,484 +12,100 @@ class ChallengeScreen extends StatefulWidget {
 }
 
 class _ChallengeScreenState extends State<ChallengeScreen> {
-  // ============================================================
-  // STATE
-  // ============================================================
+  late Future<List<ChallengeLevel>> _levelsFuture;
+
+  List<ChallengeLevel> levels = [];
+  List<LearningQuestion> levelQuestions = [];
+  List<bool> completedBoxes = [];
+  List<bool> wrongBoxes = [];
+  final Map<String, String> firstSelectedAnswers = {};
 
   int selectedLevel = -1;
   int currentBox = 0;
+  bool loadingLevel = false;
+  bool savingLevel = false;
 
-  // Menyimpan level yang sudah selesai
-  final List<bool> completedLevels = [
-    false,
-    false,
-    false,
-    false,
-    false,
+  final List<Color> levelColors = const [
+    Color(0xFF4F46E5),
+    Color(0xFF6366F1),
+    Color(0xFF7C3AED),
+    Color(0xFF8B5CF6),
+    Color(0xFF312E81),
   ];
 
-  // Menyimpan status 5 kotak pada level yang sedang dimainkan
-  final List<bool> completedBoxes = [
-    false,
-    false,
-    false,
-    false,
-    false,
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _levelsFuture = TechStepDatabase.instance.getChallengeLevels();
+  }
 
-  // Menyimpan status salah pada kotak yang sedang dimainkan
-  final List<bool> wrongBoxes = [
-    false,
-    false,
-    false,
-    false,
-    false,
-  ];
-
-  // ============================================================
-  // DATA SOAL
-  // 5 LEVEL x 5 SOAL = 25 SOAL
-  // ============================================================
-
-  final List<List<Map<String, dynamic>>> levelQuestions = [
-    // ==========================================================
-    // LEVEL 1 - BEGINNER
-    // ==========================================================
-
-    [
-      {
-        'topic': 'Hardware',
-        'question':
-            'Komponen komputer yang berfungsi sebagai pusat pemrosesan data adalah...',
-        'options': [
-          'CPU',
-          'Monitor',
-          'Keyboard',
-          'Speaker',
-        ],
-        'answer': 'CPU',
-      },
-      {
-        'topic': 'Software',
-        'question':
-            'Manakah yang merupakan contoh software pengolah kata?',
-        'options': [
-          'Microsoft Word',
-          'RAM',
-          'Processor',
-          'Motherboard',
-        ],
-        'answer': 'Microsoft Word',
-      },
-      {
-        'topic': 'Sistem Operasi',
-        'question':
-            'Manakah yang termasuk sistem operasi?',
-        'options': [
-          'Windows',
-          'Google Chrome',
-          'Canva',
-          'Microsoft Word',
-        ],
-        'answer': 'Windows',
-      },
-      {
-        'topic': 'Hardware',
-        'question':
-            'Perangkat yang digunakan untuk memasukkan teks ke komputer adalah...',
-        'options': [
-          'Keyboard',
-          'Monitor',
-          'Speaker',
-          'Projector',
-        ],
-        'answer': 'Keyboard',
-      },
-      {
-        'topic': 'Software',
-        'question':
-            'Software yang digunakan untuk menjelajah internet adalah...',
-        'options': [
-          'Web browser',
-          'Processor',
-          'RAM',
-          'Motherboard',
-        ],
-        'answer': 'Web browser',
-      },
-    ],
-
-    // ==========================================================
-    // LEVEL 2 - INTERMEDIATE
-    // ==========================================================
-
-    [
-      {
-        'topic': 'Hardware',
-        'question':
-            'Jika komputer membutuhkan tempat penyimpanan data permanen, komponen yang paling sesuai adalah...',
-        'options': [
-          'SSD',
-          'RAM',
-          'CPU',
-          'Keyboard',
-        ],
-        'answer': 'SSD',
-      },
-      {
-        'topic': 'Software',
-        'question':
-            'Seorang siswa ingin membuat tabel dan melakukan perhitungan sederhana. Software yang paling sesuai adalah...',
-        'options': [
-          'Microsoft Excel',
-          'Google Chrome',
-          'VLC Media Player',
-          'Paint',
-        ],
-        'answer': 'Microsoft Excel',
-      },
-      {
-        'topic': 'Sistem Operasi',
-        'question':
-            'Salah satu fungsi utama sistem operasi adalah...',
-        'options': [
-          'Mengatur sumber daya komputer',
-          'Mengganti processor',
-          'Mencetak tanpa printer',
-          'Membuat listrik',
-        ],
-        'answer': 'Mengatur sumber daya komputer',
-      },
-      {
-        'topic': 'Hardware',
-        'question':
-            'Jika pengguna ingin memasukkan dokumen fisik ke komputer dalam bentuk digital, perangkat yang digunakan adalah...',
-        'options': [
-          'Scanner',
-          'Speaker',
-          'Monitor',
-          'Projector',
-        ],
-        'answer': 'Scanner',
-      },
-      {
-        'topic': 'Sistem Operasi',
-        'question':
-            'Sistem operasi membantu pengguna berinteraksi dengan komputer melalui...',
-        'options': [
-          'User Interface',
-          'Power Supply',
-          'RAM',
-          'Hard Disk',
-        ],
-        'answer': 'User Interface',
-      },
-    ],
-
-    // ==========================================================
-    // LEVEL 3 - ADVANCED
-    // ==========================================================
-
-    [
-      {
-        'topic': 'Hardware',
-        'question':
-            'Sebuah komputer terasa lambat ketika menjalankan banyak aplikasi sekaligus. Komponen yang berkaitan dengan kondisi tersebut adalah...',
-        'options': [
-          'RAM',
-          'Monitor',
-          'Keyboard',
-          'Printer',
-        ],
-        'answer': 'RAM',
-      },
-      {
-        'topic': 'Software',
-        'question':
-            'Seorang siswa ingin melindungi komputer dari malware. Software yang tepat adalah...',
-        'options': [
-          'Antivirus',
-          'Calculator',
-          'Text Editor',
-          'Media Player',
-        ],
-        'answer': 'Antivirus',
-      },
-      {
-        'topic': 'Sistem Operasi',
-        'question':
-            'Ketika beberapa program berjalan secara bersamaan, sistem operasi bertugas mengatur penggunaan...',
-        'options': [
-          'Sumber daya komputer',
-          'Kabel listrik',
-          'Ukuran monitor',
-          'Bentuk keyboard',
-        ],
-        'answer': 'Sumber daya komputer',
-      },
-      {
-        'topic': 'Hardware + Software',
-        'question':
-            'Untuk membuat desain grafis, seorang siswa membutuhkan komputer dan aplikasi desain. Kombinasi tersebut menunjukkan penggunaan...',
-        'options': [
-          'Hardware dan software',
-          'Software saja',
-          'Hardware saja',
-          'Sistem operasi saja',
-        ],
-        'answer': 'Hardware dan software',
-      },
-      {
-        'topic': 'Software + Sistem Operasi',
-        'question':
-            'Sebuah aplikasi dapat berjalan di komputer karena sistem operasi menyediakan lingkungan untuk...',
-        'options': [
-          'Menjalankan dan mengelola aplikasi',
-          'Mengganti monitor',
-          'Membuat hardware baru',
-          'Menghasilkan listrik',
-        ],
-        'answer': 'Menjalankan dan mengelola aplikasi',
-      },
-    ],
-
-    // ==========================================================
-    // LEVEL 4 - EXPERT
-    // ==========================================================
-
-    [
-      {
-        'topic': 'Hardware',
-        'question':
-            'Sebuah komputer digunakan untuk mengedit video. Agar proses pengolahan grafis lebih baik, salah satu komponen yang perlu diperhatikan adalah...',
-        'options': [
-          'GPU',
-          'Keyboard',
-          'Mouse Pad',
-          'Speaker',
-        ],
-        'answer': 'GPU',
-      },
-      {
-        'topic': 'Software',
-        'question':
-            'Seorang siswa menemukan program asing yang terus berjalan dan menggunakan sumber daya komputer. Hal pertama yang perlu diperiksa adalah...',
-        'options': [
-          'Program atau proses yang sedang berjalan',
-          'Ukuran monitor',
-          'Warna keyboard',
-          'Kabel speaker',
-        ],
-        'answer': 'Program atau proses yang sedang berjalan',
-      },
-      {
-        'topic': 'Sistem Operasi',
-        'question':
-            'Jika sistem operasi tidak dapat mengelola file dengan baik, pengguna akan mengalami masalah pada...',
-        'options': [
-          'Penyimpanan dan pengelolaan file',
-          'Warna layar',
-          'Bentuk keyboard',
-          'Ukuran CPU',
-        ],
-        'answer': 'Penyimpanan dan pengelolaan file',
-      },
-      {
-        'topic': 'Hardware + Sistem Operasi',
-        'question':
-            'Ketika sebuah perangkat baru dipasang ke komputer, sistem operasi perlu mengenali perangkat tersebut agar dapat digunakan. Hal ini berkaitan dengan...',
-        'options': [
-          'Driver perangkat',
-          'Microsoft Word',
-          'Monitor',
-          'Keyboard',
-        ],
-        'answer': 'Driver perangkat',
-      },
-      {
-        'topic': 'Software + Sistem Operasi',
-        'question':
-            'Sebuah aplikasi tidak dapat berjalan karena sistem operasi tidak mendukung kebutuhan aplikasi tersebut. Masalah ini menunjukkan adanya hubungan antara...',
-        'options': [
-          'Software dan sistem operasi',
-          'Keyboard dan speaker',
-          'Monitor dan mouse',
-          'Printer dan scanner',
-        ],
-        'answer': 'Software dan sistem operasi',
-      },
-    ],
-
-    // ==========================================================
-    // LEVEL 5 - CHALLENGE
-    // ==========================================================
-
-    [
-      {
-        'topic': 'Hardware + Software + Sistem Operasi',
-        'question':
-            'Seorang siswa ingin membuat dokumen menggunakan komputer. Agar pekerjaan dapat dilakukan, kombinasi yang tepat adalah...',
-        'options': [
-          'Hardware, software, dan sistem operasi',
-          'Hardware saja',
-          'Software saja',
-          'Sistem operasi saja',
-        ],
-        'answer': 'Hardware, software, dan sistem operasi',
-      },
-      {
-        'topic': 'Hardware + Sistem Operasi',
-        'question':
-            'Saat komputer dinyalakan, sistem operasi mengatur penggunaan RAM dan processor agar program dapat berjalan. Hal ini menunjukkan fungsi sistem operasi dalam...',
-        'options': [
-          'Mengelola sumber daya hardware',
-          'Membuat aplikasi',
-          'Mengedit gambar',
-          'Mencetak dokumen',
-        ],
-        'answer': 'Mengelola sumber daya hardware',
-      },
-      {
-        'topic': 'Software + Hardware',
-        'question':
-            'Aplikasi pengolah video menggunakan processor, RAM, dan media penyimpanan selama proses editing. Kondisi ini menunjukkan bahwa software...',
-        'options': [
-          'Menggunakan sumber daya hardware',
-          'Tidak membutuhkan hardware',
-          'Merupakan hardware',
-          'Menggantikan sistem operasi',
-        ],
-        'answer': 'Menggunakan sumber daya hardware',
-      },
-      {
-        'topic': 'Sistem Operasi + Software',
-        'question':
-            'Pengguna membuka aplikasi melalui antarmuka sistem operasi. Dalam kondisi ini sistem operasi berperan sebagai...',
-        'options': [
-          'Penghubung antara pengguna dan aplikasi',
-          'Perangkat input',
-          'Media penyimpanan',
-          'Processor',
-        ],
-        'answer': 'Penghubung antara pengguna dan aplikasi',
-      },
-      {
-        'topic': 'Hardware + Software + Sistem Operasi',
-        'question':
-            'Sebuah komputer dapat digunakan untuk belajar ketika hardware tersedia, sistem operasi berjalan, dan aplikasi pembelajaran dapat dijalankan. Kesimpulan yang tepat adalah...',
-        'options': [
-          'Ketiganya saling berkaitan dalam sistem komputer',
-          'Hardware dapat bekerja tanpa software',
-          'Software tidak membutuhkan sistem operasi',
-          'Sistem operasi merupakan perangkat keras',
-        ],
-        'answer':
-            'Ketiganya saling berkaitan dalam sistem komputer',
-      },
-    ],
-  ];
-
-  // ============================================================
-  // NAMA LEVEL
-  // ============================================================
-
-  final List<String> levelNames = [
-    'Beginner',
-    'Intermediate',
-    'Advanced',
-    'Expert',
-    'Challenge',
-  ];
-
-  final List<String> levelDescriptions = [
-    'Mengenali konsep dasar sistem komputer',
-    'Memahami hubungan antar konsep',
-    'Menerapkan konsep dalam situasi sederhana',
-    'Menganalisis masalah sistem komputer',
-    'Mengintegrasikan Hardware, Software, dan Sistem Operasi',
-  ];
-
-  final List<Color> levelColors = [
-    const Color(0xFF4F46E5),
-    const Color(0xFF6366F1),
-    const Color(0xFF7C3AED),
-    const Color(0xFF8B5CF6),
-    const Color(0xFF312E81),
-  ];
-
-  // ============================================================
-  // CEK LEVEL TERBUKA
-  // ============================================================
+  void _reloadLevels() {
+    _levelsFuture = TechStepDatabase.instance.getChallengeLevels();
+  }
 
   bool isLevelUnlocked(int level) {
     if (level == 0) {
       return true;
     }
 
-    return completedLevels[level - 1];
+    if (level - 1 >= levels.length) {
+      return false;
+    }
+
+    return levels[level - 1].completed;
   }
 
-  // ============================================================
-  // BUKA LEVEL
-  // ============================================================
-
-  void openLevel(int level) {
+  Future<void> openLevel(int level) async {
     if (!isLevelUnlocked(level)) {
+      return;
+    }
+
+    setState(() {
+      loadingLevel = true;
+    });
+
+    final questions = await TechStepDatabase.instance.getChallengeQuestions(
+      levels[level].id,
+    );
+
+    if (!mounted) {
       return;
     }
 
     setState(() {
       selectedLevel = level;
       currentBox = 0;
-
-      // Reset status kotak ketika level dimulai kembali
-      for (int i = 0; i < 5; i++) {
-        completedBoxes[i] = false;
-        wrongBoxes[i] = false;
-      }
+      levelQuestions = questions;
+      completedBoxes = List<bool>.filled(questions.length, false);
+      wrongBoxes = List<bool>.filled(questions.length, false);
+      firstSelectedAnswers.clear();
+      loadingLevel = false;
     });
   }
-
-  // ============================================================
-  // KELUAR DARI LEVEL
-  // ============================================================
 
   void exitLevel() {
     setState(() {
       selectedLevel = -1;
       currentBox = 0;
+      levelQuestions = [];
+      completedBoxes = [];
+      wrongBoxes = [];
+      firstSelectedAnswers.clear();
     });
   }
 
-  // ============================================================
-  // JAWAB SOAL
-  // ============================================================
+  void answerQuestion(String selectedAnswerKey) {
+    final question = levelQuestions[currentBox];
+    firstSelectedAnswers.putIfAbsent(question.id, () => selectedAnswerKey);
 
-  void answerQuestion(String selectedAnswer) {
-    final question =
-        levelQuestions[selectedLevel][currentBox];
-
-    final String correctAnswer =
-        question['answer'].toString();
-
-    // ==========================================================
-    // JAWABAN BENAR
-    // ==========================================================
-
-    if (selectedAnswer == correctAnswer) {
+    if (selectedAnswerKey == question.correctOptionKey) {
       setState(() {
         completedBoxes[currentBox] = true;
         wrongBoxes[currentBox] = false;
       });
 
       _showCorrectAnswerDialog();
-    }
-
-    // ==========================================================
-    // JAWABAN SALAH
-    // ==========================================================
-
-    else {
+    } else {
       setState(() {
         wrongBoxes[currentBox] = true;
       });
@@ -495,21 +114,15 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     }
   }
 
-  // ============================================================
-  // DIALOG JAWABAN BENAR
-  // ============================================================
-
   void _showCorrectAnswerDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-            'Jawaban Benar! 🎉',
-          ),
+          title: const Text('Jawaban Benar'),
           content: const Text(
-            'Bagus! Kotak ini sudah selesai. Kamu bisa lanjut ke kotak berikutnya.',
+            'Kotak ini sudah selesai. Kamu bisa lanjut ke kotak berikutnya.',
           ),
           actions: [
             ElevatedButton(
@@ -518,8 +131,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 _moveToNextBox();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color(0xFF4F46E5),
+                backgroundColor: const Color(0xFF4F46E5),
                 foregroundColor: Colors.white,
               ),
               child: const Text('Lanjut'),
@@ -530,19 +142,13 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // DIALOG JAWABAN SALAH
-  // ============================================================
-
   void _showWrongAnswerDialog() {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          title: const Text(
-            'Jawaban Salah',
-          ),
+          title: const Text('Jawaban Salah'),
           content: const Text(
             'Jawaban kamu belum tepat. Kotak ini tetap merah. Coba lagi sampai jawabanmu benar.',
           ),
@@ -552,8 +158,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 Navigator.pop(context);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color(0xFFDC2626),
+                backgroundColor: const Color(0xFFDC2626),
                 foregroundColor: Colors.white,
               ),
               child: const Text('Coba Lagi'),
@@ -564,63 +169,51 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // PINDAH KE KOTAK BERIKUTNYA
-  // ============================================================
+  Future<void> _moveToNextBox() async {
+    final isLastBox = currentBox == levelQuestions.length - 1;
 
-  void _moveToNextBox() {
-    final isLastBox =
-        currentBox ==
-        levelQuestions[selectedLevel].length - 1;
-
-    // ==========================================================
-    // JIKA KOTAK TERAKHIR
-    // ==========================================================
-
- if (isLastBox) {
-  setState(() {
-    completedLevels[selectedLevel] = true;
-  });
-
-  // Simpan level yang berhasil diselesaikan
-  LearningAnalyticsService.instance.recordChallengeLevel(
-    level: selectedLevel + 1,
-  );
-
-  _showLevelComplete();
-}
-
-    // ==========================================================
-    // MASIH ADA KOTAK BERIKUTNYA
-    // ==========================================================
-
-    else {
+    if (!isLastBox) {
       setState(() {
         currentBox++;
       });
+      return;
     }
-  }
 
-  // ============================================================
-  // LEVEL SELESAI
-  // ============================================================
+    setState(() {
+      savingLevel = true;
+    });
+
+    await LearningAnalyticsService.instance.recordChallengeResult(
+      levelId: levels[selectedLevel].id,
+      questions: levelQuestions,
+      firstSelectedOptionKeys: firstSelectedAnswers,
+    );
+
+    if (!mounted) {
+      return;
+    }
+
+    setState(() {
+      savingLevel = false;
+      _reloadLevels();
+    });
+
+    _showLevelComplete();
+  }
 
   void _showLevelComplete() {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        final bool lastLevel =
-            selectedLevel == levelNames.length - 1;
+        final lastLevel = selectedLevel == levels.length - 1;
 
         return AlertDialog(
-          title: const Text(
-            'Level Selesai! 🎉',
-          ),
+          title: const Text('Level Selesai'),
           content: Text(
             lastLevel
                 ? 'Selamat! Kamu telah menyelesaikan semua level Computer Challenge.'
-                : 'Kamu telah menyelesaikan ${levelNames[selectedLevel]}.\n\nLevel berikutnya sekarang sudah terbuka.',
+                : 'Kamu telah menyelesaikan ${levels[selectedLevel].name}.\n\nLevel berikutnya sekarang sudah terbuka.',
           ),
           actions: [
             ElevatedButton(
@@ -629,8 +222,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 exitLevel();
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor:
-                    const Color(0xFF4F46E5),
+                backgroundColor: const Color(0xFF4F46E5),
                 foregroundColor: Colors.white,
               ),
               child: const Text('Kembali'),
@@ -641,27 +233,38 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // BUILD
-  // ============================================================
-
   @override
   Widget build(BuildContext context) {
+    if (loadingLevel) {
+      return const Scaffold(
+        backgroundColor: Color(0xFFF6F7FB),
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     if (selectedLevel != -1) {
       return _buildLevelPage();
     }
 
-    return _buildChallengeHome();
-  }
+    return FutureBuilder<List<ChallengeLevel>>(
+      future: _levelsFuture,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Scaffold(
+            backgroundColor: Color(0xFFF6F7FB),
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-  // ============================================================
-  // HALAMAN UTAMA CHALLENGE
-  // ============================================================
+        levels = snapshot.data!;
+        return _buildChallengeHome();
+      },
+    );
+  }
 
   Widget _buildChallengeHome() {
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFF6F7FB),
+      backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -669,7 +272,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         title: const Text(
           'Computer Challenge',
           style: TextStyle(
-            fontSize: 21,
+            fontSize: 22,
             fontWeight: FontWeight.bold,
             color: Color(0xFF111827),
           ),
@@ -677,46 +280,36 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            20,
-            8,
-            20,
-            30,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
           child: Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildChallengeHeader(),
-
               const SizedBox(height: 24),
-
               const Text(
-                'Pilih Level',
+                'Level Tantangan',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: Color(0xFF1F2937),
                 ),
               ),
-
               const SizedBox(height: 8),
-
               const Text(
-                'Selesaikan setiap papan engklek untuk membuka level berikutnya.',
+                'Setiap level berisi 5 soal dari bank soal Computer Challenge pada dokumen bahan ajar.',
                 style: TextStyle(
                   fontSize: 13,
                   height: 1.5,
                   color: Color(0xFF6B7280),
                 ),
               ),
-
-              const SizedBox(height: 16),
-
+              const SizedBox(height: 14),
               ...List.generate(
-                levelNames.length,
+                levels.length,
                 (index) => _buildLevelCard(index),
               ),
+              const SizedBox(height: 10),
+              _buildRubricCard(),
             ],
           ),
         ),
@@ -724,43 +317,29 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // HEADER CHALLENGE
-  // ============================================================
-
   Widget _buildChallengeHeader() {
-    final completedCount =
-        completedLevels.where(
-          (item) => item,
-        ).length;
+    final completedCount = levels.where((item) => item.completed).length;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF111827),
-            Color(0xFF312E81),
-          ],
+          colors: [Color(0xFF111827), Color(0xFF312E81)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius:
-            BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(22),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             width: 52,
             height: 52,
             decoration: BoxDecoration(
-              color:
-                  Colors.white.withValues(alpha:0.10),
-              borderRadius:
-                  BorderRadius.circular(15),
+              color: Colors.white.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(15),
             ),
             child: const Icon(
               Icons.sports_esports_rounded,
@@ -768,9 +347,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               size: 28,
             ),
           ),
-
           const SizedBox(height: 18),
-
           const Text(
             'Computer Challenge',
             style: TextStyle(
@@ -779,30 +356,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 8),
-
           const Text(
-            'Lewati setiap langkah engklek dan uji pemahamanmu tentang sistem komputer.',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-              height: 1.5,
-            ),
+            'Lewati setiap langkah engklek dan uji pemahaman sistem komputer secara bertahap.',
+            style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.5),
           ),
-
           const SizedBox(height: 18),
-
           Row(
             children: [
-              const Icon(
-                Icons.flag_rounded,
-                color: Colors.white70,
-                size: 18,
-              ),
+              const Icon(Icons.flag_rounded, color: Colors.white70, size: 18),
               const SizedBox(width: 8),
               Text(
-                '$completedCount dari 5 level selesai',
+                '$completedCount dari ${levels.length} level selesai',
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
@@ -816,16 +381,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // LEVEL CARD
-  // ============================================================
-
   Widget _buildLevelCard(int index) {
-    final bool unlocked =
-        isLevelUnlocked(index);
-
-    final bool completed =
-        completedLevels[index];
+    final unlocked = isLevelUnlocked(index);
+    final level = levels[index];
+    final completed = level.completed;
 
     return InkWell(
       onTap: unlocked
@@ -833,20 +392,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               openLevel(index);
             }
           : null,
-      borderRadius:
-          BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(18),
       child: Container(
         width: double.infinity,
-        margin:
-            const EdgeInsets.only(bottom: 12),
-        padding:
-            const EdgeInsets.all(17),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(17),
         decoration: BoxDecoration(
-          color: unlocked
-              ? Colors.white
-              : const Color(0xFFE5E7EB),
-          borderRadius:
-              BorderRadius.circular(18),
+          color: unlocked ? Colors.white : const Color(0xFFE5E7EB),
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
             color: completed
                 ? const Color(0xFF4F46E5)
@@ -860,93 +413,68 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               height: 52,
               decoration: BoxDecoration(
                 color: unlocked
-                    ? levelColors[index]
+                    ? levelColors[index % levelColors.length]
                     : const Color(0xFFD1D5DB),
-                borderRadius:
-                    BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(15),
               ),
               child: Icon(
                 completed
                     ? Icons.check_rounded
                     : unlocked
-                        ? Icons
-                            .sports_esports_rounded
-                        : Icons.lock_rounded,
+                    ? Icons.sports_esports_rounded
+                    : Icons.lock_rounded,
                 color: Colors.white,
                 size: 25,
               ),
             ),
-
             const SizedBox(width: 14),
-
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Level ${index + 1} • ${levelNames[index]}',
+                    'Level ${level.id} - ${level.name}',
                     style: TextStyle(
                       fontSize: 15,
-                      fontWeight:
-                          FontWeight.bold,
+                      fontWeight: FontWeight.bold,
                       color: unlocked
-                          ? const Color(
-                              0xFF1F2937,
-                            )
-                          : const Color(
-                              0xFF9CA3AF,
-                            ),
+                          ? const Color(0xFF1F2937)
+                          : const Color(0xFF9CA3AF),
                     ),
                   ),
-
                   const SizedBox(height: 4),
-
                   Text(
-                    levelDescriptions[index],
+                    level.description,
                     style: TextStyle(
                       fontSize: 12,
                       height: 1.4,
                       color: unlocked
-                          ? const Color(
-                              0xFF6B7280,
-                            )
-                          : const Color(
-                              0xFF9CA3AF,
-                            ),
+                          ? const Color(0xFF6B7280)
+                          : const Color(0xFF9CA3AF),
                     ),
                   ),
-
                   const SizedBox(height: 6),
-
                   Text(
-                    '5 kotak • 5 tantangan',
+                    completed
+                        ? 'Nilai terbaik ${level.bestScore}%'
+                        : '5 kotak - 5 tantangan',
                     style: TextStyle(
                       fontSize: 11,
-                      fontWeight:
-                          FontWeight.w600,
+                      fontWeight: FontWeight.w600,
                       color: unlocked
-                          ? const Color(
-                              0xFF4F46E5,
-                            )
-                          : const Color(
-                              0xFF9CA3AF,
-                            ),
+                          ? const Color(0xFF4F46E5)
+                          : const Color(0xFF9CA3AF),
                     ),
                   ),
                 ],
               ),
             ),
-
             Icon(
               completed
-                  ? Icons
-                      .check_circle_rounded
+                  ? Icons.check_circle_rounded
                   : unlocked
-                      ? Icons
-                          .arrow_forward_ios_rounded
-                      : Icons
-                          .lock_outline_rounded,
+                  ? Icons.arrow_forward_ios_rounded
+                  : Icons.lock_outline_rounded,
               color: completed
                   ? const Color(0xFF4F46E5)
                   : const Color(0xFF9CA3AF),
@@ -958,34 +486,37 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // HALAMAN LEVEL
-  // ============================================================
+  Widget _buildRubricCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEEF2FF),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE0E7FF)),
+      ),
+      child: const Text(
+        'Rubrik level: 0-1 benar = belum siap, 2-3 benar = mulai memahami, 4 benar = cukup dikuasai, 5 benar = dikuasai dengan baik.',
+        style: TextStyle(fontSize: 12, height: 1.5, color: Color(0xFF4B5563)),
+      ),
+    );
+  }
 
   Widget _buildLevelPage() {
-    final question =
-        levelQuestions[selectedLevel][currentBox];
+    final question = levelQuestions[currentBox];
 
     return Scaffold(
-      backgroundColor:
-          const Color(0xFFF6F7FB),
+      backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
-
         leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: Color(0xFF111827),
-          ),
-          onPressed: () {
-            exitLevel();
-          },
+          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF111827)),
+          onPressed: savingLevel ? null : exitLevel,
         ),
-
         title: Text(
-          'Level ${selectedLevel + 1}',
+          'Level ${levels[selectedLevel].id}',
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -993,29 +524,16 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           ),
         ),
       ),
-
       body: SafeArea(
         child: SingleChildScrollView(
-          padding:
-              const EdgeInsets.fromLTRB(
-            20,
-            8,
-            20,
-            30,
-          ),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
           child: Column(
             children: [
               _buildLevelTitle(),
-
               const SizedBox(height: 20),
-
               _buildHopscotchMap(),
-
               const SizedBox(height: 24),
-
-              _buildCurrentQuestion(
-                question,
-              ),
+              _buildCurrentQuestion(question),
             ],
           ),
         ),
@@ -1023,53 +541,37 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // JUDUL LEVEL
-  // ============================================================
-
   Widget _buildLevelTitle() {
+    final color = levelColors[selectedLevel % levelColors.length];
+
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            levelColors[selectedLevel],
-            levelColors[selectedLevel]
-                .withValues(alpha:0.75),
-          ],
+          colors: [color, color.withValues(alpha: 0.75)],
         ),
-        borderRadius:
-            BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Level ${selectedLevel + 1}',
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-            ),
+            'Level ${levels[selectedLevel].id}',
+            style: const TextStyle(color: Colors.white70, fontSize: 13),
           ),
-
           const SizedBox(height: 5),
-
           Text(
-            levelNames[selectedLevel],
+            levels[selectedLevel].name,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 7),
-
           Text(
-            levelDescriptions[selectedLevel],
+            levels[selectedLevel].description,
             style: const TextStyle(
               color: Colors.white70,
               fontSize: 12,
@@ -1081,36 +583,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // PAPAN ENGKLEK
-  //
-  //             [ 5 ]
-  //
-  //       [ 3 ]   [ 4 ]
-  //
-  //             [ 2 ]
-  //
-  //             [ 1 ]
-  //
-  // ============================================================
-
   Widget _buildHopscotchMap() {
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.fromLTRB(
-        16,
-        20,
-        16,
-        24,
-      ),
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFFE5E7EB),
-        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
       child: Column(
         children: [
@@ -1122,196 +602,95 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               color: Color(0xFF1F2937),
             ),
           ),
-
           const SizedBox(height: 22),
-
-          // -----------------------------
-          // KOTAK 5
-          // -----------------------------
-
           _buildHopscotchBox(4),
-
           const SizedBox(height: 8),
-
-          // -----------------------------
-          // KOTAK 3 & 4
-          // -----------------------------
-
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               _buildHopscotchBox(2),
-
               const SizedBox(width: 8),
-
               _buildHopscotchBox(3),
             ],
           ),
-
           const SizedBox(height: 8),
-
-          // -----------------------------
-          // KOTAK 2
-          // -----------------------------
-
           _buildHopscotchBox(1),
-
           const SizedBox(height: 8),
-
-          // -----------------------------
-          // KOTAK 1
-          // -----------------------------
-
           _buildHopscotchBox(0),
         ],
       ),
     );
   }
 
-  // ============================================================
-  // KOTAK ENGKLEK
-  // ============================================================
+  Widget _buildHopscotchBox(int boxIndex) {
+    if (boxIndex >= levelQuestions.length) {
+      return const SizedBox.shrink();
+    }
 
-  Widget _buildHopscotchBox(
-    int boxIndex,
-  ) {
-    final bool active =
-        boxIndex == currentBox;
-
-    final bool completed =
-        completedBoxes[boxIndex];
-
-    final bool wrong =
-        wrongBoxes[boxIndex];
+    final active = boxIndex == currentBox;
+    final completed = completedBoxes[boxIndex];
+    final wrong = wrongBoxes[boxIndex];
+    final levelColor = levelColors[selectedLevel % levelColors.length];
 
     late Color backgroundColor;
     late Color borderColor;
     late Color textColor;
     late IconData icon;
 
-    // ==========================================================
-    // SUDAH BENAR
-    // ==========================================================
-
     if (completed) {
-      backgroundColor =
-          const Color(0xFFDCFCE7);
-
-      borderColor =
-          const Color(0xFF22C55E);
-
-      textColor =
-          const Color(0xFF166534);
-
-      icon =
-          Icons.check_circle_rounded;
-    }
-
-    // ==========================================================
-    // SALAH
-    // ==========================================================
-
-    else if (wrong) {
-      backgroundColor =
-          const Color(0xFFFEE2E2);
-
-      borderColor =
-          const Color(0xFFDC2626);
-
-      textColor =
-          const Color(0xFFB91C1C);
-
+      backgroundColor = const Color(0xFFDCFCE7);
+      borderColor = const Color(0xFF22C55E);
+      textColor = const Color(0xFF166534);
+      icon = Icons.check_circle_rounded;
+    } else if (wrong) {
+      backgroundColor = const Color(0xFFFEE2E2);
+      borderColor = const Color(0xFFDC2626);
+      textColor = const Color(0xFFB91C1C);
       icon = Icons.close_rounded;
-    }
-
-    // ==========================================================
-    // KOTAK AKTIF
-    // ==========================================================
-
-    else if (active) {
-      backgroundColor =
-          levelColors[selectedLevel];
-
-      borderColor =
-          levelColors[selectedLevel];
-
+    } else if (active) {
+      backgroundColor = levelColor;
+      borderColor = levelColor;
       textColor = Colors.white;
-
-      icon =
-          Icons.location_on_rounded;
-    }
-
-    // ==========================================================
-    // KOTAK BELUM DIMAINKAN
-    // ==========================================================
-
-    else {
-      backgroundColor =
-          const Color(0xFFF3F4F6);
-
-      borderColor =
-          const Color(0xFFD1D5DB);
-
-      textColor =
-          const Color(0xFF9CA3AF);
-
-      icon =
-          Icons.circle_outlined;
+      icon = Icons.location_on_rounded;
+    } else {
+      backgroundColor = const Color(0xFFF3F4F6);
+      borderColor = const Color(0xFFD1D5DB);
+      textColor = const Color(0xFF9CA3AF);
+      icon = Icons.circle_outlined;
     }
 
     return AnimatedContainer(
-      duration:
-          const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 200),
       width: 130,
       height: 62,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius:
-            BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: borderColor,
-          width:
-              active || wrong || completed
-                  ? 2
-                  : 1,
+          width: active || wrong || completed ? 2 : 1,
         ),
-        boxShadow:
-            active && !wrong && !completed
-                ? [
-                    BoxShadow(
-                      color:
-                          levelColors[
-                                  selectedLevel]
-                              .withValues(alpha:
-                        0.20,
-                      ),
-                      blurRadius: 10,
-                      offset:
-                          const Offset(0, 4),
-                    ),
-                  ]
-                : null,
+        boxShadow: active && !wrong && !completed
+            ? [
+                BoxShadow(
+                  color: levelColor.withValues(alpha: 0.20),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : null,
       ),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            icon,
-            color: textColor,
-            size: 21,
-          ),
-
+          Icon(icon, color: textColor, size: 21),
           const SizedBox(width: 8),
-
           Text(
             'Kotak ${boxIndex + 1}',
             style: TextStyle(
               fontSize: 13,
-              fontWeight:
-                  FontWeight.bold,
+              fontWeight: FontWeight.bold,
               color: textColor,
             ),
           ),
@@ -1320,173 +699,124 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  // ============================================================
-  // PERTANYAAN
-  // ============================================================
-
-  Widget _buildCurrentQuestion(
-    Map<String, dynamic> question,
-  ) {
-    final List<String> options =
-        List<String>.from(
-      question['options'],
-    );
-
+  Widget _buildCurrentQuestion(LearningQuestion question) {
     return Container(
       width: double.infinity,
-      padding:
-          const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius:
-            BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFFE5E7EB),
-        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
       child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(
+                padding: const EdgeInsets.symmetric(
                   horizontal: 11,
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      const Color(0xFFEEF2FF),
-                  borderRadius:
-                      BorderRadius.circular(9),
+                  color: const Color(0xFFEEF2FF),
+                  borderRadius: BorderRadius.circular(9),
                 ),
                 child: Text(
-                  question['topic']
-                      .toString(),
-                  style:
-                      const TextStyle(
+                  question.materialTitle,
+                  style: const TextStyle(
                     fontSize: 11,
-                    fontWeight:
-                        FontWeight.bold,
-                    color:
-                        Color(0xFF4F46E5),
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF4F46E5),
                   ),
                 ),
               ),
-
               const Spacer(),
-
               Text(
-                'Kotak ${currentBox + 1}/5',
+                'Kotak ${currentBox + 1}/${levelQuestions.length}',
                 style: const TextStyle(
                   fontSize: 12,
-                  fontWeight:
-                      FontWeight.w600,
-                  color:
-                      Color(0xFF6B7280),
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF6B7280),
                 ),
               ),
             ],
           ),
-
-          const SizedBox(height: 18),
-
+          const SizedBox(height: 8),
           Text(
-            question['question']
-                .toString(),
+            'Kompetensi: ${question.competencyTitle}',
+            style: const TextStyle(fontSize: 11, color: Color(0xFF6B7280)),
+          ),
+          const SizedBox(height: 18),
+          Text(
+            question.question,
             style: const TextStyle(
               fontSize: 19,
               height: 1.4,
-              fontWeight:
-                  FontWeight.bold,
-              color:
-                  Color(0xFF111827),
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF111827),
             ),
           ),
-
           const SizedBox(height: 22),
-
-          ...options.map(
+          ...question.options.map(
             (option) => Padding(
-              padding:
-                  const EdgeInsets.only(
-                bottom: 10,
-              ),
-              child:
-                  _buildAnswerButton(
-                option,
-              ),
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildAnswerButton(option),
             ),
           ),
+          if (savingLevel) ...[
+            const SizedBox(height: 8),
+            const Center(child: CircularProgressIndicator()),
+          ],
         ],
       ),
     );
   }
 
-  // ============================================================
-  // PILIHAN JAWABAN
-  // ============================================================
-
-  Widget _buildAnswerButton(
-    String option,
-  ) {
+  Widget _buildAnswerButton(AnswerOption option) {
     return InkWell(
-      onTap: () {
-        answerQuestion(option);
-      },
-      borderRadius:
-          BorderRadius.circular(14),
+      onTap: savingLevel
+          ? null
+          : () {
+              answerQuestion(option.key);
+            },
+      borderRadius: BorderRadius.circular(14),
       child: Container(
         width: double.infinity,
-        padding:
-            const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color:
-              const Color(0xFFF9FAFB),
-          borderRadius:
-              BorderRadius.circular(14),
-          border: Border.all(
-            color:
-                const Color(0xFFE5E7EB),
-          ),
+          color: const Color(0xFFF9FAFB),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFE5E7EB)),
         ),
         child: Row(
           children: [
             Container(
               width: 30,
               height: 30,
-              alignment:
-                  Alignment.center,
-              decoration:
-                  const BoxDecoration(
-                color:
-                    Color(0xFFEEF2FF),
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Color(0xFFEEF2FF),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
-                Icons
-                    .arrow_forward_rounded,
-                color:
-                    Color(0xFF4F46E5),
-                size: 17,
+              child: Text(
+                option.key,
+                style: const TextStyle(
+                  color: Color(0xFF4F46E5),
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
-
             const SizedBox(width: 12),
-
             Expanded(
               child: Text(
-                option,
-                style:
-                    const TextStyle(
+                option.text,
+                style: const TextStyle(
                   fontSize: 13,
                   height: 1.4,
-                  fontWeight:
-                      FontWeight.w500,
-                  color:
-                      Color(0xFF374151),
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF374151),
                 ),
               ),
             ),
