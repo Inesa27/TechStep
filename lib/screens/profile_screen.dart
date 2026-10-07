@@ -1,23 +1,43 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:file_saver/file_saver.dart';
 import 'package:pdf/pdf.dart' as pdf;
 import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 import '../services/learning_analytics_service.dart';
 
 class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
+  final Map<String, dynamic>? user;
+
+  const ProfileScreen({
+    super.key,
+    this.user,
+  });
+
+  String get _studentName {
+    final value = user?['name']?.toString().trim();
+    return value == null || value.isEmpty ? 'Siswa TechStep' : value;
+  }
+
+  String get _studentNis {
+    final value = user?['nis']?.toString().trim();
+    return value == null || value.isEmpty ? '-' : value;
+  }
+
+  String get _studentClass {
+    final value = user?['class_name']?.toString().trim();
+    return value == null || value.isEmpty ? 'X TJKT' : value;
+  }
 
   // ============================================================
   // DOWNLOAD LEARNING ANALYTICS
   // ============================================================
 
-  Future<void> _downloadLearningAnalytics(
-    BuildContext context,
-  ) async {
-    try {
-      final analytics =
-          LearningAnalyticsService.instance;
+  Future<Uint8List> _buildLearningAnalyticsPdf() async {
+    final analytics =
+        LearningAnalyticsService.instance;
 
       final document = pw.Document();
 
@@ -44,7 +64,7 @@ class ProfileScreen extends StatelessWidget {
       final int sistemOperasi =
           analytics.operatingSystemMastery;
 
-      const int completedMaterials = 0;
+      final int completedMaterials = analytics.completedMaterials;
 
       final int completedQuiz =
           analytics.quizCompleted ? 1 : 0;
@@ -178,12 +198,17 @@ class ProfileScreen extends StatelessWidget {
 
             _pdfInfoRow(
               'Nama',
-              'Siswa TechStep',
+              _studentName,
+            ),
+
+            _pdfInfoRow(
+              'NIS / Username',
+              _studentNis,
             ),
 
             _pdfInfoRow(
               'Kelas',
-              'X TJKT',
+              _studentClass,
             ),
 
             _pdfInfoRow(
@@ -561,7 +586,7 @@ class ProfileScreen extends StatelessWidget {
               ),
               child: pw.Text(
                 'Catatan: Laporan ini dihasilkan berdasarkan data Learning Analytics TechStep. '
-                'Nilai dan status penguasaan diperbarui berdasarkan aktivitas pembelajaran yang tersimpan selama aplikasi berjalan.',
+                'Nilai dan status penguasaan diperbarui berdasarkan aktivitas pembelajaran yang tersimpan pada perangkat atau browser.',
                 style:
                     const pw.TextStyle(
                   fontSize: 9,
@@ -572,34 +597,33 @@ class ProfileScreen extends StatelessWidget {
         ),
       );
 
-      // ========================================================
-      // SIMPAN PDF
-      // ========================================================
+    return document.save();
+  }
 
-      final bytes =
-          await document.save();
+  Future<void> _downloadLearningAnalytics(
+    BuildContext context,
+  ) async {
+    try {
+      final bytes = await _buildLearningAnalyticsPdf();
 
-      await FileSaver.instance.saveAs(
-        name:
-            'hasil_learning_analytics_techstep',
+      await FileSaver.instance.saveToDownloads(
+        name: 'hasil_learning_analytics_techstep',
         bytes: bytes,
         fileExtension: 'pdf',
         mimeType: MimeType.pdf,
+        subfolder: 'TechStep',
       );
 
       if (!context.mounted) {
         return;
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-            'Hasil Learning Analytics berhasil diunduh.',
+            'PDF berhasil disimpan ke folder Downloads/TechStep.',
           ),
-          behavior:
-              SnackBarBehavior.floating,
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } catch (e) {
@@ -607,15 +631,52 @@ class ProfileScreen extends StatelessWidget {
         return;
       }
 
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Gagal membuat PDF: $e',
-          ),
-          behavior:
-              SnackBarBehavior.floating,
+          content: Text('Gagal menyimpan PDF: $e'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
+
+  Future<void> _previewLearningAnalytics(
+    BuildContext context,
+  ) async {
+    try {
+      final bytes = await _buildLearningAnalyticsPdf();
+
+      if (!context.mounted) {
+        return;
+      }
+
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text('Learning Report'),
+              ),
+              body: PdfPreview(
+                canChangeOrientation: false,
+                canChangePageFormat: false,
+                allowPrinting: true,
+                allowSharing: true,
+                build: (_) async => bytes,
+              ),
+            );
+          },
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal membuka PDF: $e'),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
@@ -1039,13 +1100,12 @@ class ProfileScreen extends StatelessWidget {
 
           const SizedBox(width: 16),
 
-          const Expanded(
+          Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Siswa TechStep',
+                  _studentName,
                   style:
                       TextStyle(
                     color:
@@ -1059,11 +1119,9 @@ class ProfileScreen extends StatelessWidget {
                 SizedBox(height: 5),
 
                 Text(
-                  'Kelas X TJKT',
-                  style:
-                      TextStyle(
-                    color:
-                        Colors.white70,
+                  '$_studentClass • $_studentNis',
+                  style: const TextStyle(
+                    color: Colors.white70,
                     fontSize: 13,
                   ),
                 ),
@@ -1505,6 +1563,38 @@ class ProfileScreen extends StatelessWidget {
           ),
 
           const SizedBox(height: 16),
+
+          SizedBox(
+            width: double.infinity,
+            height: 46,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                _previewLearningAnalytics(context);
+              },
+              icon: const Icon(
+                Icons.picture_as_pdf_rounded,
+                size: 19,
+              ),
+              label: const Text(
+                'Lihat Laporan PDF',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: const BorderSide(
+                  color: Colors.white54,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 10),
 
           SizedBox(
             width: double.infinity,

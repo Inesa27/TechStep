@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
+import 'services/learning_analytics_service.dart';
+import 'screens/auth_gate.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/learn_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/challenge_screen.dart';
 import 'screens/profile_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await LearningAnalyticsService.instance.initialize();
+
   runApp(const TechStepApp());
 }
 
@@ -25,13 +31,22 @@ class TechStepApp extends StatelessWidget {
         ),
         scaffoldBackgroundColor: const Color(0xFFF6F7FB),
       ),
-      home: const TechStepHome(),
+      home: AuthGate(
+        authenticatedHomeBuilder: (user) {
+          return TechStepHome(user: user);
+        },
+      ),
     );
   }
 }
 
 class TechStepHome extends StatefulWidget {
-  const TechStepHome({super.key});
+  final Map<String, dynamic> user;
+
+  const TechStepHome({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<TechStepHome> createState() => _TechStepHomeState();
@@ -40,33 +55,42 @@ class TechStepHome extends StatefulWidget {
 class _TechStepHomeState extends State<TechStepHome> {
   int currentIndex = 0;
 
-  late final List<Widget> pages = [
-    DashboardScreen(
-      onLearn: () {
-        setState(() {
-          currentIndex = 1;
-        });
-      },
-      onQuiz: () {
-        setState(() {
-          currentIndex = 2;
-        });
-      },
-      onChallenge: () {
-        setState(() {
-          currentIndex = 3;
-        });
-      },
-    ),
+  late final List<Widget> pages;
 
-    const LearnScreen(),
+  @override
+  void initState() {
+    super.initState();
 
-    const QuizScreen(),
+    pages = [
+      DashboardScreen(
+        onLearn: () {
+          setState(() {
+            currentIndex = 1;
+          });
+        },
+        onQuiz: () {
+          setState(() {
+            currentIndex = 2;
+          });
+        },
+        onChallenge: () {
+          setState(() {
+            currentIndex = 3;
+          });
+        },
+      ),
 
-    const ChallengeScreen(),
+      const LearnScreen(),
 
-    const ProfileScreen(),
-  ];
+      const QuizScreen(),
+
+      const ChallengeScreen(),
+
+      ProfileScreen(
+        user: widget.user,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,13 +104,11 @@ class _TechStepHomeState extends State<TechStepHome> {
 
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
-
         onDestinationSelected: (index) {
           setState(() {
             currentIndex = index;
           });
         },
-
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),

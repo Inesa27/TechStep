@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/learning_content.dart';
 
@@ -26,6 +27,10 @@ class TechStepDatabase {
   final List<Map<String, Object?>> _webCompetencyMapping = [];
   final List<Map<String, Object?>> _webRecommendations = [];
   final List<Map<String, Object?>> _webReports = [];
+
+  static const String _webStateKey = 'techstep_learning_web_state_v1';
+  final SharedPreferencesAsync _webPreferences =
+      SharedPreferencesAsync();
 
   Future<Database> get database async {
     if (kIsWeb) {
@@ -602,6 +607,7 @@ class TechStepDatabase {
         description: submaterial.title,
       );
       await refreshCompetencyMapping();
+      await _persistWebState();
       return;
     }
 
@@ -797,6 +803,7 @@ class TechStepDatabase {
         description: 'Nilai quiz: $scorePercent',
       );
       await refreshCompetencyMapping();
+      await _persistWebState();
       return resultId;
     }
 
@@ -889,6 +896,7 @@ class TechStepDatabase {
         description: 'Level $levelId selesai dengan nilai $scorePercent',
       );
       await refreshCompetencyMapping();
+      await _persistWebState();
       return resultId;
     }
 
@@ -1421,6 +1429,7 @@ class TechStepDatabase {
         'description': description,
         'created_at': DateTime.now().toIso8601String(),
       });
+      await _persistWebState();
       return;
     }
 
@@ -1444,6 +1453,7 @@ class TechStepDatabase {
         'report_json': jsonEncode(report),
         'created_at': DateTime.now().toIso8601String(),
       });
+      await _persistWebState();
       return;
     }
 
@@ -1464,7 +1474,102 @@ class TechStepDatabase {
       'assets/data/techstep_seed.json',
     );
     _webSeed = jsonDecode(seedRaw) as Map<String, dynamic>;
+
+    final savedState =
+        await _webPreferences.getString(_webStateKey);
+
+    if (savedState != null && savedState.isNotEmpty) {
+      try {
+        final decoded = jsonDecode(savedState);
+        if (decoded is Map) {
+          _restoreWebState(decoded);
+        }
+      } catch (_) {
+        // Abaikan state web yang rusak.
+      }
+    }
+
     _refreshWebCompetencyMapping();
+  }
+
+  void _restoreWebState(Map decoded) {
+    _webCompletedSubmaterials.clear();
+    _webSubmaterialViewedAt.clear();
+    _webActivities.clear();
+    _webQuizResults.clear();
+    _webQuizAnswers.clear();
+    _webChallengeResults.clear();
+    _webChallengeAnswers.clear();
+    _webReports.clear();
+
+    final completed = decoded['completed_submaterials'];
+    if (completed is List) {
+      _webCompletedSubmaterials.addAll(
+        completed.map((item) => item.toString()),
+      );
+    }
+
+    final viewedAt = decoded['submaterial_viewed_at'];
+    if (viewedAt is Map) {
+      for (final entry in viewedAt.entries) {
+        _webSubmaterialViewedAt[entry.key.toString()] =
+            entry.value.toString();
+      }
+    }
+
+    _webActivities.addAll(
+      _decodeWebMapList(decoded['activities']),
+    );
+    _webQuizResults.addAll(
+      _decodeWebMapList(decoded['quiz_results']),
+    );
+    _webQuizAnswers.addAll(
+      _decodeWebMapList(decoded['quiz_answers']),
+    );
+    _webChallengeResults.addAll(
+      _decodeWebMapList(decoded['challenge_results']),
+    );
+    _webChallengeAnswers.addAll(
+      _decodeWebMapList(decoded['challenge_answers']),
+    );
+    _webReports.addAll(
+      _decodeWebMapList(decoded['reports']),
+    );
+  }
+
+  List<Map<String, Object?>> _decodeWebMapList(Object? value) {
+    if (value is! List) {
+      return <Map<String, Object?>>[];
+    }
+
+    return value
+        .whereType<Map>()
+        .map(
+          (item) => item.map<String, Object?>(
+            (key, value) => MapEntry(key.toString(), value),
+          ),
+        )
+        .toList();
+  }
+
+  Future<void> _persistWebState() async {
+    final state = <String, Object?>{
+      'completed_submaterials':
+          _webCompletedSubmaterials.toList(),
+      'submaterial_viewed_at':
+          _webSubmaterialViewedAt,
+      'activities': _webActivities,
+      'quiz_results': _webQuizResults,
+      'quiz_answers': _webQuizAnswers,
+      'challenge_results': _webChallengeResults,
+      'challenge_answers': _webChallengeAnswers,
+      'reports': _webReports,
+    };
+
+    await _webPreferences.setString(
+      _webStateKey,
+      jsonEncode(state),
+    );
   }
 
   List<Map<String, dynamic>> _webMaterials() {
