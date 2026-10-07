@@ -1,15 +1,29 @@
 import 'package:flutter/foundation.dart';
 
+import '../models/learning_content.dart';
+import 'techstep_database.dart';
+
 class LearningActivity {
   final String title;
   final String description;
+  final String type;
   final DateTime time;
 
   const LearningActivity({
     required this.title,
     required this.description,
+    required this.type,
     required this.time,
   });
+
+  factory LearningActivity.fromMap(Map<String, Object?> map) {
+    return LearningActivity(
+      title: map['title'] as String? ?? '',
+      description: map['description'] as String? ?? '',
+      type: map['type'] as String? ?? 'learn',
+      time: DateTime.tryParse(map['created_at'].toString()) ?? DateTime.now(),
+    );
+  }
 }
 
 class LearningAnalyticsService extends ChangeNotifier {
@@ -18,155 +32,138 @@ class LearningAnalyticsService extends ChangeNotifier {
 
   LearningAnalyticsService._internal();
 
-  // ============================================================
-  // DATA QUIZ
-  // ============================================================
+  static const int totalChallengeLevels = 5;
 
+  final TechStepDatabase _database = TechStepDatabase.instance;
+
+  bool initialized = false;
   bool quizCompleted = false;
 
   int quizScore = 0;
-
   int hardwareQuizScore = 0;
   int softwareQuizScore = 0;
   int operatingSystemQuizScore = 0;
 
-  // ============================================================
-  // DATA CHALLENGE
-  // ============================================================
+  int hardwareMastery = 0;
+  int softwareMastery = 0;
+  int operatingSystemMastery = 0;
 
   int completedChallengeLevels = 0;
-
-  static const int totalChallengeLevels = 5;
-
-  // ============================================================
-  // RIWAYAT AKTIVITAS
-  // ============================================================
+  int completedMaterials = 0;
+  int totalMaterials = 0;
 
   final List<LearningActivity> _activities = [];
+  final List<CompetencyProgress> _competencies = [];
 
   List<LearningActivity> get activities {
-    return List.unmodifiable(
-      _activities.reversed,
-    );
+    return List.unmodifiable(_activities);
   }
 
-  // ============================================================
-  // CATAT HASIL QUIZ
-  // ============================================================
+  List<CompetencyProgress> get competencies {
+    return List.unmodifiable(_competencies);
+  }
 
-  void recordQuizResult({
-    required int totalCorrect,
-    required int totalQuestions,
-    required int hardwareScore,
-    required int softwareScore,
-    required int operatingSystemScore,
-  }) {
-    quizCompleted = true;
+  List<CompetencyProgress> get competenciesNeedingSupport {
+    return _competencies.where((item) {
+      return item.masteryScore < 80;
+    }).toList();
+  }
 
-    quizScore =
-        ((totalCorrect / totalQuestions) * 100).round();
+  List<String> get recommendations {
+    return competenciesNeedingSupport
+        .map((item) => item.recommendation)
+        .where((item) => item.isNotEmpty)
+        .take(6)
+        .toList();
+  }
 
-    hardwareQuizScore = hardwareScore;
-    softwareQuizScore = softwareScore;
-    operatingSystemQuizScore = operatingSystemScore;
+  Future<void> initialize() async {
+    await _database.initialize();
+    await refresh();
+    initialized = true;
+  }
 
-    _activities.add(
-      LearningActivity(
-        title: 'Quiz selesai',
-        description: 'Nilai quiz: $quizScore',
-        time: DateTime.now(),
-      ),
-    );
+  Future<void> refresh() async {
+    quizCompleted = await _database.hasQuizResult();
+    quizScore = await _database.latestQuizScore();
+
+    final quizScores = await _database.latestQuizScoresByMaterial();
+    hardwareQuizScore = quizScores['hardware'] ?? 0;
+    softwareQuizScore = quizScores['software'] ?? 0;
+    operatingSystemQuizScore = quizScores['sistem_operasi'] ?? 0;
+
+    final materialScores = await _database.materialMasteryScores();
+    hardwareMastery = materialScores['hardware'] ?? 0;
+    softwareMastery = materialScores['software'] ?? 0;
+    operatingSystemMastery = materialScores['sistem_operasi'] ?? 0;
+
+    completedChallengeLevels = await _database.completedChallengeLevels();
+    completedMaterials = await _database.completedSubmaterials();
+    totalMaterials = await _database.totalSubmaterials();
+
+    final activityRows = await _database.getActivities(limit: 20);
+    _activities
+      ..clear()
+      ..addAll(activityRows.map(LearningActivity.fromMap));
+
+    final competencyRows = await _database.getCompetencyProgress();
+    _competencies
+      ..clear()
+      ..addAll(competencyRows);
 
     notifyListeners();
   }
 
-  // ============================================================
-  // CATAT LEVEL CHALLENGE
-  // ============================================================
-
-  void recordChallengeLevel({
-    required int level,
-  }) {
-    if (level > completedChallengeLevels) {
-      completedChallengeLevels = level;
-
-      _activities.add(
-        LearningActivity(
-          title: 'Challenge selesai',
-          description: 'Level $level berhasil diselesaikan',
-          time: DateTime.now(),
-        ),
-      );
-
-      notifyListeners();
-    }
+  Future<void> recordSubmaterialOpened(Submaterial submaterial) async {
+    await _database.recordSubmaterialOpened(submaterial);
+    await refresh();
   }
 
-  // ============================================================
-  // PROGRESS CHALLENGE
-  // ============================================================
+  Future<void> recordQuizResult({
+    required List<LearningQuestion> questions,
+    required Map<String, String> selectedOptionKeys,
+  }) async {
+    await _database.recordQuizResult(
+      questions: questions,
+      selectedOptionKeys: selectedOptionKeys,
+    );
+    await refresh();
+  }
+
+  Future<void> recordChallengeResult({
+    required int levelId,
+    required List<LearningQuestion> questions,
+    required Map<String, String> firstSelectedOptionKeys,
+  }) async {
+    await _database.recordChallengeResult(
+      levelId: levelId,
+      questions: questions,
+      firstSelectedOptionKeys: firstSelectedOptionKeys,
+    );
+    await refresh();
+  }
 
   double get challengeProgress {
-    return (completedChallengeLevels /
-            totalChallengeLevels) *
-        100;
+    return (completedChallengeLevels / totalChallengeLevels) * 100;
   }
 
-  // ============================================================
-  // PROGRESS KESELURUHAN
-  //
-  // Quiz = 50%
-  // Challenge = 50%
-  // ============================================================
+  int get learningProgress {
+    if (totalMaterials == 0) {
+      return 0;
+    }
+
+    return ((completedMaterials / totalMaterials) * 100).round();
+  }
 
   int get overallProgress {
-    final quizProgress =
-        quizCompleted ? 50.0 : 0.0;
+    final learnContribution = learningProgress * 0.30;
+    final quizContribution = quizCompleted ? 30.0 : 0.0;
+    final challengeContribution = challengeProgress * 0.40;
 
-    final challengeContribution =
-        challengeProgress * 0.5;
-
-    return (quizProgress +
-            challengeContribution)
-        .round();
+    return (learnContribution + quizContribution + challengeContribution)
+        .round()
+        .clamp(0, 100);
   }
-
-  // ============================================================
-  // HITUNG PENGUASAAN KOMPETENSI
-  //
-  // 70% QUIZ
-  // 30% CHALLENGE
-  // ============================================================
-
-  int _calculateMastery(int quizScore) {
-    return (
-      (quizScore * 0.70) +
-      (challengeProgress * 0.30)
-    ).round();
-  }
-
-  int get hardwareMastery {
-    return _calculateMastery(
-      hardwareQuizScore,
-    );
-  }
-
-  int get softwareMastery {
-    return _calculateMastery(
-      softwareQuizScore,
-    );
-  }
-
-  int get operatingSystemMastery {
-    return _calculateMastery(
-      operatingSystemQuizScore,
-    );
-  }
-
-  // ============================================================
-  // STATUS PEMBELAJARAN
-  // ============================================================
 
   String get learningStatus {
     final progress = overallProgress;
@@ -190,45 +187,7 @@ class LearningAnalyticsService extends ChangeNotifier {
     return 'Pembelajaran Selesai';
   }
 
-  // ============================================================
-  // STATUS KOMPETENSI
-  // ============================================================
-
   String competencyStatus(int score) {
-    if (score >= 80) {
-      return 'Sangat Baik';
-    }
-
-    if (score >= 60) {
-      return 'Baik';
-    }
-
-    if (score >= 40) {
-      return 'Cukup';
-    }
-
-    return 'Perlu Penguatan';
-  }
-
-  // ============================================================
-  // RESET DATA
-  //
-  // Berguna untuk testing.
-  // ============================================================
-
-  void resetData() {
-    quizCompleted = false;
-
-    quizScore = 0;
-
-    hardwareQuizScore = 0;
-    softwareQuizScore = 0;
-    operatingSystemQuizScore = 0;
-
-    completedChallengeLevels = 0;
-
-    _activities.clear();
-
-    notifyListeners();
+    return _database.competencyStatus(score);
   }
 }
