@@ -1,0 +1,2931 @@
+{
+  "schema_version": 1,
+  "students": [
+    {
+      "id": 1,
+      "name": "Siswa TechStep",
+      "class_name": "X TJKT"
+    }
+  ],
+  "competency_rules": [
+    {
+      "min": 80,
+      "max": 100,
+      "status": "Dikuasai",
+      "description": "Siswa menunjukkan penguasaan kuat pada kompetensi ini."
+    },
+    {
+      "min": 60,
+      "max": 79,
+      "status": "Cukup",
+      "description": "Siswa cukup memahami kompetensi ini, tetapi masih perlu latihan."
+    },
+    {
+      "min": 0,
+      "max": 59,
+      "status": "Perlu Diperkuat",
+      "description": "Siswa perlu membaca ulang materi dan mengulang latihan pada kompetensi ini."
+    }
+  ],
+  "materials": [
+    {
+      "id": "hardware",
+      "title": "Hardware",
+      "subtitle": "Perangkat keras komputer, fungsi komponen, spesifikasi, perawatan, dan troubleshooting dasar.",
+      "icon_key": "memory",
+      "color_hex": "#4F46E5",
+      "order": 1,
+      "description": "Hardware adalah seluruh bagian fisik komputer yang dapat dilihat dan disentuh. Untuk siswa TJKT, hardware bukan sekadar \"nama komponen\", tetapi perlu dipahami dari fungsi, hubungan antarkomponen, spesifikasi dasar, serta cara menentukan komponen yang sesuai kebutuhan.",
+      "image_asset": "assets/images/learn/image1.png",
+      "submaterials": [
+        {
+          "id": "hardware_1_1_sistem_komputer_dan_posisi_hardware",
+          "material_id": "hardware",
+          "title": "1.1 Sistem komputer dan posisi hardware",
+          "summary": "Sistem komputer bekerja melalui kerja sama hardware, software, dan brainware. Hardware menyediakan sumber daya fisik, software menyediakan instruksi, sedangkan brainware menggunaka",
+          "order": 1,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Sistem komputer bekerja melalui kerja sama hardware, software, dan brainware. Hardware menyediakan sumber daya fisik, software menyediakan instruksi, sedangkan brainware menggunakan sistem untuk mencapai tujuan tertentu."
+            },
+            {
+              "type": "image",
+              "asset": "assets/images/learn/image1.png",
+              "caption": "Gambar 2. Tiga komponen utama sistem komputer."
+            },
+            {
+              "type": "paragraph",
+              "text": "Contoh sederhana Saat siswa membuka browser: brainware memilih browser, software menjalankan perintah, lalu hardware seperti CPU, RAM, storage, GPU, keyboard, dan monitor bekerja sesuai kebutuhan proses tersebut."
+            }
+          ],
+          "competency_ids": [
+            "hardware_cpu_dan_fungsi_komponen",
+            "hardware_storage",
+            "hardware_pemilihan_komponen_sesuai_kebutuhan"
+          ]
+        },
+        {
+          "id": "hardware_1_2_klasifikasi_hardware_berdasarkan_fungsi",
+          "material_id": "hardware",
+          "title": "1.2 Klasifikasi hardware berdasarkan fungsi",
+          "summary": "Klasifikasi paling mudah untuk pemula adalah berdasarkan alur informasi: input -> process -> output, dengan storage sebagai tempat menyimpan data secara sementara atau permanen.",
+          "order": 2,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Klasifikasi paling mudah untuk pemula adalah berdasarkan alur informasi: input -> process -> output, dengan storage sebagai tempat menyimpan data secara sementara atau permanen."
+            },
+            {
+              "type": "image",
+              "asset": "assets/images/learn/image2.png",
+              "caption": "Gambar 3. Klasifikasi hardware berdasarkan fungsi."
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Kelompok",
+                "Fungsi",
+                "Contoh"
+              ],
+              "rows": [
+                [
+                  "Input",
+                  "Memasukkan data atau perintah ke komputer.",
+                  "Keyboard, mouse, scanner, microphone, webcam."
+                ],
+                [
+                  "Process",
+                  "Mengolah data dan menjalankan instruksi.",
+                  "CPU, GPU, RAM, motherboard, chipset."
+                ],
+                [
+                  "Output",
+                  "Menampilkan atau menghasilkan informasi.",
+                  "Monitor, printer, speaker, projector."
+                ],
+                [
+                  "Storage",
+                  "Menyimpan data dan program.",
+                  "HDD, SSD/NVMe, flashdisk, memory card."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "hardware_cpu_dan_fungsi_komponen",
+            "hardware_klasifikasi_input",
+            "hardware_storage",
+            "hardware_motherboard",
+            "hardware_kompatibilitas_motherboard_cpu"
+          ]
+        },
+        {
+          "id": "hardware_1_3_komponen_utama_pc",
+          "material_id": "hardware",
+          "title": "1.3 Komponen utama PC",
+          "summary": "CPU sering disebut sebagai \"otak\" komputer karena menjalankan instruksi dan mengolah data. CPU memiliki core untuk mengeksekusi tugas, cache untuk penyimpanan data/instruksi yang s",
+          "order": 3,
+          "blocks": [
+            {
+              "type": "heading",
+              "text": "a. CPU (Central Processing Unit)"
+            },
+            {
+              "type": "paragraph",
+              "text": "CPU sering disebut sebagai \"otak\" komputer karena menjalankan instruksi dan mengolah data. CPU memiliki core untuk mengeksekusi tugas, cache untuk penyimpanan data/instruksi yang sangat cepat, serta bekerja dengan komponen lain melalui motherboard."
+            },
+            {
+              "type": "bullet",
+              "text": "Core: bagian pemroses yang dapat menjalankan tugas. CPU multi-core dapat menangani beberapa pekerjaan secara lebih efisien."
+            },
+            {
+              "type": "bullet",
+              "text": "Clock speed (misalnya GHz) menunjukkan laju siklus kerja, tetapi bukan satu-satunya penentu kinerja."
+            },
+            {
+              "type": "bullet",
+              "text": "Cache membantu CPU mengakses data yang sering digunakan tanpa selalu mengambilnya dari RAM."
+            },
+            {
+              "type": "heading",
+              "text": "b. Motherboard"
+            },
+            {
+              "type": "paragraph",
+              "text": "Motherboard adalah papan sirkuit utama tempat CPU, RAM, storage, kartu ekspansi, dan berbagai konektor saling terhubung. Motherboard menentukan banyak aspek kompatibilitas, misalnya socket CPU dan jenis RAM yang didukung."
+            },
+            {
+              "type": "heading",
+              "text": "c. RAM (Random Access Memory)"
+            },
+            {
+              "type": "paragraph",
+              "text": "RAM adalah memori kerja sementara yang digunakan saat program sedang berjalan. Data di RAM bersifat volatil, sehingga isinya hilang ketika listrik dimatikan. Kapasitas RAM memengaruhi kemampuan komputer menjalankan banyak aplikasi secara bersamaan."
+            },
+            {
+              "type": "heading",
+              "text": "d. Storage: HDD, SSD, dan NVMe"
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Jenis",
+                "Karakteristik",
+                "Konteks penggunaan"
+              ],
+              "rows": [
+                [
+                  "HDD",
+                  "Menggunakan piringan magnetik dan komponen bergerak. Kapasitas besar dengan biaya per GB relatif rendah.",
+                  "Penyimpanan data besar dengan biaya ekonomis."
+                ],
+                [
+                  "SSD SATA",
+                  "Menggunakan flash memory, tanpa komponen bergerak. Lebih cepat dan lebih tahan terhadap guncangan dibanding HDD.",
+                  "Upgrade laptop/PC agar boot dan aplikasi lebih responsif."
+                ],
+                [
+                  "SSD NVMe",
+                  "SSD yang menggunakan protokol NVMe melalui koneksi PCIe. Umumnya lebih cepat daripada SATA SSD.",
+                  "Komputer kerja yang membutuhkan transfer data tinggi."
+                ]
+              ]
+            },
+            {
+              "type": "heading",
+              "text": "e. PSU (Power Supply Unit)"
+            },
+            {
+              "type": "paragraph",
+              "text": "PSU mengubah listrik AC menjadi tegangan DC yang dibutuhkan komponen komputer. Pemilihan PSU harus mempertimbangkan kebutuhan daya, kualitas, efisiensi, dan konektor. PSU yang tidak sesuai dapat menyebabkan sistem tidak stabil atau gagal menyala."
+            },
+            {
+              "type": "heading",
+              "text": "f. GPU / VGA"
+            },
+            {
+              "type": "paragraph",
+              "text": "GPU mengolah data grafis dan membantu menampilkan gambar/video. GPU dapat terintegrasi dengan CPU atau berupa kartu grafis diskret yang dipasang pada slot ekspansi. Kebutuhannya berbeda-beda: pekerjaan perkantoran tidak membutuhkan GPU kelas tinggi, sedangkan desain 3D dan pengolahan grafis berat biasanya membutuhkan kemampuan GPU lebih besar."
+            },
+            {
+              "type": "heading",
+              "text": "g. NIC / kartu jaringan"
+            },
+            {
+              "type": "paragraph",
+              "text": "NIC (Network Interface Card) memungkinkan komputer terhubung ke jaringan. Pada PC/laptop modern, NIC sering terintegrasi pada motherboard. Bentuknya dapat berupa Ethernet (kabel) atau wireless/Wi-Fi."
+            },
+            {
+              "type": "heading",
+              "text": "h. Port dan konektor penting"
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Port/Konektor",
+                "Kegunaan umum"
+              ],
+              "rows": [
+                [
+                  "USB",
+                  "Menghubungkan keyboard, mouse, flashdisk, printer, dan perangkat USB lainnya."
+                ],
+                [
+                  "HDMI / DisplayPort",
+                  "Mengirim sinyal audio/video digital ke monitor atau perangkat display."
+                ],
+                [
+                  "RJ-45 Ethernet",
+                  "Koneksi jaringan menggunakan kabel twisted pair."
+                ],
+                [
+                  "Audio 3.5 mm",
+                  "Koneksi headset, speaker, atau microphone pada perangkat yang masih menyediakan jack analog."
+                ],
+                [
+                  "Slot RAM / M.2 / PCIe",
+                  "Tempat pemasangan RAM, SSD M.2, atau kartu ekspansi sesuai dukungan motherboard."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "hardware_cpu_dan_fungsi_komponen",
+            "hardware_storage",
+            "hardware_motherboard",
+            "hardware_kompatibilitas_motherboard_cpu",
+            "hardware_troubleshooting_display",
+            "hardware_pemilihan_komponen_sesuai_kebutuhan"
+          ]
+        },
+        {
+          "id": "hardware_1_4_spesifikasi_dan_kompatibilitas",
+          "material_id": "hardware",
+          "title": "1.4 Spesifikasi dan kompatibilitas",
+          "summary": "Spesifikasi adalah informasi teknis yang menjelaskan kemampuan suatu komponen. Saat memilih atau merakit PC, spesifikasi harus dibaca sebagai satu sistem, bukan hanya mengejar angk",
+          "order": 4,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Spesifikasi adalah informasi teknis yang menjelaskan kemampuan suatu komponen. Saat memilih atau merakit PC, spesifikasi harus dibaca sebagai satu sistem, bukan hanya mengejar angka terbesar."
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Komponen",
+                "Hal yang perlu diperiksa"
+              ],
+              "rows": [
+                [
+                  "CPU",
+                  "Socket, generasi/platform, jumlah core/thread, konsumsi daya, dukungan RAM."
+                ],
+                [
+                  "Motherboard",
+                  "Socket CPU, chipset, jenis/kapasitas RAM, slot M.2/PCIe, port I/O, ukuran form factor."
+                ],
+                [
+                  "RAM",
+                  "Jenis/generasi (mis. DDR4/DDR5), kapasitas, jumlah modul, dukungan motherboard."
+                ],
+                [
+                  "Storage",
+                  "Jenis interface (SATA/M.2 NVMe), kapasitas, kecepatan, ruang pemasangan."
+                ],
+                [
+                  "PSU",
+                  "Daya, konektor, kualitas, efisiensi, dan cadangan daya untuk komponen."
+                ],
+                [
+                  "GPU",
+                  "Interface, kebutuhan daya, dimensi kartu, output display, kebutuhan pendinginan."
+                ]
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Kunci berpikir TJKT Komponen yang \"paling mahal\" belum tentu paling tepat. Yang penting adalah kecocokan antar-komponen, kebutuhan kerja, stabilitas, dan kemudahan pemeliharaan."
+            }
+          ],
+          "competency_ids": [
+            "hardware_cpu_dan_fungsi_komponen",
+            "hardware_storage",
+            "hardware_motherboard",
+            "hardware_kompatibilitas_motherboard_cpu",
+            "hardware_troubleshooting_display",
+            "hardware_pemilihan_komponen_sesuai_kebutuhan"
+          ]
+        },
+        {
+          "id": "hardware_1_5_perawatan_hardware",
+          "material_id": "hardware",
+          "title": "1.5 Perawatan hardware",
+          "summary": "",
+          "order": 5,
+          "blocks": [
+            {
+              "type": "bullet",
+              "text": "Jaga ventilasi dan sirkulasi udara agar komponen tidak mudah overheat."
+            },
+            {
+              "type": "bullet",
+              "text": "Bersihkan debu secara berkala dengan metode yang aman dan sesuai prosedur laboratorium."
+            },
+            {
+              "type": "bullet",
+              "text": "Jangan membuka atau mengganti komponen saat perangkat masih tersambung listrik."
+            },
+            {
+              "type": "bullet",
+              "text": "Gunakan prosedur anti-statis/ESD saat menangani komponen sensitif seperti RAM, CPU, dan kartu ekspansi."
+            },
+            {
+              "type": "bullet",
+              "text": "Periksa kabel, konektor, dan kondisi fisik sebelum melakukan diagnosis lebih lanjut."
+            }
+          ],
+          "competency_ids": [
+            "hardware_cpu_dan_fungsi_komponen",
+            "hardware_pemilihan_komponen_sesuai_kebutuhan"
+          ]
+        },
+        {
+          "id": "hardware_1_6_troubleshooting_hardware_dasar",
+          "material_id": "hardware",
+          "title": "1.6 Troubleshooting hardware dasar",
+          "summary": "",
+          "order": 6,
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Gejala",
+                "Kemungkinan penyebab",
+                "Langkah awal yang masuk akal"
+              ],
+              "rows": [
+                [
+                  "Komputer mati total",
+                  "PSU, kabel listrik, tombol power, atau sumber listrik.",
+                  "Periksa sumber listrik dan kabel; pastikan koneksi PSU benar; jangan langsung menyimpulkan CPU rusak."
+                ],
+                [
+                  "Komputer menyala tetapi monitor tidak menampilkan gambar",
+                  "Kabel display, RAM, GPU, monitor, atau input monitor.",
+                  "Periksa kabel/port display, input monitor, dan pasang ulang komponen sesuai SOP."
+                ],
+                [
+                  "Komputer terasa sangat lambat saat banyak aplikasi terbuka",
+                  "RAM terbatas, storage lambat/penuh, atau proses latar belakang.",
+                  "Periksa penggunaan RAM dan storage; tutup aplikasi yang tidak perlu."
+                ],
+                [
+                  "Laptop cepat panas",
+                  "Ventilasi terhalang, debu, beban kerja tinggi, atau masalah pendinginan.",
+                  "Pastikan ventilasi tidak tertutup dan periksa beban kerja; lanjutkan diagnosis sesuai SOP."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "hardware_cpu_dan_fungsi_komponen",
+            "hardware_klasifikasi_input",
+            "hardware_storage",
+            "hardware_troubleshooting_display",
+            "hardware_pemilihan_komponen_sesuai_kebutuhan"
+          ]
+        },
+        {
+          "id": "hardware_1_7_aktivitas_belajar_singkat",
+          "material_id": "hardware",
+          "title": "1.7 Aktivitas belajar singkat",
+          "summary": "1. Kelompokkan 12 perangkat di laboratorium ke dalam input, process, output, atau storage.",
+          "order": 7,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "1. Kelompokkan 12 perangkat di laboratorium ke dalam input, process, output, atau storage."
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Buka informasi spesifikasi satu PC/laptop dan catat CPU, RAM, storage, GPU, dan NIC."
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Buat pasangan \"kebutuhan pengguna -> komponen yang perlu diperhatikan\", misalnya lab kantor, editing video, atau server file sederhana."
+            },
+            {
+              "type": "paragraph",
+              "text": "4. Buat daftar pemeriksaan awal saat komputer tidak menampilkan gambar."
+            }
+          ],
+          "competency_ids": [
+            "hardware_cpu_dan_fungsi_komponen",
+            "hardware_klasifikasi_input",
+            "hardware_storage",
+            "hardware_pemilihan_komponen_sesuai_kebutuhan"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "software",
+      "title": "Software",
+      "subtitle": "Perangkat lunak, jenis software, lisensi, driver, utility, instalasi, dan keamanan dasar.",
+      "icon_key": "apps",
+      "color_hex": "#7C3AED",
+      "order": 2,
+      "description": "Software adalah sekumpulan program, instruksi, dan data yang membuat komputer dapat melakukan tugas tertentu. Software tidak dapat disentuh seperti hardware, tetapi dapat dijalankan, diperbarui, disalin, dipindahkan, atau dihapus sesuai aturan dan lisensinya.",
+      "image_asset": "assets/images/learn/image3.png",
+      "submaterials": [
+        {
+          "id": "software_2_1_hubungan_software_dengan_hardware",
+          "material_id": "software",
+          "title": "2.1 Hubungan software dengan hardware",
+          "summary": "Aplikasi pengguna tidak berkomunikasi langsung dengan seluruh detail hardware. Sistem operasi menjadi penghubung penting, sedangkan driver membantu OS mengenali dan menggunakan per",
+          "order": 1,
+          "blocks": [
+            {
+              "type": "image",
+              "asset": "assets/images/learn/image3.png",
+              "caption": "Gambar 4. Hubungan berlapis software dengan hardware."
+            },
+            {
+              "type": "paragraph",
+              "text": "Aplikasi pengguna tidak berkomunikasi langsung dengan seluruh detail hardware. Sistem operasi menjadi penghubung penting, sedangkan driver membantu OS mengenali dan menggunakan perangkat tertentu."
+            }
+          ],
+          "competency_ids": [
+            "software_peran_os",
+            "software_software_aplikasi",
+            "software_driver",
+            "software_update_software",
+            "software_driver_perangkat",
+            "software_lisensi_software",
+            "software_keamanan_sumber_software"
+          ]
+        },
+        {
+          "id": "software_2_2_jenis_jenis_software",
+          "material_id": "software",
+          "title": "2.2 Jenis-jenis software",
+          "summary": "",
+          "order": 2,
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Jenis",
+                "Fungsi",
+                "Contoh"
+              ],
+              "rows": [
+                [
+                  "Sistem operasi",
+                  "Mengelola sumber daya komputer dan menyediakan lingkungan untuk menjalankan aplikasi.",
+                  "Windows, Linux, macOS, Android."
+                ],
+                [
+                  "Aplikasi",
+                  "Membantu pengguna menyelesaikan pekerjaan tertentu.",
+                  "Browser, pengolah kata, spreadsheet, editor gambar, pemutar media."
+                ],
+                [
+                  "Utility",
+                  "Membantu pemeliharaan, keamanan, pengelolaan, atau optimasi sistem.",
+                  "Backup, kompresi file, antivirus, disk utility."
+                ],
+                [
+                  "Driver",
+                  "Perangkat lunak yang membantu OS berkomunikasi dengan perangkat keras tertentu.",
+                  "Driver printer, GPU, audio, NIC."
+                ],
+                [
+                  "Firmware",
+                  "Perangkat lunak tingkat rendah yang tertanam pada perangkat dan membantu fungsi awal/pengendalian perangkat.",
+                  "UEFI/firmware motherboard, firmware router, firmware perangkat IoT."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "software_peran_os",
+            "software_software_aplikasi",
+            "software_driver",
+            "software_utility_kompresi",
+            "software_update_software",
+            "software_firmware",
+            "software_driver_perangkat",
+            "software_lisensi_software",
+            "software_keamanan_sumber_software"
+          ]
+        },
+        {
+          "id": "software_2_3_aplikasi_berdasarkan_kebutuhan",
+          "material_id": "software",
+          "title": "2.3 Aplikasi berdasarkan kebutuhan",
+          "summary": "",
+          "order": 3,
+          "blocks": [
+            {
+              "type": "bullet",
+              "text": "Produktivitas: pengolah kata, spreadsheet, presentasi, dan pengelola dokumen."
+            },
+            {
+              "type": "bullet",
+              "text": "Komunikasi: aplikasi pesan, rapat online, email, dan kolaborasi."
+            },
+            {
+              "type": "bullet",
+              "text": "Internet: browser dan aplikasi akses layanan berbasis web."
+            },
+            {
+              "type": "bullet",
+              "text": "Grafis/multimedia: editor gambar, audio, dan video."
+            },
+            {
+              "type": "bullet",
+              "text": "Pengembangan: code editor, compiler/interpreter, IDE, dan tools pengujian."
+            },
+            {
+              "type": "bullet",
+              "text": "Jaringan/TJKT: simulator jaringan, terminal, tools diagnosis, dan aplikasi konfigurasi perangkat."
+            }
+          ],
+          "competency_ids": [
+            "software_peran_os",
+            "software_software_aplikasi",
+            "software_driver_perangkat"
+          ]
+        },
+        {
+          "id": "software_2_4_lisensi_software",
+          "material_id": "software",
+          "title": "2.4 Lisensi software",
+          "summary": "Lisensi menentukan apa yang boleh dilakukan pengguna terhadap sebuah software. \"Gratis\" tidak selalu berarti \"bebas melakukan apa saja\"; pengguna tetap perlu membaca ketentuan lise",
+          "order": 4,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Lisensi menentukan apa yang boleh dilakukan pengguna terhadap sebuah software. \"Gratis\" tidak selalu berarti \"bebas melakukan apa saja\"; pengguna tetap perlu membaca ketentuan lisensinya."
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Istilah",
+                "Makna sederhana",
+                "Catatan"
+              ],
+              "rows": [
+                [
+                  "Freeware",
+                  "Software yang dapat digunakan tanpa membayar biaya lisensi tertentu.",
+                  "Belum tentu open source."
+                ],
+                [
+                  "Open source",
+                  "Kode sumber tersedia sesuai ketentuan lisensi dan pengguna memperoleh hak tertentu untuk menggunakan/memodifikasi/mendistribusikannya.",
+                  "Hak tetap mengikuti lisensi proyek."
+                ],
+                [
+                  "Proprietary/closed source",
+                  "Kode sumber dikendalikan oleh pemilik dan pengguna terikat ketentuan lisensi.",
+                  "Contoh umum: banyak software komersial."
+                ],
+                [
+                  "Trial",
+                  "Versi uji coba yang memiliki batas waktu atau fitur.",
+                  "Setelah masa uji bisa membutuhkan lisensi/pembayaran."
+                ]
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Jangan menyamakan istilah \"open source\" dan \"gratis\" Open source membahas keterbukaan kode sumber dan hak berdasarkan lisensi. Gratis membahas biaya penggunaan. Sebuah software dapat gratis tetapi bukan open source, dan software open source tidak selalu bebas dari seluruh bentuk biaya."
+            }
+          ],
+          "competency_ids": [
+            "software_software_aplikasi",
+            "software_open_source",
+            "software_update_software",
+            "software_lisensi_software",
+            "software_keamanan_sumber_software"
+          ]
+        },
+        {
+          "id": "software_2_5_instalasi_update_dan_uninstall",
+          "material_id": "software",
+          "title": "2.5 Instalasi, update, dan uninstall",
+          "summary": "1. Pastikan sumber software tepercaya dan sesuai sistem.",
+          "order": 5,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "1. Pastikan sumber software tepercaya dan sesuai sistem."
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Periksa kebutuhan sistem atau dependensi sebelum instalasi."
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Baca pilihan instalasi dan izin yang diminta."
+            },
+            {
+              "type": "paragraph",
+              "text": "4. Selesaikan instalasi lalu uji apakah aplikasi berjalan dengan benar."
+            },
+            {
+              "type": "paragraph",
+              "text": "5. Lakukan update untuk memperoleh perbaikan bug, kompatibilitas, dan keamanan bila diperlukan."
+            },
+            {
+              "type": "paragraph",
+              "text": "6. Uninstall menggunakan mekanisme yang benar agar konfigurasi tidak rusak."
+            }
+          ],
+          "competency_ids": [
+            "software_software_aplikasi",
+            "software_update_software",
+            "software_lisensi_software",
+            "software_keamanan_sumber_software"
+          ]
+        },
+        {
+          "id": "software_2_6_driver_dan_utility",
+          "material_id": "software",
+          "title": "2.6 Driver dan utility",
+          "summary": "Driver membantu sistem operasi mengenali serta mengendalikan hardware. Contohnya driver NIC, printer, audio, dan GPU. Utility membantu pemeliharaan seperti backup, kompresi, keaman",
+          "order": 6,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Driver membantu sistem operasi mengenali serta mengendalikan hardware. Contohnya driver NIC, printer, audio, dan GPU. Utility membantu pemeliharaan seperti backup, kompresi, keamanan, atau diagnosis."
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Situasi",
+                "Software yang relevan"
+              ],
+              "rows": [
+                [
+                  "Printer baru tidak berfungsi dengan baik",
+                  "Driver printer dan pengaturan perangkat."
+                ],
+                [
+                  "Komputer perlu mencadangkan data",
+                  "Backup utility atau software backup."
+                ],
+                [
+                  "File dikirim dalam ukuran lebih kecil",
+                  "Utility kompresi seperti ZIP."
+                ],
+                [
+                  "Kartu grafis bermasalah",
+                  "Driver GPU, pengaturan display, dan diagnosis sistem."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "software_peran_os",
+            "software_software_aplikasi",
+            "software_driver",
+            "software_utility_kompresi",
+            "software_update_software",
+            "software_driver_perangkat",
+            "software_lisensi_software",
+            "software_keamanan_sumber_software"
+          ]
+        },
+        {
+          "id": "software_2_7_keamanan_software_dasar",
+          "material_id": "software",
+          "title": "2.7 Keamanan software dasar",
+          "summary": "",
+          "order": 7,
+          "blocks": [
+            {
+              "type": "bullet",
+              "text": "Gunakan sumber software yang legal dan terpercaya."
+            },
+            {
+              "type": "bullet",
+              "text": "Waspadai installer dari situs tidak dikenal atau file bajakan yang dimodifikasi."
+            },
+            {
+              "type": "bullet",
+              "text": "Perbarui software penting terutama yang berhubungan dengan internet."
+            },
+            {
+              "type": "bullet",
+              "text": "Gunakan akun dan izin sesuai kebutuhan; jangan menjalankan semua hal dengan hak administrator tanpa alasan."
+            },
+            {
+              "type": "bullet",
+              "text": "Buat cadangan data penting secara berkala."
+            }
+          ],
+          "competency_ids": [
+            "software_software_aplikasi",
+            "software_update_software",
+            "software_lisensi_software",
+            "software_keamanan_sumber_software"
+          ]
+        },
+        {
+          "id": "software_2_8_aktivitas_belajar_singkat",
+          "material_id": "software",
+          "title": "2.8 Aktivitas belajar singkat",
+          "summary": "1. Pilih 10 software yang ada di komputer laboratorium lalu klasifikasikan sebagai OS, aplikasi, utility, driver, atau kategori lain yang relevan.",
+          "order": 8,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "1. Pilih 10 software yang ada di komputer laboratorium lalu klasifikasikan sebagai OS, aplikasi, utility, driver, atau kategori lain yang relevan."
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Bandingkan satu software open source dengan satu software proprietary dari sisi lisensi dan penggunaan."
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Cari satu masalah komputer yang dapat diselesaikan dengan driver dan satu masalah yang lebih tepat ditangani dengan utility."
+            },
+            {
+              "type": "paragraph",
+              "text": "4. Buat alur sederhana instalasi software yang aman."
+            }
+          ],
+          "competency_ids": [
+            "software_software_aplikasi",
+            "software_driver",
+            "software_open_source",
+            "software_utility_kompresi",
+            "software_update_software",
+            "software_driver_perangkat",
+            "software_lisensi_software",
+            "software_keamanan_sumber_software"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sistem_operasi",
+      "title": "Sistem Operasi",
+      "subtitle": "Peran OS dalam mengelola proses, memori, file, perangkat, antarmuka, booting, dan troubleshooting.",
+      "icon_key": "desktop",
+      "color_hex": "#2563EB",
+      "order": 3,
+      "description": "Sistem operasi (Operating System/OS) adalah software sistem yang mengelola sumber daya komputer dan menyediakan layanan agar aplikasi dapat berjalan. Dalam konteks TJKT, OS penting karena banyak pekerjaan teknis seperti konfigurasi, diagnosis, instalasi, manajemen file, dan akses jaringan dilakukan melalui OS.",
+      "image_asset": "assets/images/learn/image4.png",
+      "submaterials": [
+        {
+          "id": "sistem_operasi_3_1_apa_yang_dilakukan_sistem_operasi",
+          "material_id": "sistem_operasi",
+          "title": "3.1 Apa yang dilakukan sistem operasi?",
+          "summary": "",
+          "order": 1,
+          "blocks": [
+            {
+              "type": "image",
+              "asset": "assets/images/learn/image4.png",
+              "caption": "Gambar 5. Fungsi utama sistem operasi dalam mengelola sumber daya komputer."
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Fungsi",
+                "Penjelasan sederhana",
+                "Contoh yang terlihat pengguna"
+              ],
+              "rows": [
+                [
+                  "Manajemen proses",
+                  "Mengatur program yang sedang berjalan dan penggunaan CPU.",
+                  "Task Manager, daftar aplikasi, proses latar belakang."
+                ],
+                [
+                  "Manajemen memori",
+                  "Mengatur penggunaan RAM dan memori virtual sesuai kebutuhan sistem.",
+                  "Program dapat berjalan bersamaan; sistem melaporkan penggunaan memori."
+                ],
+                [
+                  "Manajemen file",
+                  "Mengatur file, folder, nama, lokasi, izin, dan media penyimpanan.",
+                  "File Explorer atau file manager."
+                ],
+                [
+                  "Manajemen perangkat",
+                  "Mengatur penggunaan keyboard, mouse, printer, GPU, NIC, dan perangkat lain melalui driver.",
+                  "Device Manager, pengaturan printer, audio, display."
+                ],
+                [
+                  "Manajemen pengguna & keamanan",
+                  "Mengatur akun, hak akses, autentikasi, dan pengaturan keamanan.",
+                  "User account, password, permission."
+                ],
+                [
+                  "Antarmuka",
+                  "Menyediakan cara pengguna memberi perintah dan menerima hasil.",
+                  "GUI atau CLI/terminal."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_manajemen_proses",
+            "sistem_operasi_file_system",
+            "sistem_operasi_monitoring_proses",
+            "sistem_operasi_troubleshooting_perangkat",
+            "sistem_operasi_shutdown_aman",
+            "sistem_operasi_cli_dalam_pekerjaan_teknis"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_2_kernel_dan_layanan_os",
+          "material_id": "sistem_operasi",
+          "title": "3.2 Kernel dan layanan OS",
+          "summary": "Kernel adalah inti dari sistem operasi yang berhubungan dekat dengan pengelolaan sumber daya. Kernel membantu mengatur proses, memori, perangkat, dan layanan tingkat rendah agar ap",
+          "order": 2,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "Kernel adalah inti dari sistem operasi yang berhubungan dekat dengan pengelolaan sumber daya. Kernel membantu mengatur proses, memori, perangkat, dan layanan tingkat rendah agar aplikasi tidak harus mengendalikan hardware secara langsung."
+            },
+            {
+              "type": "paragraph",
+              "text": "Gambaran mudah Aplikasi dapat dianggap sebagai \"pekerja\" yang membutuhkan sumber daya. OS berperan seperti pengelola yang menentukan sumber daya mana yang digunakan, kapan digunakan, dan bagaimana pengguna berinteraksi dengannya."
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_kernel",
+            "sistem_operasi_manajemen_proses",
+            "sistem_operasi_monitoring_proses",
+            "sistem_operasi_troubleshooting_perangkat"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_3_gui_dan_cli",
+          "material_id": "sistem_operasi",
+          "title": "3.3 GUI dan CLI",
+          "summary": "Siswa TJKT perlu memahami keduanya. GUI memudahkan pekerjaan sehari-hari, sedangkan CLI membantu memahami cara sistem bekerja dan mempermudah pekerjaan tertentu yang berulang atau ",
+          "order": 3,
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Antarmuka",
+                "Ciri",
+                "Kapan berguna"
+              ],
+              "rows": [
+                [
+                  "GUI (Graphical User Interface)",
+                  "Menggunakan jendela, ikon, menu, pointer, dan elemen visual.",
+                  "Pemula, pekerjaan desktop, pengaturan umum."
+                ],
+                [
+                  "CLI (Command Line Interface)",
+                  "Pengguna mengetik perintah pada terminal/console.",
+                  "Administrasi sistem, troubleshooting, otomasi, konfigurasi, pekerjaan teknis tertentu."
+                ]
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Siswa TJKT perlu memahami keduanya. GUI memudahkan pekerjaan sehari-hari, sedangkan CLI membantu memahami cara sistem bekerja dan mempermudah pekerjaan tertentu yang berulang atau membutuhkan presisi."
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_troubleshooting_perangkat",
+            "sistem_operasi_cli_dalam_pekerjaan_teknis"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_4_booting_komputer",
+          "material_id": "sistem_operasi",
+          "title": "3.4 Booting komputer",
+          "summary": "Ketika komputer dinyalakan, sistem melakukan beberapa tahap pemeriksaan dan pemuatan sebelum pengguna mendapatkan desktop. Firmware melakukan inisialisasi awal, kemudian proses boo",
+          "order": 4,
+          "blocks": [
+            {
+              "type": "image",
+              "asset": "assets/images/learn/image5.png",
+              "caption": "Gambar 6. Alur booting komputer secara sederhana."
+            },
+            {
+              "type": "paragraph",
+              "text": "Ketika komputer dinyalakan, sistem melakukan beberapa tahap pemeriksaan dan pemuatan sebelum pengguna mendapatkan desktop. Firmware melakukan inisialisasi awal, kemudian proses boot mencari media yang berisi sistem operasi. Selanjutnya OS memuat komponen inti dan driver hingga sistem siap digunakan."
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_manajemen_proses",
+            "sistem_operasi_booting",
+            "sistem_operasi_monitoring_proses"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_5_file_system_dan_manajemen_file",
+          "material_id": "sistem_operasi",
+          "title": "3.5 File system dan manajemen file",
+          "summary": "File system adalah mekanisme yang digunakan untuk mengatur bagaimana data disimpan dan ditemukan pada media penyimpanan. Sebagai pengguna, siswa perlu memahami konsep dasar file, f",
+          "order": 5,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "File system adalah mekanisme yang digunakan untuk mengatur bagaimana data disimpan dan ditemukan pada media penyimpanan. Sebagai pengguna, siswa perlu memahami konsep dasar file, folder, ekstensi, path, copy, move, rename, delete, dan permission."
+            },
+            {
+              "type": "table",
+              "headers": [
+                "Konsep",
+                "Contoh pemahaman"
+              ],
+              "rows": [
+                [
+                  "Path",
+                  "Menunjukkan lokasi file, misalnya C:\\Users\\Siswa\\Dokumen."
+                ],
+                [
+                  "Ekstensi file",
+                  "Menunjukkan jenis file yang umum dikenali aplikasi, misalnya .docx, .jpg, .mp4, .zip."
+                ],
+                [
+                  "Copy",
+                  "Membuat salinan data tanpa menghilangkan file asal."
+                ],
+                [
+                  "Move",
+                  "Memindahkan lokasi file atau folder."
+                ],
+                [
+                  "Permission",
+                  "Menentukan siapa yang dapat membaca, menulis, menjalankan, atau mengubah data pada sistem tertentu."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_manajemen_proses",
+            "sistem_operasi_file_system",
+            "sistem_operasi_shutdown_aman"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_6_windows_dan_linux_secara_umum",
+          "material_id": "sistem_operasi",
+          "title": "3.6 Windows dan Linux secara umum",
+          "summary": "",
+          "order": 6,
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Aspek",
+                "Windows",
+                "Linux"
+              ],
+              "rows": [
+                [
+                  "Sifat",
+                  "Sistem operasi proprietary milik Microsoft.",
+                  "Keluarga sistem operasi berbasis kernel Linux dengan beragam distribusi dan lisensi."
+                ],
+                [
+                  "Antarmuka",
+                  "GUI kuat dan luas digunakan pada desktop/laptop.",
+                  "GUI tersedia, CLI/terminal sangat umum pada administrasi teknis."
+                ],
+                [
+                  "Penggunaan TJKT",
+                  "Banyak digunakan pada PC klien, aplikasi desktop, dan lingkungan tertentu.",
+                  "Banyak digunakan pada server, jaringan, layanan cloud, dan lingkungan pengembangan."
+                ],
+                [
+                  "Kebutuhan siswa",
+                  "Memahami file, aplikasi, device management, update, dan troubleshooting dasar.",
+                  "Memahami terminal, permission, paket, service, dan struktur file secara bertahap."
+                ]
+              ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Fokus kelas X Siswa tidak harus menghafal semua perintah Linux atau pengaturan Windows. Yang utama adalah memahami konsep OS dan mampu memilih tindakan yang tepat saat menghadapi masalah sederhana."
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_kernel",
+            "sistem_operasi_file_system",
+            "sistem_operasi_troubleshooting_perangkat",
+            "sistem_operasi_cli_dalam_pekerjaan_teknis"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_7_shutdown_restart_sleep_dan_hibernate",
+          "material_id": "sistem_operasi",
+          "title": "3.7 Shutdown, restart, sleep, dan hibernate",
+          "summary": "",
+          "order": 7,
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Tindakan",
+                "Makna"
+              ],
+              "rows": [
+                [
+                  "Shutdown",
+                  "Menutup sistem dan mematikan komputer secara normal."
+                ],
+                [
+                  "Restart",
+                  "Menutup sesi sistem lalu menyalakan kembali OS tanpa memutus proses secara tidak aman."
+                ],
+                [
+                  "Sleep",
+                  "Menempatkan sistem pada kondisi daya rendah dengan sesi kerja tetap tersimpan di memori."
+                ],
+                [
+                  "Hibernate",
+                  "Menyimpan keadaan sesi ke media penyimpanan lalu mematikan daya; saat dilanjutkan sesi dapat dipulihkan."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_manajemen_proses",
+            "sistem_operasi_monitoring_proses",
+            "sistem_operasi_shutdown_aman"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_8_troubleshooting_os_dasar",
+          "material_id": "sistem_operasi",
+          "title": "3.8 Troubleshooting OS dasar",
+          "summary": "",
+          "order": 8,
+          "blocks": [
+            {
+              "type": "table",
+              "headers": [
+                "Masalah",
+                "Pemeriksaan awal"
+              ],
+              "rows": [
+                [
+                  "Aplikasi tidak merespons",
+                  "Tunggu sebentar, periksa penggunaan CPU/RAM, tutup proses bermasalah sesuai mekanisme OS."
+                ],
+                [
+                  "Storage hampir penuh",
+                  "Periksa ukuran file/aplikasi, hapus file tidak diperlukan, pindahkan/cadangkan data penting."
+                ],
+                [
+                  "Perangkat tidak dikenali",
+                  "Periksa koneksi fisik lalu Device Manager/driver atau pengaturan perangkat sesuai OS."
+                ],
+                [
+                  "Internet tidak tersambung",
+                  "Periksa status NIC/Wi-Fi, kabel, konfigurasi dasar, dan uji konektivitas bertahap."
+                ],
+                [
+                  "OS terasa lambat saat startup",
+                  "Periksa aplikasi startup, penggunaan storage/RAM, update, dan kondisi sistem."
+                ]
+              ]
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_manajemen_proses",
+            "sistem_operasi_file_system",
+            "sistem_operasi_monitoring_proses",
+            "sistem_operasi_troubleshooting_perangkat"
+          ]
+        },
+        {
+          "id": "sistem_operasi_3_9_aktivitas_belajar_singkat",
+          "material_id": "sistem_operasi",
+          "title": "3.9 Aktivitas belajar singkat",
+          "summary": "1. Buka Task Manager/monitor proses dan identifikasi 3 proses yang sedang berjalan.",
+          "order": 9,
+          "blocks": [
+            {
+              "type": "paragraph",
+              "text": "1. Buka Task Manager/monitor proses dan identifikasi 3 proses yang sedang berjalan."
+            },
+            {
+              "type": "paragraph",
+              "text": "2. Buka pengelola file dan amati path, folder, ekstensi file, serta ukuran file."
+            },
+            {
+              "type": "paragraph",
+              "text": "3. Bandingkan GUI dan CLI melalui satu tugas sederhana, misalnya melihat isi folder."
+            },
+            {
+              "type": "paragraph",
+              "text": "4. Buat flowchart troubleshooting ketika sebuah perangkat eksternal tidak dikenali OS."
+            },
+            {
+              "type": "paragraph",
+              "text": "5. Jelaskan mengapa shutdown melalui menu OS lebih aman daripada langsung memutus listrik."
+            }
+          ],
+          "competency_ids": [
+            "sistem_operasi_manajemen_proses",
+            "sistem_operasi_file_system",
+            "sistem_operasi_monitoring_proses",
+            "sistem_operasi_troubleshooting_perangkat",
+            "sistem_operasi_shutdown_aman"
+          ]
+        }
+      ]
+    }
+  ],
+  "competencies": [
+    {
+      "id": "hardware_cpu_dan_fungsi_komponen",
+      "material_id": "hardware",
+      "title": "CPU dan fungsi komponen",
+      "description": "Penguasaan pada kompetensi CPU dan fungsi komponen.",
+      "order": 1
+    },
+    {
+      "id": "hardware_klasifikasi_input",
+      "material_id": "hardware",
+      "title": "Klasifikasi input",
+      "description": "Penguasaan pada kompetensi Klasifikasi input.",
+      "order": 2
+    },
+    {
+      "id": "hardware_ram",
+      "material_id": "hardware",
+      "title": "RAM",
+      "description": "Penguasaan pada kompetensi RAM.",
+      "order": 3
+    },
+    {
+      "id": "hardware_storage",
+      "material_id": "hardware",
+      "title": "Storage",
+      "description": "Penguasaan pada kompetensi Storage.",
+      "order": 4
+    },
+    {
+      "id": "hardware_motherboard",
+      "material_id": "hardware",
+      "title": "Motherboard",
+      "description": "Penguasaan pada kompetensi Motherboard.",
+      "order": 5
+    },
+    {
+      "id": "hardware_kompatibilitas_motherboard_cpu",
+      "material_id": "hardware",
+      "title": "Kompatibilitas motherboard-CPU",
+      "description": "Penguasaan pada kompetensi Kompatibilitas motherboard-CPU.",
+      "order": 6
+    },
+    {
+      "id": "hardware_psu",
+      "material_id": "hardware",
+      "title": "PSU",
+      "description": "Penguasaan pada kompetensi PSU.",
+      "order": 7
+    },
+    {
+      "id": "hardware_troubleshooting_display",
+      "material_id": "hardware",
+      "title": "Troubleshooting display",
+      "description": "Penguasaan pada kompetensi Troubleshooting display.",
+      "order": 8
+    },
+    {
+      "id": "hardware_nic",
+      "material_id": "hardware",
+      "title": "NIC",
+      "description": "Penguasaan pada kompetensi NIC.",
+      "order": 9
+    },
+    {
+      "id": "hardware_pemilihan_komponen_sesuai_kebutuhan",
+      "material_id": "hardware",
+      "title": "Pemilihan komponen sesuai kebutuhan",
+      "description": "Penguasaan pada kompetensi Pemilihan komponen sesuai kebutuhan.",
+      "order": 10
+    },
+    {
+      "id": "software_peran_os",
+      "material_id": "software",
+      "title": "Peran OS",
+      "description": "Penguasaan pada kompetensi Peran OS.",
+      "order": 1
+    },
+    {
+      "id": "software_software_aplikasi",
+      "material_id": "software",
+      "title": "Software aplikasi",
+      "description": "Penguasaan pada kompetensi Software aplikasi.",
+      "order": 2
+    },
+    {
+      "id": "software_driver",
+      "material_id": "software",
+      "title": "Driver",
+      "description": "Penguasaan pada kompetensi Driver.",
+      "order": 3
+    },
+    {
+      "id": "software_open_source",
+      "material_id": "software",
+      "title": "Open source",
+      "description": "Penguasaan pada kompetensi Open source.",
+      "order": 4
+    },
+    {
+      "id": "software_utility_kompresi",
+      "material_id": "software",
+      "title": "Utility kompresi",
+      "description": "Penguasaan pada kompetensi Utility kompresi.",
+      "order": 5
+    },
+    {
+      "id": "software_update_software",
+      "material_id": "software",
+      "title": "Update software",
+      "description": "Penguasaan pada kompetensi Update software.",
+      "order": 6
+    },
+    {
+      "id": "software_firmware",
+      "material_id": "software",
+      "title": "Firmware",
+      "description": "Penguasaan pada kompetensi Firmware.",
+      "order": 7
+    },
+    {
+      "id": "software_driver_perangkat",
+      "material_id": "software",
+      "title": "Driver perangkat",
+      "description": "Penguasaan pada kompetensi Driver perangkat.",
+      "order": 8
+    },
+    {
+      "id": "software_lisensi_software",
+      "material_id": "software",
+      "title": "Lisensi software",
+      "description": "Penguasaan pada kompetensi Lisensi software.",
+      "order": 9
+    },
+    {
+      "id": "software_keamanan_sumber_software",
+      "material_id": "software",
+      "title": "Keamanan sumber software",
+      "description": "Penguasaan pada kompetensi Keamanan sumber software.",
+      "order": 10
+    },
+    {
+      "id": "sistem_operasi_tujuan_os",
+      "material_id": "sistem_operasi",
+      "title": "Tujuan OS",
+      "description": "Penguasaan pada kompetensi Tujuan OS.",
+      "order": 1
+    },
+    {
+      "id": "sistem_operasi_kernel",
+      "material_id": "sistem_operasi",
+      "title": "Kernel",
+      "description": "Penguasaan pada kompetensi Kernel.",
+      "order": 2
+    },
+    {
+      "id": "sistem_operasi_manajemen_proses",
+      "material_id": "sistem_operasi",
+      "title": "Manajemen proses",
+      "description": "Penguasaan pada kompetensi Manajemen proses.",
+      "order": 3
+    },
+    {
+      "id": "sistem_operasi_gui",
+      "material_id": "sistem_operasi",
+      "title": "GUI",
+      "description": "Penguasaan pada kompetensi GUI.",
+      "order": 4
+    },
+    {
+      "id": "sistem_operasi_booting",
+      "material_id": "sistem_operasi",
+      "title": "Booting",
+      "description": "Penguasaan pada kompetensi Booting.",
+      "order": 5
+    },
+    {
+      "id": "sistem_operasi_file_system",
+      "material_id": "sistem_operasi",
+      "title": "File system",
+      "description": "Penguasaan pada kompetensi File system.",
+      "order": 6
+    },
+    {
+      "id": "sistem_operasi_monitoring_proses",
+      "material_id": "sistem_operasi",
+      "title": "Monitoring proses",
+      "description": "Penguasaan pada kompetensi Monitoring proses.",
+      "order": 7
+    },
+    {
+      "id": "sistem_operasi_troubleshooting_perangkat",
+      "material_id": "sistem_operasi",
+      "title": "Troubleshooting perangkat",
+      "description": "Penguasaan pada kompetensi Troubleshooting perangkat.",
+      "order": 8
+    },
+    {
+      "id": "sistem_operasi_shutdown_aman",
+      "material_id": "sistem_operasi",
+      "title": "Shutdown aman",
+      "description": "Penguasaan pada kompetensi Shutdown aman.",
+      "order": 9
+    },
+    {
+      "id": "sistem_operasi_cli_dalam_pekerjaan_teknis",
+      "material_id": "sistem_operasi",
+      "title": "CLI dalam pekerjaan teknis",
+      "description": "Penguasaan pada kompetensi CLI dalam pekerjaan teknis.",
+      "order": 10
+    }
+  ],
+  "quiz_questions": [
+    {
+      "id": "quiz_hardware_1",
+      "material_id": "hardware",
+      "competency_id": "hardware_cpu_dan_fungsi_komponen",
+      "question": "Komponen yang berfungsi menjalankan instruksi dan mengolah data adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "CPU"
+        },
+        {
+          "key": "B",
+          "text": "RAM"
+        },
+        {
+          "key": "C",
+          "text": "PSU"
+        },
+        {
+          "key": "D",
+          "text": "Monitor"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 1,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_2",
+      "material_id": "hardware",
+      "competency_id": "hardware_klasifikasi_input",
+      "question": "Perangkat yang termasuk kelompok input adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Speaker"
+        },
+        {
+          "key": "B",
+          "text": "Keyboard"
+        },
+        {
+          "key": "C",
+          "text": "Monitor"
+        },
+        {
+          "key": "D",
+          "text": "Printer"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 2,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_3",
+      "material_id": "hardware",
+      "competency_id": "hardware_ram",
+      "question": "Pernyataan yang paling tepat tentang RAM adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Menyimpan data permanen"
+        },
+        {
+          "key": "B",
+          "text": "Mengubah AC menjadi DC"
+        },
+        {
+          "key": "C",
+          "text": "Menjadi memori kerja sementara saat program berjalan"
+        },
+        {
+          "key": "D",
+          "text": "Menghubungkan komputer ke internet"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 3,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_4",
+      "material_id": "hardware",
+      "competency_id": "hardware_storage",
+      "question": "Perangkat penyimpanan yang menggunakan flash memory dan umumnya lebih cepat dari HDD adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "PSU"
+        },
+        {
+          "key": "B",
+          "text": "NIC"
+        },
+        {
+          "key": "C",
+          "text": "Heatsink"
+        },
+        {
+          "key": "D",
+          "text": "SSD"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 4,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_5",
+      "material_id": "hardware",
+      "competency_id": "hardware_motherboard",
+      "question": "Komponen yang menjadi papan utama tempat berbagai komponen komputer terhubung adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Motherboard"
+        },
+        {
+          "key": "B",
+          "text": "GPU"
+        },
+        {
+          "key": "C",
+          "text": "Keyboard"
+        },
+        {
+          "key": "D",
+          "text": "Monitor"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 5,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_6",
+      "material_id": "hardware",
+      "competency_id": "hardware_kompatibilitas_motherboard_cpu",
+      "question": "Jika akan memilih motherboard untuk CPU tertentu, hal yang paling penting diperiksa terlebih dahulu adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Warna casing"
+        },
+        {
+          "key": "B",
+          "text": "Socket dan dukungan platform"
+        },
+        {
+          "key": "C",
+          "text": "Ukuran monitor"
+        },
+        {
+          "key": "D",
+          "text": "Jenis speaker"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 6,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_7",
+      "material_id": "hardware",
+      "competency_id": "hardware_psu",
+      "question": "Fungsi utama PSU pada komputer adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Menyimpan file"
+        },
+        {
+          "key": "B",
+          "text": "Menampilkan gambar"
+        },
+        {
+          "key": "C",
+          "text": "Menyediakan tegangan listrik yang dibutuhkan komponen"
+        },
+        {
+          "key": "D",
+          "text": "Menjalankan aplikasi"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 7,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_8",
+      "material_id": "hardware",
+      "competency_id": "hardware_troubleshooting_display",
+      "question": "Komputer menyala tetapi monitor tidak menampilkan gambar. Langkah awal yang paling tepat adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Langsung mengganti CPU"
+        },
+        {
+          "key": "B",
+          "text": "Menghapus semua file"
+        },
+        {
+          "key": "C",
+          "text": "Menginstal ulang OS"
+        },
+        {
+          "key": "D",
+          "text": "Memeriksa kabel display dan sumber tampilan"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 8,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_9",
+      "material_id": "hardware",
+      "competency_id": "hardware_nic",
+      "question": "Perangkat yang memungkinkan komputer terhubung ke jaringan Ethernet adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "NIC"
+        },
+        {
+          "key": "B",
+          "text": "RAM"
+        },
+        {
+          "key": "C",
+          "text": "GPU"
+        },
+        {
+          "key": "D",
+          "text": "Speaker"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 9,
+      "weight": 1
+    },
+    {
+      "id": "quiz_hardware_10",
+      "material_id": "hardware",
+      "competency_id": "hardware_pemilihan_komponen_sesuai_kebutuhan",
+      "question": "Untuk komputer yang digunakan untuk editing video berat, komponen yang perlu mendapat perhatian lebih dibanding PC administrasi biasa adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Keyboard dan mouse saja"
+        },
+        {
+          "key": "B",
+          "text": "GPU dan kapasitas RAM"
+        },
+        {
+          "key": "C",
+          "text": "Speaker saja"
+        },
+        {
+          "key": "D",
+          "text": "Kabel audio saja"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 10,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_1",
+      "material_id": "software",
+      "competency_id": "software_peran_os",
+      "question": "Perangkat lunak yang menjadi penghubung utama antara pengguna, aplikasi, dan hardware adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Sistem operasi"
+        },
+        {
+          "key": "B",
+          "text": "Mouse driver saja"
+        },
+        {
+          "key": "C",
+          "text": "Printer"
+        },
+        {
+          "key": "D",
+          "text": "Monitor"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 11,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_2",
+      "material_id": "software",
+      "competency_id": "software_software_aplikasi",
+      "question": "Contoh software aplikasi adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Windows"
+        },
+        {
+          "key": "B",
+          "text": "Browser web"
+        },
+        {
+          "key": "C",
+          "text": "Linux kernel"
+        },
+        {
+          "key": "D",
+          "text": "Firmware motherboard"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 12,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_3",
+      "material_id": "software",
+      "competency_id": "software_driver",
+      "question": "Software yang membantu OS berkomunikasi dengan perangkat keras tertentu disebut ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Compiler"
+        },
+        {
+          "key": "B",
+          "text": "Browser"
+        },
+        {
+          "key": "C",
+          "text": "Driver"
+        },
+        {
+          "key": "D",
+          "text": "Spreadsheet"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 13,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_4",
+      "material_id": "software",
+      "competency_id": "software_open_source",
+      "question": "Pernyataan yang paling tepat tentang open source adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Semua software open source pasti gratis selamanya"
+        },
+        {
+          "key": "B",
+          "text": "Hanya dapat digunakan satu orang"
+        },
+        {
+          "key": "C",
+          "text": "Tidak boleh dimodifikasi"
+        },
+        {
+          "key": "D",
+          "text": "Kode sumber dan hak pengguna diatur oleh lisensi open source"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 14,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_5",
+      "material_id": "software",
+      "competency_id": "software_utility_kompresi",
+      "question": "Untuk mengecilkan ukuran beberapa file agar mudah dikirim, software yang sesuai adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Utility kompresi"
+        },
+        {
+          "key": "B",
+          "text": "Driver GPU"
+        },
+        {
+          "key": "C",
+          "text": "Sistem operasi"
+        },
+        {
+          "key": "D",
+          "text": "Firmware"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 15,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_6",
+      "material_id": "software",
+      "competency_id": "software_update_software",
+      "question": "Salah satu tujuan melakukan update software adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Menambah debu pada perangkat"
+        },
+        {
+          "key": "B",
+          "text": "Memperbaiki bug dan meningkatkan keamanan/kompatibilitas"
+        },
+        {
+          "key": "C",
+          "text": "Mengubah monitor menjadi printer"
+        },
+        {
+          "key": "D",
+          "text": "Menghapus RAM"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 16,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_7",
+      "material_id": "software",
+      "competency_id": "software_firmware",
+      "question": "Software yang tertanam pada perangkat dan menangani fungsi tingkat rendah disebut ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Browser"
+        },
+        {
+          "key": "B",
+          "text": "Spreadsheet"
+        },
+        {
+          "key": "C",
+          "text": "Firmware"
+        },
+        {
+          "key": "D",
+          "text": "Chat application"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 17,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_8",
+      "material_id": "software",
+      "competency_id": "software_driver_perangkat",
+      "question": "Saat printer terpasang tetapi tidak dikenali dengan benar, langkah yang paling relevan adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mengganti monitor"
+        },
+        {
+          "key": "B",
+          "text": "Menghapus browser"
+        },
+        {
+          "key": "C",
+          "text": "Mengurangi ukuran keyboard"
+        },
+        {
+          "key": "D",
+          "text": "Memeriksa driver printer"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 18,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_9",
+      "material_id": "software",
+      "competency_id": "software_lisensi_software",
+      "question": "Manakah pernyataan yang benar?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Pengguna perlu memperhatikan ketentuan lisensi software"
+        },
+        {
+          "key": "B",
+          "text": "Gratis dan open source selalu berarti sama"
+        },
+        {
+          "key": "C",
+          "text": "Lisensi tidak penting jika software dapat dibuka"
+        },
+        {
+          "key": "D",
+          "text": "Semua software proprietary tidak bisa digunakan pada sekolah"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 19,
+      "weight": 1
+    },
+    {
+      "id": "quiz_software_10",
+      "material_id": "software",
+      "competency_id": "software_keamanan_sumber_software",
+      "question": "Seorang siswa mengunduh aplikasi dari situs tidak dikenal yang menawarkan \"versi bajakan\". Risiko paling masuk akal adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Tidak ada risiko sama sekali"
+        },
+        {
+          "key": "B",
+          "text": "Bisa mengandung malware atau modifikasi berbahaya"
+        },
+        {
+          "key": "C",
+          "text": "RAM otomatis bertambah"
+        },
+        {
+          "key": "D",
+          "text": "CPU menjadi lebih cepat"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 20,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_1",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_tujuan_os",
+      "question": "Tujuan utama sistem operasi adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mengelola sumber daya komputer dan menyediakan layanan bagi aplikasi"
+        },
+        {
+          "key": "B",
+          "text": "Menggantikan monitor"
+        },
+        {
+          "key": "C",
+          "text": "Menambah kapasitas hard disk secara fisik"
+        },
+        {
+          "key": "D",
+          "text": "Mengubah keyboard menjadi printer"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 21,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_2",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_kernel",
+      "question": "Komponen inti sistem operasi yang dekat dengan pengelolaan sumber daya disebut ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Browser"
+        },
+        {
+          "key": "B",
+          "text": "Kernel"
+        },
+        {
+          "key": "C",
+          "text": "Spreadsheet"
+        },
+        {
+          "key": "D",
+          "text": "Antivirus"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 22,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_3",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_manajemen_proses",
+      "question": "Contoh fungsi manajemen proses adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mencetak dokumen tanpa driver"
+        },
+        {
+          "key": "B",
+          "text": "Mengganti kabel LAN"
+        },
+        {
+          "key": "C",
+          "text": "Mengatur program yang sedang berjalan"
+        },
+        {
+          "key": "D",
+          "text": "Menambah kapasitas RAM fisik"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 23,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_4",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_gui",
+      "question": "GUI berbeda dengan CLI karena GUI ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Tidak dapat menjalankan aplikasi"
+        },
+        {
+          "key": "B",
+          "text": "Hanya digunakan pada server"
+        },
+        {
+          "key": "C",
+          "text": "Tidak membutuhkan sistem operasi"
+        },
+        {
+          "key": "D",
+          "text": "Menggunakan antarmuka visual seperti menu dan ikon"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 24,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_5",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_booting",
+      "question": "Ketika komputer dinyalakan dan OS mulai dimuat, tahap tersebut termasuk proses ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Booting"
+        },
+        {
+          "key": "B",
+          "text": "Printing"
+        },
+        {
+          "key": "C",
+          "text": "Formatting keyboard"
+        },
+        {
+          "key": "D",
+          "text": "Rendering monitor"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 25,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_6",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_file_system",
+      "question": "Fungsi file system yang paling tepat adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Menambah daya PSU"
+        },
+        {
+          "key": "B",
+          "text": "Mengatur cara data disimpan dan ditemukan pada media penyimpanan"
+        },
+        {
+          "key": "C",
+          "text": "Mengganti CPU"
+        },
+        {
+          "key": "D",
+          "text": "Mempercepat internet secara otomatis"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 26,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_7",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_monitoring_proses",
+      "question": "Seorang siswa ingin melihat program yang sedang menggunakan RAM cukup besar. Fitur OS yang paling relevan adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Paint"
+        },
+        {
+          "key": "B",
+          "text": "Calculator"
+        },
+        {
+          "key": "C",
+          "text": "Task Manager/monitor proses"
+        },
+        {
+          "key": "D",
+          "text": "Device charger"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 27,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_8",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_troubleshooting_perangkat",
+      "question": "Jika perangkat printer tidak dikenali oleh OS, salah satu pemeriksaan awal yang tepat adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mengganti wallpaper"
+        },
+        {
+          "key": "B",
+          "text": "Menghapus folder Downloads"
+        },
+        {
+          "key": "C",
+          "text": "Menambah ukuran monitor"
+        },
+        {
+          "key": "D",
+          "text": "Memeriksa koneksi dan driver perangkat"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 28,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_9",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_shutdown_aman",
+      "question": "Tindakan yang paling tepat untuk mematikan komputer setelah selesai digunakan adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Menggunakan menu shutdown OS"
+        },
+        {
+          "key": "B",
+          "text": "Mencabut kabel listrik saat aplikasi masih berjalan"
+        },
+        {
+          "key": "C",
+          "text": "Menekan tombol reset berulang-ulang"
+        },
+        {
+          "key": "D",
+          "text": "Menutup monitor saja"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 29,
+      "weight": 1
+    },
+    {
+      "id": "quiz_sistem_operasi_10",
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_cli_dalam_pekerjaan_teknis",
+      "question": "Mengapa siswa TJKT perlu memahami CLI selain GUI?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Karena GUI selalu salah"
+        },
+        {
+          "key": "B",
+          "text": "Karena CLI dapat membantu administrasi, troubleshooting, dan otomasi pada kondisi tertentu"
+        },
+        {
+          "key": "C",
+          "text": "Karena CLI hanya untuk bermain game"
+        },
+        {
+          "key": "D",
+          "text": "Karena CLI membuat RAM menjadi lebih besar"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 30,
+      "weight": 1
+    }
+  ],
+  "challenge_levels": [
+    {
+      "id": 1,
+      "name": "Beginner",
+      "description": "Mengenali konsep dasar dan istilah.",
+      "order": 1
+    },
+    {
+      "id": 2,
+      "name": "Intermediate",
+      "description": "Memahami dan menghubungkan konsep.",
+      "order": 2
+    },
+    {
+      "id": 3,
+      "name": "Advanced",
+      "description": "Menerapkan konsep pada situasi.",
+      "order": 3
+    },
+    {
+      "id": 4,
+      "name": "Expert",
+      "description": "Menganalisis masalah dan menentukan tindakan.",
+      "order": 4
+    },
+    {
+      "id": 5,
+      "name": "Challenge",
+      "description": "Mengintegrasikan beberapa konsep dalam satu kasus.",
+      "order": 5
+    }
+  ],
+  "challenge_questions": [
+    {
+      "id": "challenge_l1_1",
+      "code": "L1-1",
+      "level_id": 1,
+      "material_id": "hardware",
+      "competency_id": "hardware_klasifikasi_input",
+      "question": "Perangkat yang digunakan untuk memasukkan teks ke komputer adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Keyboard"
+        },
+        {
+          "key": "B",
+          "text": "Monitor"
+        },
+        {
+          "key": "C",
+          "text": "Speaker"
+        },
+        {
+          "key": "D",
+          "text": "Printer"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 1,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l1_2",
+      "code": "L1-2",
+      "level_id": 1,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_tujuan_os",
+      "question": "Software yang mengelola hardware dan menjalankan aplikasi disebut ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mouse"
+        },
+        {
+          "key": "B",
+          "text": "Sistem operasi"
+        },
+        {
+          "key": "C",
+          "text": "PSU"
+        },
+        {
+          "key": "D",
+          "text": "Monitor"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 2,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l1_3",
+      "code": "L1-3",
+      "level_id": 1,
+      "material_id": "hardware",
+      "competency_id": "hardware_ram",
+      "question": "RAM digunakan terutama sebagai ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Penyimpanan permanen"
+        },
+        {
+          "key": "B",
+          "text": "Sumber listrik"
+        },
+        {
+          "key": "C",
+          "text": "Memori kerja sementara"
+        },
+        {
+          "key": "D",
+          "text": "Perangkat output"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 3,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l1_4",
+      "code": "L1-4",
+      "level_id": 1,
+      "material_id": "software",
+      "competency_id": "software_software_aplikasi",
+      "question": "Contoh software aplikasi adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "BIOS/firmware"
+        },
+        {
+          "key": "B",
+          "text": "Driver keyboard"
+        },
+        {
+          "key": "C",
+          "text": "Kernel"
+        },
+        {
+          "key": "D",
+          "text": "Browser"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 4,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l1_5",
+      "code": "L1-5",
+      "level_id": 1,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_tujuan_os",
+      "question": "Salah satu fungsi utama sistem operasi adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mengelola sumber daya komputer"
+        },
+        {
+          "key": "B",
+          "text": "Mengubah listrik AC menjadi DC"
+        },
+        {
+          "key": "C",
+          "text": "Mencetak kertas secara fisik"
+        },
+        {
+          "key": "D",
+          "text": "Menambah ukuran monitor"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 5,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l2_1",
+      "code": "L2-1",
+      "level_id": 2,
+      "material_id": "hardware",
+      "competency_id": "hardware_ram",
+      "question": "Seorang siswa membuka banyak aplikasi dan komputer mulai lambat. Komponen yang paling relevan untuk diperiksa adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "RAM dan penggunaan proses"
+        },
+        {
+          "key": "B",
+          "text": "Warna casing"
+        },
+        {
+          "key": "C",
+          "text": "Speaker"
+        },
+        {
+          "key": "D",
+          "text": "Kabel HDMI saja"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 1,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l2_2",
+      "code": "L2-2",
+      "level_id": 2,
+      "material_id": "software",
+      "competency_id": "software_driver_perangkat",
+      "question": "Printer terpasang secara fisik tetapi belum dapat digunakan dengan benar. Software yang perlu diperiksa adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Browser"
+        },
+        {
+          "key": "B",
+          "text": "Driver printer"
+        },
+        {
+          "key": "C",
+          "text": "Game"
+        },
+        {
+          "key": "D",
+          "text": "Wallpaper"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 2,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l2_3",
+      "code": "L2-3",
+      "level_id": 2,
+      "material_id": "hardware",
+      "competency_id": "hardware_storage",
+      "question": "Mengapa SSD biasanya membuat proses boot lebih responsif dibanding HDD?",
+      "options": [
+        {
+          "key": "A",
+          "text": "SSD selalu memiliki RAM lebih besar"
+        },
+        {
+          "key": "B",
+          "text": "HDD tidak bisa menyimpan OS"
+        },
+        {
+          "key": "C",
+          "text": "SSD tidak memakai komponen mekanis bergerak"
+        },
+        {
+          "key": "D",
+          "text": "SSD adalah software"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 3,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l2_4",
+      "code": "L2-4",
+      "level_id": 2,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_tujuan_os",
+      "question": "Hubungan yang benar adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Monitor mengatur OS"
+        },
+        {
+          "key": "B",
+          "text": "Keyboard mengatur CPU"
+        },
+        {
+          "key": "C",
+          "text": "PSU menjalankan browser"
+        },
+        {
+          "key": "D",
+          "text": "Aplikasi meminta layanan OS, lalu OS mengelola akses ke hardware"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 4,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l2_5",
+      "code": "L2-5",
+      "level_id": 2,
+      "material_id": "software",
+      "competency_id": "software_utility_kompresi",
+      "question": "Siswa ingin mengecilkan ukuran beberapa file sebelum dikirim. Pilihan paling tepat adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Utility kompresi"
+        },
+        {
+          "key": "B",
+          "text": "Driver GPU"
+        },
+        {
+          "key": "C",
+          "text": "Sistem operasi kedua"
+        },
+        {
+          "key": "D",
+          "text": "Device Manager"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 5,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l3_1",
+      "code": "L3-1",
+      "level_id": 3,
+      "material_id": "hardware",
+      "competency_id": "hardware_pemilihan_komponen_sesuai_kebutuhan",
+      "question": "Laboratorium membutuhkan PC untuk pekerjaan administrasi dan browser. Pilihan paling rasional adalah memprioritaskan ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "CPU cukup, RAM memadai, SSD, dan NIC yang baik"
+        },
+        {
+          "key": "B",
+          "text": "GPU kelas tertinggi meski CPU sangat rendah"
+        },
+        {
+          "key": "C",
+          "text": "Speaker besar tanpa storage"
+        },
+        {
+          "key": "D",
+          "text": "Monitor saja"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 1,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l3_2",
+      "code": "L3-2",
+      "level_id": 3,
+      "material_id": "hardware",
+      "competency_id": "hardware_kompatibilitas_motherboard_cpu",
+      "question": "Sebuah PC memiliki CPU baru, tetapi motherboard tidak mendukung socket CPU tersebut. Masalah utamanya adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Lisensi software"
+        },
+        {
+          "key": "B",
+          "text": "Kompatibilitas hardware"
+        },
+        {
+          "key": "C",
+          "text": "Resolusi monitor"
+        },
+        {
+          "key": "D",
+          "text": "Kecepatan internet"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 2,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l3_3",
+      "code": "L3-3",
+      "level_id": 3,
+      "material_id": "software",
+      "competency_id": "software_driver_perangkat",
+      "question": "Setelah update driver GPU, masalah tampilan muncul. Tindakan awal yang paling masuk akal adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mengganti keyboard"
+        },
+        {
+          "key": "B",
+          "text": "Menghapus semua dokumen"
+        },
+        {
+          "key": "C",
+          "text": "Memeriksa kompatibilitas driver dan konfigurasi display"
+        },
+        {
+          "key": "D",
+          "text": "Menambah kapasitas flashdisk"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 3,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l3_4",
+      "code": "L3-4",
+      "level_id": 3,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_cli_dalam_pekerjaan_teknis",
+      "question": "Siswa ingin menjalankan perintah administrasi secara cepat dan berulang. Antarmuka yang paling cocok adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Wallpaper"
+        },
+        {
+          "key": "B",
+          "text": "Speaker"
+        },
+        {
+          "key": "C",
+          "text": "Printer"
+        },
+        {
+          "key": "D",
+          "text": "CLI/terminal"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 4,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l3_5",
+      "code": "L3-5",
+      "level_id": 3,
+      "material_id": "software",
+      "competency_id": "software_utility_kompresi",
+      "question": "Ketika storage hampir penuh, dampak yang mungkin muncul adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Sistem dan aplikasi dapat terganggu karena ruang kerja/penyimpanan menipis"
+        },
+        {
+          "key": "B",
+          "text": "Keyboard menjadi monitor"
+        },
+        {
+          "key": "C",
+          "text": "PSU menghasilkan lebih banyak RAM"
+        },
+        {
+          "key": "D",
+          "text": "CPU berubah menjadi GPU"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 5,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l4_1",
+      "code": "L4-1",
+      "level_id": 4,
+      "material_id": "hardware",
+      "competency_id": "hardware_troubleshooting_display",
+      "question": "PC menyala, kipas berputar, tetapi tidak ada tampilan. Siswa ingin melakukan diagnosis awal. Urutan yang paling logis adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Periksa monitor/input dan kabel, lalu periksa koneksi komponen seperti RAM/GPU sesuai SOP"
+        },
+        {
+          "key": "B",
+          "text": "Langsung format storage"
+        },
+        {
+          "key": "C",
+          "text": "Langsung ganti CPU"
+        },
+        {
+          "key": "D",
+          "text": "Hapus sistem operasi"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 1,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l4_2",
+      "code": "L4-2",
+      "level_id": 4,
+      "material_id": "hardware",
+      "competency_id": "hardware_ram",
+      "question": "Aplikasi sering \"not responding\" saat banyak program terbuka. Analisis awal paling tepat adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Ganti kabel LAN tanpa pemeriksaan"
+        },
+        {
+          "key": "B",
+          "text": "Cek penggunaan CPU/RAM dan proses yang berjalan"
+        },
+        {
+          "key": "C",
+          "text": "Ganti monitor dengan printer"
+        },
+        {
+          "key": "D",
+          "text": "Hapus semua driver"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 2,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l4_3",
+      "code": "L4-3",
+      "level_id": 4,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_troubleshooting_perangkat",
+      "question": "OS tidak mendeteksi NIC kabel. Pemeriksaan yang paling relevan adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Ganti RAM terlebih dahulu"
+        },
+        {
+          "key": "B",
+          "text": "Hapus semua file gambar"
+        },
+        {
+          "key": "C",
+          "text": "Cek kabel/port, status NIC, lalu driver dan konfigurasi jaringan"
+        },
+        {
+          "key": "D",
+          "text": "Ganti speaker"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 3,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l4_4",
+      "code": "L4-4",
+      "level_id": 4,
+      "material_id": "software",
+      "competency_id": "software_keamanan_sumber_software",
+      "question": "Seorang siswa menginstal software dari sumber tidak dikenal. Mengapa tindakan tersebut berisiko?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Software pasti menambah kapasitas RAM"
+        },
+        {
+          "key": "B",
+          "text": "Komputer otomatis menjadi open source"
+        },
+        {
+          "key": "C",
+          "text": "CPU menjadi rusak secara fisik setiap saat"
+        },
+        {
+          "key": "D",
+          "text": "Installer dapat dimodifikasi dan membawa malware atau konfigurasi berbahaya"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 4,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l4_5",
+      "code": "L4-5",
+      "level_id": 4,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_troubleshooting_perangkat",
+      "question": "Dari pilihan berikut, mana yang menunjukkan diagnosis yang tidak tepat?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mengganti CPU hanya karena monitor tidak menampilkan gambar"
+        },
+        {
+          "key": "B",
+          "text": "Memeriksa gejala dan koneksi sebelum mengganti komponen"
+        },
+        {
+          "key": "C",
+          "text": "Memeriksa driver ketika perangkat tidak dikenali OS"
+        },
+        {
+          "key": "D",
+          "text": "Memeriksa penggunaan RAM saat sistem lambat"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 5,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l5_1",
+      "code": "L5-1",
+      "level_id": 5,
+      "material_id": "hardware",
+      "competency_id": "hardware_pemilihan_komponen_sesuai_kebutuhan",
+      "question": "Sebuah laboratorium ingin membuat PC pembelajaran yang stabil. Spesifikasi harus seimbang. Kombinasi pertimbangan paling lengkap adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "CPU sesuai kebutuhan, RAM cukup, SSD, PSU berkualitas, NIC, dan OS/software legal"
+        },
+        {
+          "key": "B",
+          "text": "GPU mahal saja sudah cukup"
+        },
+        {
+          "key": "C",
+          "text": "Monitor mahal tanpa storage"
+        },
+        {
+          "key": "D",
+          "text": "RAM kecil tetapi aplikasi sebanyak mungkin"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 1,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l5_2",
+      "code": "L5-2",
+      "level_id": 5,
+      "material_id": "software",
+      "competency_id": "software_driver_perangkat",
+      "question": "Siswa melakukan upgrade dari HDD ke SSD dan ingin tetap menggunakan OS yang sama. Bagian software yang perlu diperhatikan adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Mengganti speaker"
+        },
+        {
+          "key": "B",
+          "text": "Migrasi/instalasi OS, driver, dan pengaturan boot sesuai metode upgrade"
+        },
+        {
+          "key": "C",
+          "text": "Menghapus NIC"
+        },
+        {
+          "key": "D",
+          "text": "Menambah port HDMI fisik"
+        }
+      ],
+      "correct_option_key": "B",
+      "order": 2,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l5_3",
+      "code": "L5-3",
+      "level_id": 5,
+      "material_id": "hardware",
+      "competency_id": "hardware_ram",
+      "question": "Komputer lambat saat boot dan setelah masuk desktop. Hasil pemeriksaan: storage hampir penuh, banyak aplikasi startup, dan RAM terbatas. Kesimpulan paling tepat adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Pasti hanya monitor yang rusak"
+        },
+        {
+          "key": "B",
+          "text": "Pasti hanya keyboard yang rusak"
+        },
+        {
+          "key": "C",
+          "text": "Masalah kemungkinan berasal dari gabungan pengelolaan storage, startup software, dan kapasitas RAM"
+        },
+        {
+          "key": "D",
+          "text": "Pasti karena kabel HDMI"
+        }
+      ],
+      "correct_option_key": "C",
+      "order": 3,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l5_4",
+      "code": "L5-4",
+      "level_id": 5,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_troubleshooting_perangkat",
+      "question": "Seorang siswa ingin membuat diagnosis masalah printer. Printer terhubung tetapi tidak mencetak. Urutan berpikir paling tepat adalah ...",
+      "options": [
+        {
+          "key": "A",
+          "text": "Ganti CPU -> install ulang browser -> cabut RAM"
+        },
+        {
+          "key": "B",
+          "text": "Hapus semua file pengguna -> ganti GPU"
+        },
+        {
+          "key": "C",
+          "text": "Matikan listrik tanpa menyimpan pekerjaan"
+        },
+        {
+          "key": "D",
+          "text": "Periksa koneksi -> status printer -> driver/antrian cetak -> uji cetak"
+        }
+      ],
+      "correct_option_key": "D",
+      "order": 4,
+      "weight": 1
+    },
+    {
+      "id": "challenge_l5_5",
+      "code": "L5-5",
+      "level_id": 5,
+      "material_id": "sistem_operasi",
+      "competency_id": "sistem_operasi_troubleshooting_perangkat",
+      "question": "Mengapa hardware, software, dan sistem operasi harus dipahami sebagai satu kesatuan saat troubleshooting?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Karena gejala yang sama dapat dipengaruhi oleh komponen fisik, driver/software, atau pengelolaan OS sehingga diagnosis harus bertahap"
+        },
+        {
+          "key": "B",
+          "text": "Karena ketiganya adalah benda fisik"
+        },
+        {
+          "key": "C",
+          "text": "Karena OS tidak berhubungan dengan hardware"
+        },
+        {
+          "key": "D",
+          "text": "Karena semua masalah komputer pasti disebabkan software"
+        }
+      ],
+      "correct_option_key": "A",
+      "order": 5,
+      "weight": 1
+    }
+  ]
+}
