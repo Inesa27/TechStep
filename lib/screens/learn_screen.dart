@@ -1,141 +1,96 @@
 import 'package:flutter/material.dart';
 
+import '../models/learning_content.dart';
+import '../services/learning_analytics_service.dart';
+import '../services/techstep_database.dart';
+
 class LearnScreen extends StatelessWidget {
   const LearnScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF6F7FB),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: const Text(
-          'Learn',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+    final analytics = LearningAnalyticsService.instance;
+
+    return AnimatedBuilder(
+      animation: analytics,
+      builder: (context, child) {
+        return Scaffold(
+          backgroundColor: const Color(0xFFF6F7FB),
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            title: const Text(
+              'Learn',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF111827),
+              ),
+            ),
+            centerTitle: false,
           ),
-        ),
-        centerTitle: false,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildIntroCard(),
+          body: SafeArea(
+            child: FutureBuilder<List<LearningMaterial>>(
+              future: TechStepDatabase.instance.getMaterialsWithProgress(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              const SizedBox(height: 24),
+                final materials = snapshot.data!;
 
-              const Text(
-                'Materi Pembelajaran',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              const Text(
-                'Pelajari materi dasar sistem komputer sebelum mengerjakan quiz dan challenge.',
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.5,
-                  color: Color(0xFF6B7280),
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              _buildMaterialCard(
-                context,
-                title: 'Hardware',
-                subtitle: 'Komponen fisik yang membentuk sistem komputer.',
-                icon: Icons.memory_rounded,
-                color: const Color(0xFF4F46E5),
-                topics: const [
-                  'Pengertian Hardware',
-                  'CPU dan Processor',
-                  'RAM',
-                  'Media Penyimpanan',
-                  'Motherboard',
-                  'Perangkat Input',
-                  'Perangkat Output',
-                ],
-                description:
-                    'Hardware adalah seluruh komponen fisik komputer yang dapat dilihat dan disentuh. Hardware bekerja bersama untuk menerima input, memproses data, menyimpan data, dan menghasilkan output.',
-              ),
-
-              const SizedBox(height: 14),
-
-              _buildMaterialCard(
-                context,
-                title: 'Software',
-                subtitle: 'Perangkat lunak yang digunakan untuk menjalankan komputer.',
-                icon: Icons.apps_rounded,
-                color: const Color(0xFF7C3AED),
-                topics: const [
-                  'Pengertian Software',
-                  'System Software',
-                  'Application Software',
-                  'Utility Software',
-                  'Software Produktivitas',
-                  'Contoh Software',
-                ],
-                description:
-                    'Software adalah kumpulan program atau instruksi yang digunakan untuk mengatur dan menjalankan berbagai fungsi pada komputer. Software tidak memiliki bentuk fisik seperti hardware.',
-              ),
-
-              const SizedBox(height: 14),
-
-              _buildMaterialCard(
-                context,
-                title: 'Sistem Operasi',
-                subtitle: 'Perangkat lunak utama yang mengelola sumber daya komputer.',
-                icon: Icons.desktop_windows_rounded,
-                color: const Color(0xFF2563EB),
-                topics: const [
-                  'Pengertian Sistem Operasi',
-                  'Fungsi Sistem Operasi',
-                  'Manajemen Hardware',
-                  'Manajemen File',
-                  'User Interface',
-                  'Contoh Sistem Operasi',
-                ],
-                description:
-                    'Sistem operasi adalah perangkat lunak utama yang menjadi penghubung antara pengguna, aplikasi, dan hardware komputer. Sistem operasi mengatur berbagai sumber daya agar komputer dapat bekerja dengan baik.',
-              ),
-
-              const SizedBox(height: 24),
-
-              _buildLearningTip(),
-            ],
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildIntroCard(analytics.learningProgress),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Materi Pembelajaran',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1F2937),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Pelajari materi dari dokumen bahan ajar. Riwayat submateri yang sudah dibuka akan tersimpan otomatis.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          height: 1.5,
+                          color: Color(0xFF6B7280),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      ...materials.map(
+                        (material) => Padding(
+                          padding: const EdgeInsets.only(bottom: 14),
+                          child: _buildMaterialCard(context, material),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      _buildLearningTip(),
+                    ],
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  // ============================================================
-  // INTRO CARD
-  // ============================================================
-
-  Widget _buildIntroCard() {
+  Widget _buildIntroCard(int learningProgress) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF4F46E5),
-            Color(0xFF6366F1),
-          ],
+          colors: [Color(0xFF4F46E5), Color(0xFF6366F1)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -148,7 +103,7 @@ class LearnScreen extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha:0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(14),
             ),
             child: const Icon(
@@ -157,9 +112,7 @@ class LearnScreen extends StatelessWidget {
               size: 25,
             ),
           ),
-
           const SizedBox(height: 16),
-
           const Text(
             'Mulai Langkah Belajarmu',
             style: TextStyle(
@@ -168,49 +121,54 @@ class LearnScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 8),
-
           const Text(
-            'Pelajari konsep dasar sistem komputer secara bertahap sebelum menguji kemampuanmu.',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-              height: 1.5,
-            ),
+            'Materi Hardware, Software, dan Sistem Operasi sudah tersusun per submateri sesuai bahan ajar.',
+            style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.5),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: learningProgress / 100,
+                    minHeight: 7,
+                    backgroundColor: Colors.white.withValues(alpha: 0.18),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                '$learningProgress%',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  // ============================================================
-  // MATERIAL CARD
-  // ============================================================
+  Widget _buildMaterialCard(BuildContext context, LearningMaterial material) {
+    final color = _colorFromHex(material.colorHex);
+    final percentage = (material.progress * 100).round();
 
-  Widget _buildMaterialCard(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required Color color,
-    required List<String> topics,
-    required String description,
-  }) {
     return InkWell(
       borderRadius: BorderRadius.circular(20),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MaterialDetailScreen(
-              title: title,
-              subtitle: subtitle,
-              icon: icon,
-              color: color,
-              topics: topics,
-              description: description,
-            ),
+            builder: (context) => MaterialDetailScreen(material: material),
           ),
         );
       },
@@ -220,9 +178,7 @@ class LearnScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: const Color(0xFFE5E7EB),
-          ),
+          border: Border.all(color: const Color(0xFFE5E7EB)),
         ),
         child: Column(
           children: [
@@ -232,35 +188,31 @@ class LearnScreen extends StatelessWidget {
                   width: 54,
                   height: 54,
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha:0.10),
+                    color: color.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Icon(
-                    icon,
+                    _iconFromKey(material.iconKey),
                     color: color,
                     size: 28,
                   ),
                 ),
-
                 const SizedBox(width: 14),
-
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        title,
+                        material.title,
                         style: const TextStyle(
                           fontSize: 17,
                           fontWeight: FontWeight.bold,
                           color: Color(0xFF1F2937),
                         ),
                       ),
-
                       const SizedBox(height: 4),
-
                       Text(
-                        subtitle,
+                        material.subtitle,
                         style: const TextStyle(
                           fontSize: 12,
                           height: 1.4,
@@ -270,7 +222,6 @@ class LearnScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 16,
@@ -278,30 +229,24 @@ class LearnScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
             Row(
               children: [
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: const LinearProgressIndicator(
-                      value: 0.0,
+                    child: LinearProgressIndicator(
+                      value: material.progress,
                       minHeight: 7,
-                      backgroundColor: Color(0xFFE5E7EB),
-                      valueColor: AlwaysStoppedAnimation<Color>(
-                        Color(0xFF4F46E5),
-                      ),
+                      backgroundColor: const Color(0xFFE5E7EB),
+                      valueColor: AlwaysStoppedAnimation<Color>(color),
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 12),
-
-                const Text(
-                  '0%',
-                  style: TextStyle(
+                Text(
+                  '$percentage%',
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF6B7280),
@@ -309,25 +254,27 @@ class LearnScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 8),
-
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Belum dipelajari',
-                  style: TextStyle(
+                  material.completedSubmaterials == 0
+                      ? 'Belum dipelajari'
+                      : '${material.completedSubmaterials}/${material.totalSubmaterials} submateri dibuka',
+                  style: const TextStyle(
                     fontSize: 11,
                     color: Color(0xFF9CA3AF),
                   ),
                 ),
                 Text(
-                  'Mulai belajar',
+                  material.completedSubmaterials == 0
+                      ? 'Mulai belajar'
+                      : 'Lanjutkan',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF4F46E5),
+                    color: color,
                   ),
                 ),
               ],
@@ -338,10 +285,6 @@ class LearnScreen extends StatelessWidget {
     );
   }
 
-  // ============================================================
-  // LEARNING TIP
-  // ============================================================
-
   Widget _buildLearningTip() {
     return Container(
       width: double.infinity,
@@ -349,22 +292,18 @@ class LearnScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFEEF2FF),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: const Color(0xFFE0E7FF),
-        ),
+        border: Border.all(color: const Color(0xFFE0E7FF)),
       ),
-      child: Row(
+      child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.lightbulb_outline_rounded,
             color: Color(0xFF4F46E5),
             size: 25,
           ),
-
-          const SizedBox(width: 12),
-
-          const Expanded(
+          SizedBox(width: 12),
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -376,11 +315,9 @@ class LearnScreen extends StatelessWidget {
                     color: Color(0xFF1F2937),
                   ),
                 ),
-
                 SizedBox(height: 5),
-
                 Text(
-                  'Pelajari setiap materi secara berurutan agar lebih mudah memahami hubungan antara hardware, software, dan sistem operasi.',
+                  'Buka submateri secara bertahap. Progress Learn ikut menjadi bukti aktivitas pada pemetaan kompetensi.',
                   style: TextStyle(
                     fontSize: 12,
                     height: 1.5,
@@ -396,30 +333,34 @@ class LearnScreen extends StatelessWidget {
   }
 }
 
-// ================================================================
-// MATERIAL DETAIL SCREEN
-// ================================================================
+class MaterialDetailScreen extends StatefulWidget {
+  final LearningMaterial material;
 
-class MaterialDetailScreen extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final List<String> topics;
-  final String description;
+  const MaterialDetailScreen({super.key, required this.material});
 
-  const MaterialDetailScreen({
-    super.key,
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-    required this.color,
-    required this.topics,
-    required this.description,
-  });
+  @override
+  State<MaterialDetailScreen> createState() => _MaterialDetailScreenState();
+}
+
+class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
+  late Future<List<Submaterial>> _submaterialsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSubmaterials();
+  }
+
+  void _loadSubmaterials() {
+    _submaterialsFuture = TechStepDatabase.instance.getSubmaterials(
+      widget.material.id,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final color = _colorFromHex(widget.material.colorHex);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
       appBar: AppBar(
@@ -427,7 +368,7 @@ class MaterialDetailScreen extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
-          title,
+          widget.material.title,
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -436,74 +377,60 @@ class MaterialDetailScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeaderCard(),
+        child: FutureBuilder<List<Submaterial>>(
+          future: _submaterialsFuture,
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-              const SizedBox(height: 24),
+            final submaterials = snapshot.data!;
 
-              const Text(
-                'Tentang Materi',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(
-                    color: const Color(0xFFE5E7EB),
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeaderCard(color),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Tentang Materi',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1F2937),
+                    ),
                   ),
-                ),
-                child: Text(
-                  description,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    height: 1.7,
-                    color: Color(0xFF4B5563),
+                  const SizedBox(height: 10),
+                  _buildDescriptionCard(),
+                  const SizedBox(height: 24),
+                  const Text(
+                    'Submateri',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1F2937),
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 12),
+                  ...List.generate(
+                    submaterials.length,
+                    (index) => _buildSubmaterialItem(
+                      submaterial: submaterials[index],
+                      number: index + 1,
+                      color: color,
+                    ),
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 24),
-
-              const Text(
-                'Pokok Bahasan',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              ...List.generate(
-                topics.length,
-                (index) => _buildTopicItem(
-                  number: index + 1,
-                  topic: topics[index],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildHeaderCard() {
+  Widget _buildHeaderCard(Color color) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -517,35 +444,31 @@ class MaterialDetailScreen extends StatelessWidget {
             width: 58,
             height: 58,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha:0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
-              icon,
+              _iconFromKey(widget.material.iconKey),
               color: Colors.white,
               size: 30,
             ),
           ),
-
           const SizedBox(width: 14),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  title,
+                  widget.material.title,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 21,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-
                 const SizedBox(height: 5),
-
                 Text(
-                  subtitle,
+                  widget.material.subtitle,
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
@@ -560,60 +483,379 @@ class MaterialDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTopicItem({
-    required int number,
-    required String topic,
-  }) {
+  Widget _buildDescriptionCard() {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Text(
+        widget.material.description,
+        style: const TextStyle(
+          fontSize: 13,
+          height: 1.7,
+          color: Color(0xFF4B5563),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubmaterialItem({
+    required Submaterial submaterial,
+    required int number,
+    required Color color,
+  }) {
+    return InkWell(
+      onTap: () async {
+        await LearningAnalyticsService.instance.recordSubmaterialOpened(
+          submaterial,
+        );
+
+        if (!mounted) {
+          return;
+        }
+
+        await Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SubmaterialScreen(
+              material: widget.material,
+              submaterial: submaterial,
+            ),
+          ),
+        );
+
+        if (mounted) {
+          setState(_loadSubmaterials);
+        }
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(15),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: submaterial.completed ? color : const Color(0xFFE5E7EB),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 34,
+              height: 34,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: 0.10),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: submaterial.completed
+                  ? Icon(Icons.check_rounded, color: color, size: 18)
+                  : Text(
+                      '$number',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    submaterial.title,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF374151),
+                    ),
+                  ),
+                  if (submaterial.summary.isNotEmpty) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      submaterial.summary,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 11,
+                        height: 1.4,
+                        color: Color(0xFF6B7280),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SubmaterialScreen extends StatelessWidget {
+  final LearningMaterial material;
+  final Submaterial submaterial;
+
+  const SubmaterialScreen({
+    super.key,
+    required this.material,
+    required this.submaterial,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = _colorFromHex(material.colorHex);
+
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F7FB),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        title: Text(
+          material.title,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF111827),
+          ),
+        ),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(22),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      material.title,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 7),
+                    Text(
+                      submaterial.title,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        height: 1.25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              ...submaterial.blocks.map(
+                (block) => Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: _buildContentBlock(block, color),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildContentBlock(ContentBlock block, Color color) {
+    switch (block.type) {
+      case 'heading':
+        return Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 2),
+          child: Text(
+            block.text,
+            style: const TextStyle(
+              fontSize: 17,
+              height: 1.35,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF1F2937),
+            ),
+          ),
+        );
+      case 'bullet':
+        return _buildTextCard(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 7,
+                height: 7,
+                margin: const EdgeInsets.only(top: 7),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  block.text,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    height: 1.65,
+                    color: Color(0xFF4B5563),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      case 'image':
+        return _buildImageCard(block);
+      case 'table':
+        return _buildTableCard(block);
+      default:
+        return _buildTextCard(
+          child: Text(
+            block.text,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.7,
+              color: Color(0xFF4B5563),
+            ),
+          ),
+        );
+    }
+  }
+
+  Widget _buildTextCard({required Widget child}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0xFFE5E7EB),
-        ),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
       ),
-      child: Row(
+      child: child,
+    );
+  }
+
+  Widget _buildImageCard(ContentBlock block) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 34,
-            height: 34,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha:0.10),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Text(
-              '$number',
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.asset(
+              block.asset,
+              width: double.infinity,
+              fit: BoxFit.contain,
             ),
           ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Text(
-              topic,
+          if (block.caption.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text(
+              block.caption,
               style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF374151),
+                fontSize: 11,
+                height: 1.4,
+                color: Color(0xFF6B7280),
               ),
             ),
-          ),
-
-          const Icon(
-            Icons.chevron_right_rounded,
-            color: Color(0xFF9CA3AF),
-          ),
+          ],
         ],
       ),
     );
   }
+
+  Widget _buildTableCard(ContentBlock block) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: const Color(0xFFE5E7EB)),
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          headingRowColor: const WidgetStatePropertyAll(Color(0xFFEEF2FF)),
+          columnSpacing: 22,
+          horizontalMargin: 12,
+          columns: block.headers.map((header) {
+            return DataColumn(
+              label: Text(
+                header,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1F2937),
+                ),
+              ),
+            );
+          }).toList(),
+          rows: block.rows.map((row) {
+            return DataRow(
+              cells: row.map((cell) {
+                return DataCell(
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 220),
+                    child: Text(
+                      cell,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        height: 1.35,
+                        color: Color(0xFF4B5563),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+}
+
+IconData _iconFromKey(String key) {
+  switch (key) {
+    case 'memory':
+      return Icons.memory_rounded;
+    case 'apps':
+      return Icons.apps_rounded;
+    case 'desktop':
+      return Icons.desktop_windows_rounded;
+    default:
+      return Icons.menu_book_rounded;
+  }
+}
+
+Color _colorFromHex(String hex) {
+  final normalized = hex.replaceFirst('#', '');
+
+  return Color(int.parse('FF$normalized', radix: 16));
 }
