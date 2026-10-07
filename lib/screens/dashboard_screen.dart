@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 import '../services/learning_analytics_service.dart';
-
 class DashboardScreen extends StatelessWidget {
   final VoidCallback? onLearn;
   final VoidCallback? onQuiz;
   final VoidCallback? onChallenge;
-
   const DashboardScreen({
     super.key,
     this.onLearn,
     this.onQuiz,
     this.onChallenge,
   });
-
   @override
   Widget build(BuildContext context) {
     final analytics = LearningAnalyticsService.instance;
-
     return AnimatedBuilder(
       animation: analytics,
       builder: (context, child) {
@@ -36,23 +32,16 @@ class DashboardScreen extends StatelessWidget {
                   // ==================================================
                   // HEADER
                   // ==================================================
-
                   _buildHeader(),
-
                   const SizedBox(height: 24),
-
                   // ==================================================
                   // WELCOME
                   // ==================================================
-
                   _buildWelcomeCard(),
-
                   const SizedBox(height: 24),
-
                   // ==================================================
                   // PROGRESS BELAJAR
                   // ==================================================
-
                   const Text(
                     'Progress Belajar',
                     style: TextStyle(
@@ -61,17 +50,12 @@ class DashboardScreen extends StatelessWidget {
                       color: Color(0xFF1F2937),
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   _buildProgressCard(analytics),
-
                   const SizedBox(height: 24),
-
                   // ==================================================
                   // MATERI PEMBELAJARAN
                   // ==================================================
-
                   const Text(
                     'Materi Pembelajaran',
                     style: TextStyle(
@@ -80,9 +64,7 @@ class DashboardScreen extends StatelessWidget {
                       color: Color(0xFF1F2937),
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   _buildMaterialCard(
                     title: 'Hardware',
                     subtitle:
@@ -92,9 +74,7 @@ class DashboardScreen extends StatelessWidget {
                         analytics.hardwareMastery / 100,
                     onTap: onLearn,
                   ),
-
                   const SizedBox(height: 12),
-
                   _buildMaterialCard(
                     title: 'Software',
                     subtitle:
@@ -104,9 +84,7 @@ class DashboardScreen extends StatelessWidget {
                         analytics.softwareMastery / 100,
                     onTap: onLearn,
                   ),
-
                   const SizedBox(height: 12),
-
                   _buildMaterialCard(
                     title: 'Sistem Operasi',
                     subtitle:
@@ -117,13 +95,10 @@ class DashboardScreen extends StatelessWidget {
                         analytics.operatingSystemMastery / 100,
                     onTap: onLearn,
                   ),
-
                   const SizedBox(height: 24),
-
                   // ==================================================
                   // MULAI BELAJAR
                   // ==================================================
-
                   const Text(
                     'Mulai Belajar',
                     style: TextStyle(
@@ -132,9 +107,7 @@ class DashboardScreen extends StatelessWidget {
                       color: Color(0xFF1F2937),
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   Row(
                     children: [
                       Expanded(
@@ -145,9 +118,7 @@ class DashboardScreen extends StatelessWidget {
                           onTap: onLearn,
                         ),
                       ),
-
                       const SizedBox(width: 12),
-
                       Expanded(
                         child: _buildActionCard(
                           title: 'Quiz',
@@ -158,13 +129,10 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 24),
-
                   // ==================================================
                   // RIWAYAT AKTIVITAS
                   // ==================================================
-
                   const Text(
                     'Riwayat Aktivitas',
                     style: TextStyle(
@@ -173,17 +141,12 @@ class DashboardScreen extends StatelessWidget {
                       color: Color(0xFF1F2937),
                     ),
                   ),
-
                   const SizedBox(height: 12),
-
                   _buildActivityHistory(analytics),
-
                   const SizedBox(height: 24),
-
                   // ==================================================
                   // COMPUTER CHALLENGE
                   // ==================================================
-
                   _buildChallengeCard(
                     analytics,
                   ),
@@ -195,11 +158,9 @@ class DashboardScreen extends StatelessWidget {
       },
     );
   }
-
   // ============================================================
   // HEADER
   // ============================================================
-
   Widget _buildHeader() {
     return Row(
       children: [
@@ -216,9 +177,7 @@ class DashboardScreen extends StatelessWidget {
             size: 26,
           ),
         ),
-
         const SizedBox(width: 12),
-
         const Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,9 +190,7 @@ class DashboardScreen extends StatelessWidget {
                   color: Color(0xFF111827),
                 ),
               ),
-
               SizedBox(height: 2),
-
               Text(
                 'Belajar Informatika dengan langkahmu',
                 style: TextStyle(
@@ -244,7 +201,6 @@ class DashboardScreen extends StatelessWidget {
             ],
           ),
         ),
-
         Container(
           width: 42,
           height: 42,
@@ -263,11 +219,9 @@ class DashboardScreen extends StatelessWidget {
       ],
     );
   }
-
   // ============================================================
   // WELCOME CARD
   // ============================================================
-
   Widget _buildWelcomeCard() {
     return Container(
       width: double.infinity,
@@ -295,9 +249,7 @@ class DashboardScreen extends StatelessWidget {
               fontWeight: FontWeight.w500,
             ),
           ),
-
           const SizedBox(height: 8),
-
           const Text(
             'Siap melanjutkan\nlangkah belajarmu?',
             style: TextStyle(
@@ -307,9 +259,7 @@ class DashboardScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-
           const SizedBox(height: 12),
-
           const Text(
             'Pelajari materi, kerjakan quiz, dan tantang kemampuanmu.',
             style: TextStyle(
@@ -318,9 +268,7 @@ class DashboardScreen extends StatelessWidget {
               height: 1.4,
             ),
           ),
-
           const SizedBox(height: 18),
-
           SizedBox(
             height: 42,
             child: ElevatedButton(
@@ -352,16 +300,13 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
   // ============================================================
   // PROGRESS CARD
   // ============================================================
-
   Widget _buildProgressCard(
     LearningAnalyticsService analytics,
   ) {
     final progress = analytics.overallProgress;
-
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
@@ -392,9 +337,7 @@ class DashboardScreen extends StatelessWidget {
                       Color(0xFF4F46E5),
                 ),
               ),
-
               const SizedBox(width: 12),
-
               const Expanded(
                 child: Column(
                   crossAxisAlignment:
@@ -408,9 +351,7 @@ class DashboardScreen extends StatelessWidget {
                             FontWeight.bold,
                       ),
                     ),
-
                     SizedBox(height: 4),
-
                     Text(
                       'Perkembangan pembelajaranmu',
                       style: TextStyle(
@@ -422,7 +363,6 @@ class DashboardScreen extends StatelessWidget {
                   ],
                 ),
               ),
-
               Text(
                 '$progress%',
                 style: const TextStyle(
@@ -435,9 +375,7 @@ class DashboardScreen extends StatelessWidget {
               ),
             ],
           ),
-
           const SizedBox(height: 16),
-
           ClipRRect(
             borderRadius:
                 BorderRadius.circular(10),
@@ -454,34 +392,34 @@ class DashboardScreen extends StatelessWidget {
               ),
             ),
           ),
-
           const SizedBox(height: 12),
-
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                analytics.quizCompleted
-                    ? 'Quiz sudah dikerjakan'
-                    : '3 materi tersedia',
-                style:
-                    const TextStyle(
-                  fontSize: 12,
-                  color:
-                      Color(0xFF6B7280),
+              Expanded(
+                child: Text(
+                  analytics.quizCompleted
+                      ? 'Quiz sudah dikerjakan'
+                      : '3 materi tersedia',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF6B7280),
+                  ),
                 ),
               ),
-
-              Text(
-                analytics.learningStatus,
-                style:
-                    const TextStyle(
-                  fontSize: 12,
-                  fontWeight:
-                      FontWeight.w600,
-                  color:
-                      Color(0xFF6B7280),
+              const SizedBox(width: 12),
+              Flexible(
+                child: Text(
+                  analytics.learningStatus,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.right,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF6B7280),
+                  ),
                 ),
               ),
             ],
@@ -490,11 +428,9 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
   // ============================================================
   // MATERIAL CARD
   // ============================================================
-
   Widget _buildMaterialCard({
     required String title,
     required String subtitle,
@@ -504,7 +440,6 @@ class DashboardScreen extends StatelessWidget {
   }) {
     final percentage =
         (progress * 100).round();
-
     return InkWell(
       onTap: onTap,
       borderRadius:
@@ -543,9 +478,7 @@ class DashboardScreen extends StatelessWidget {
                 size: 26,
               ),
             ),
-
             const SizedBox(width: 14),
-
             Expanded(
               child: Column(
                 crossAxisAlignment:
@@ -562,9 +495,7 @@ class DashboardScreen extends StatelessWidget {
                           Color(0xFF1F2937),
                     ),
                   ),
-
                   const SizedBox(height: 3),
-
                   Text(
                     subtitle,
                     style:
@@ -574,9 +505,7 @@ class DashboardScreen extends StatelessWidget {
                           Color(0xFF6B7280),
                     ),
                   ),
-
                   const SizedBox(height: 9),
-
                   ClipRRect(
                     borderRadius:
                         BorderRadius.circular(
@@ -603,9 +532,7 @@ class DashboardScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(width: 12),
-
             Text(
               '$percentage%',
               style:
@@ -622,11 +549,9 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
   // ============================================================
   // ACTION CARD
   // ============================================================
-
   Widget _buildActionCard({
     required String title,
     required String subtitle,
@@ -671,9 +596,7 @@ class DashboardScreen extends StatelessWidget {
                     const Color(0xFF4F46E5),
               ),
             ),
-
             const SizedBox(height: 14),
-
             Text(
               title,
               style:
@@ -683,9 +606,7 @@ class DashboardScreen extends StatelessWidget {
                     FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 3),
-
             Text(
               subtitle,
               style:
@@ -700,11 +621,9 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
   // ============================================================
   // RIWAYAT AKTIVITAS
   // ============================================================
-
   Widget _buildActivityHistory(
     LearningAnalyticsService analytics,
   ) {
@@ -742,9 +661,7 @@ class DashboardScreen extends StatelessWidget {
                     Color(0xFF4F46E5),
               ),
             ),
-
             const SizedBox(width: 14),
-
             const Expanded(
               child: Column(
                 crossAxisAlignment:
@@ -761,9 +678,7 @@ class DashboardScreen extends StatelessWidget {
                           Color(0xFF1F2937),
                     ),
                   ),
-
                   SizedBox(height: 4),
-
                   Text(
                     'Mulai belajar untuk melihat riwayat aktivitasmu.',
                     style:
@@ -781,10 +696,8 @@ class DashboardScreen extends StatelessWidget {
         ),
       );
     }
-
     final activities =
         analytics.activities.take(5).toList();
-
     return Container(
       width: double.infinity,
       padding:
@@ -805,7 +718,6 @@ class DashboardScreen extends StatelessWidget {
             (index) {
               final activity =
                   activities[index];
-
               return Padding(
                 padding:
                     EdgeInsets.only(
@@ -827,7 +739,6 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildActivityItem(
     LearningActivity activity,
   ) {
@@ -859,9 +770,7 @@ class DashboardScreen extends StatelessWidget {
             size: 20,
           ),
         ),
-
         const SizedBox(width: 12),
-
         Expanded(
           child: Column(
             crossAxisAlignment:
@@ -878,9 +787,7 @@ class DashboardScreen extends StatelessWidget {
                       Color(0xFF1F2937),
                 ),
               ),
-
               const SizedBox(height: 3),
-
               Text(
                 activity.description,
                 style:
@@ -890,9 +797,7 @@ class DashboardScreen extends StatelessWidget {
                       Color(0xFF6B7280),
                 ),
               ),
-
               const SizedBox(height: 3),
-
               Text(
                 _formatActivityTime(
                   activity.time,
@@ -910,23 +815,18 @@ class DashboardScreen extends StatelessWidget {
       ],
     );
   }
-
   String _formatActivityTime(
     DateTime time,
   ) {
     final hour =
         time.hour.toString().padLeft(2, '0');
-
     final minute =
         time.minute.toString().padLeft(2, '0');
-
     return '${time.day}/${time.month}/${time.year} • $hour:$minute';
   }
-
   // ============================================================
   // COMPUTER CHALLENGE
   // ============================================================
-
   Widget _buildChallengeCard(
     LearningAnalyticsService analytics,
   ) {
@@ -934,7 +834,6 @@ class DashboardScreen extends StatelessWidget {
         analytics.completedChallengeLevels /
             LearningAnalyticsService
                 .totalChallengeLevels;
-
     return InkWell(
       onTap: onChallenge,
       borderRadius:
@@ -972,9 +871,7 @@ class DashboardScreen extends StatelessWidget {
                     size: 27,
                   ),
                 ),
-
                 const SizedBox(width: 14),
-
                 const Expanded(
                   child: Column(
                     crossAxisAlignment:
@@ -992,9 +889,7 @@ class DashboardScreen extends StatelessWidget {
                               FontWeight.bold,
                         ),
                       ),
-
                       SizedBox(height: 4),
-
                       Text(
                         'Uji kemampuanmu melalui 5 level tantangan.',
                         style:
@@ -1008,7 +903,6 @@ class DashboardScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-
                 const Icon(
                   Icons
                       .arrow_forward_ios_rounded,
@@ -1018,9 +912,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 16),
-
             Row(
               children: [
                 Expanded(
@@ -1047,9 +939,7 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 const SizedBox(width: 12),
-
                 Text(
                   '${analytics.completedChallengeLevels}/5',
                   style:
