@@ -6,7 +6,8 @@ import 'login_screen.dart';
 import 'register_screen.dart';
 
 class AuthGate extends StatefulWidget {
-  final Widget Function(Map<String, dynamic> user) authenticatedHomeBuilder;
+  final Widget Function(Map<String, dynamic> user, VoidCallback onLogout)
+  authenticatedHomeBuilder;
 
   const AuthGate({super.key, required this.authenticatedHomeBuilder});
 
@@ -83,10 +84,18 @@ class _AuthGateState extends State<AuthGate> {
     });
   }
 
+  void _handleLogout() {
+    setState(() {
+      _isLoggedIn = false;
+      _showRegister = false;
+      _currentUser = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoggedIn && _currentUser != null) {
-      return widget.authenticatedHomeBuilder(_currentUser!);
+      return widget.authenticatedHomeBuilder(_currentUser!, _handleLogout);
     }
 
     if (_showRegister) {

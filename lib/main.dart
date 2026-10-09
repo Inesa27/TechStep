@@ -26,14 +26,12 @@ class TechStepApp extends StatelessWidget {
       title: 'TechStep',
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4F46E5),
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF4F46E5)),
         scaffoldBackgroundColor: const Color(0xFFF6F7FB),
       ),
       home: AuthGate(
-        authenticatedHomeBuilder: (user) {
-          return TechStepHome(user: user);
+        authenticatedHomeBuilder: (user, onLogout) {
+          return TechStepHome(user: user, onLogout: onLogout);
         },
       ),
     );
@@ -42,11 +40,9 @@ class TechStepApp extends StatelessWidget {
 
 class TechStepHome extends StatefulWidget {
   final Map<String, dynamic> user;
+  final VoidCallback onLogout;
 
-  const TechStepHome({
-    super.key,
-    required this.user,
-  });
+  const TechStepHome({super.key, required this.user, required this.onLogout});
 
   @override
   State<TechStepHome> createState() => _TechStepHomeState();
@@ -54,7 +50,6 @@ class TechStepHome extends StatefulWidget {
 
 class _TechStepHomeState extends State<TechStepHome> {
   int currentIndex = 0;
-
   late final List<Widget> pages;
 
   @override
@@ -79,16 +74,10 @@ class _TechStepHomeState extends State<TechStepHome> {
           });
         },
       ),
-
       const LearnScreen(),
-
       const QuizScreen(),
-
       const ChallengeScreen(),
-
-      ProfileScreen(
-        user: widget.user,
-      ),
+      ProfileScreen(user: widget.user, onLogout: widget.onLogout),
     ];
   }
 
@@ -96,12 +85,8 @@ class _TechStepHomeState extends State<TechStepHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: IndexedStack(
-          index: currentIndex,
-          children: pages,
-        ),
+        child: IndexedStack(index: currentIndex, children: pages),
       ),
-
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {
@@ -115,25 +100,21 @@ class _TechStepHomeState extends State<TechStepHome> {
             selectedIcon: Icon(Icons.home),
             label: 'Home',
           ),
-
           NavigationDestination(
             icon: Icon(Icons.menu_book_outlined),
             selectedIcon: Icon(Icons.menu_book),
             label: 'Learn',
           ),
-
           NavigationDestination(
             icon: Icon(Icons.quiz_outlined),
             selectedIcon: Icon(Icons.quiz),
             label: 'Quiz',
           ),
-
           NavigationDestination(
             icon: Icon(Icons.sports_esports_outlined),
             selectedIcon: Icon(Icons.sports_esports),
             label: 'Challenge',
           ),
-
           NavigationDestination(
             icon: Icon(Icons.person_outline),
             selectedIcon: Icon(Icons.person),
