@@ -6,13 +6,9 @@ import 'login_screen.dart';
 import 'register_screen.dart';
 
 class AuthGate extends StatefulWidget {
-  final Widget Function(Map<String, dynamic> user)
-      authenticatedHomeBuilder;
+  final Widget Function(Map<String, dynamic> user) authenticatedHomeBuilder;
 
-  const AuthGate({
-    super.key,
-    required this.authenticatedHomeBuilder,
-  });
+  const AuthGate({super.key, required this.authenticatedHomeBuilder});
 
   @override
   State<AuthGate> createState() => _AuthGateState();
@@ -25,10 +21,7 @@ class _AuthGateState extends State<AuthGate> {
   bool _showRegister = false;
   Map<String, dynamic>? _currentUser;
 
-  Future<bool> _handleLogin(
-    String username,
-    String password,
-  ) async {
+  Future<bool> _handleLogin(String username, String password) async {
     final success = await _authDatabase.loginUser(
       nis: username,
       password: password,
@@ -38,13 +31,24 @@ class _AuthGateState extends State<AuthGate> {
       return false;
     }
 
-    _currentUser = await _authDatabase.getUserByNis(username);
-
-    if (_currentUser != null) {
-      await LearningAnalyticsService.instance.refresh();
+    final user = await _authDatabase.getUserByNis(username);
+    if (user == null) {
+      return false;
     }
 
-    return _currentUser != null;
+    final userId = int.tryParse(user['id'].toString());
+    if (userId == null || userId <= 0) {
+      return false;
+    }
+
+    await LearningAnalyticsService.instance.setCurrentStudent(
+      id: userId,
+      name: user['name']?.toString() ?? 'Siswa TechStep',
+      className: user['class_name']?.toString() ?? 'X TJKT',
+    );
+
+    _currentUser = user;
+    return true;
   }
 
   Future<bool> _handleRegister({
@@ -82,9 +86,7 @@ class _AuthGateState extends State<AuthGate> {
   @override
   Widget build(BuildContext context) {
     if (_isLoggedIn && _currentUser != null) {
-      return widget.authenticatedHomeBuilder(
-        _currentUser!,
-      );
+      return widget.authenticatedHomeBuilder(_currentUser!);
     }
 
     if (_showRegister) {
@@ -96,10 +98,7 @@ class _AuthGateState extends State<AuthGate> {
 
     return LoginScreen(
       onLogin: (username, password) async {
-        final success = await _handleLogin(
-          username,
-          password,
-        );
+        final success = await _handleLogin(username, password);
 
         if (success) {
           _loginSuccess();

@@ -33,6 +33,7 @@ class LearningAnalyticsService extends ChangeNotifier {
   LearningAnalyticsService._internal();
 
   static const int totalChallengeLevels = 5;
+  static const int totalQuizMaterials = 3;
 
   final TechStepDatabase _database = TechStepDatabase.instance;
 
@@ -43,6 +44,8 @@ class LearningAnalyticsService extends ChangeNotifier {
   int hardwareQuizScore = 0;
   int softwareQuizScore = 0;
   int operatingSystemQuizScore = 0;
+
+  Set<String> completedQuizMaterialIds = <String>{};
 
   int hardwareMastery = 0;
   int softwareMastery = 0;
@@ -83,14 +86,40 @@ class LearningAnalyticsService extends ChangeNotifier {
     initialized = true;
   }
 
+  /// Switches analytics to the currently authenticated account and reloads
+  /// every progress/value/history field from that student's own data.
+  Future<void> setCurrentStudent({
+    required int id,
+    required String name,
+    required String className,
+  }) async {
+    await _database.setCurrentStudent(id: id, name: name, className: className);
+    await refresh();
+  }
+
   Future<void> refresh() async {
-    quizCompleted = await _database.hasQuizResult();
-    quizScore = await _database.latestQuizScore();
+    completedQuizMaterialIds = await _database.completedQuizMaterialIds();
+    quizCompleted = completedQuizMaterialIds.isNotEmpty;
 
     final quizScores = await _database.latestQuizScoresByMaterial();
     hardwareQuizScore = quizScores['hardware'] ?? 0;
     softwareQuizScore = quizScores['software'] ?? 0;
     operatingSystemQuizScore = quizScores['sistem_operasi'] ?? 0;
+
+    final recordedScores = <int>[];
+    if (completedQuizMaterialIds.contains('hardware')) {
+      recordedScores.add(hardwareQuizScore);
+    }
+    if (completedQuizMaterialIds.contains('software')) {
+      recordedScores.add(softwareQuizScore);
+    }
+    if (completedQuizMaterialIds.contains('sistem_operasi')) {
+      recordedScores.add(operatingSystemQuizScore);
+    }
+    quizScore = recordedScores.isEmpty
+        ? 0
+        : (recordedScores.reduce((a, b) => a + b) / recordedScores.length)
+              .round();
 
     final materialScores = await _database.materialMasteryScores();
     hardwareMastery = materialScores['hardware'] ?? 0;
@@ -155,9 +184,16 @@ class LearningAnalyticsService extends ChangeNotifier {
     return ((completedMaterials / totalMaterials) * 100).round();
   }
 
+  double get quizProgress {
+    return (completedQuizMaterialIds.length / totalQuizMaterials * 100)
+        .clamp(0, 100)
+        .toDouble();
+  }
+
   int get overallProgress {
     final learnContribution = learningProgress * 0.30;
-    final quizContribution = quizCompleted ? 30.0 : 0.0;
+    final quizContribution =
+        (completedQuizMaterialIds.length / totalQuizMaterials) * 30.0;
     final challengeContribution = challengeProgress * 0.40;
 
     return (learnContribution + quizContribution + challengeContribution)

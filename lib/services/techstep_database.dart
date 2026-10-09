@@ -13,7 +13,10 @@ class TechStepDatabase {
 
   TechStepDatabase._internal();
 
-  static const int studentId = 1;
+  // Default is used only before the first authenticated user logs in.
+  // AuthGate switches this to the ID of the currently authenticated account.
+  int _studentId = 1;
+  int get studentId => _studentId;
 
   Database? _database;
   Map<String, dynamic>? _webSeed;
@@ -28,9 +31,64 @@ class TechStepDatabase {
   final List<Map<String, Object?>> _webRecommendations = [];
   final List<Map<String, Object?>> _webReports = [];
 
-  static const String _webStateKey = 'techstep_learning_web_state_v1';
-  final SharedPreferencesAsync _webPreferences =
-      SharedPreferencesAsync();
+  // Persist Learning Analytics separately for each authenticated Web user.
+  // Version 1 is retained only to migrate the original single-user data to
+  // account ID 1. Other users must never inherit that legacy state.
+  static const String _legacyWebStateKey = 'techstep_learning_web_state_v1';
+  static const String _webStateKeyPrefix =
+      'techstep_learning_web_state_v2_student_';
+  String get _webStateKey => '$_webStateKeyPrefix$_studentId';
+  int? _webLoadedStudentId;
+  final SharedPreferencesAsync _webPreferences = SharedPreferencesAsync();
+
+  /// Activates the learning-data partition for the logged-in account.
+  /// The account's user ID is used as student_id in the learning database.
+  Future<void> setCurrentStudent({
+    required int id,
+    required String name,
+    required String className,
+  }) async {
+    if (id <= 0) {
+      throw ArgumentError.value(id, 'id', 'Student ID must be positive.');
+    }
+
+    if (kIsWeb) {
+      // Ensure the previous user's state is loaded and safely saved before
+      // switching to a different account namespace.
+      await _initializeWebStore();
+      await _persistWebState();
+
+      if (_studentId != id) {
+        _studentId = id;
+        _clearWebUserState();
+        _webLoadedStudentId = null;
+        await _initializeWebStore();
+      }
+
+      _refreshWebCompetencyMapping();
+      return;
+    }
+
+    // Initialize while the old ID is still active. This avoids seeding the
+    // database with an unauthenticated ID and preserves existing rows.
+    await initialize();
+    _studentId = id;
+
+    final db = await database;
+    await db.insert('students', {
+      'id': id,
+      'name': name,
+      'class_name': className,
+    }, conflictAlgorithm: ConflictAlgorithm.ignore);
+    await db.update(
+      'students',
+      {'name': name, 'class_name': className},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    await refreshCompetencyMapping();
+  }
 
   Future<Database> get database async {
     if (kIsWeb) {
@@ -607,7 +665,6 @@ class TechStepDatabase {
         description: submaterial.title,
       );
       await refreshCompetencyMapping();
-      await _persistWebState();
       return;
     }
 
@@ -803,7 +860,6 @@ class TechStepDatabase {
         description: 'Nilai quiz: $scorePercent',
       );
       await refreshCompetencyMapping();
-      await _persistWebState();
       return resultId;
     }
 
@@ -896,7 +952,6 @@ class TechStepDatabase {
         description: 'Level $levelId selesai dengan nilai $scorePercent',
       );
       await refreshCompetencyMapping();
-      await _persistWebState();
       return resultId;
     }
 
@@ -957,12 +1012,20 @@ class TechStepDatabase {
       'competencies',
       orderBy: 'material_id ASC, order_index ASC',
     );
-    final latestQuizId = Sqflite.firstIntValue(
-      await db.rawQuery(
-        'SELECT MAX(id) FROM quiz_results WHERE student_id = ?',
-        [studentId],
-      ),
+    final latestQuizRows = await db.rawQuery(
+      '''
+      SELECT qa.material_id, MAX(qr.id) AS result_id
+      FROM quiz_answers qa
+      INNER JOIN quiz_results qr ON qr.id = qa.result_id
+      WHERE qr.student_id = ?
+      GROUP BY qa.material_id
+      ''',
+      [studentId],
     );
+    final latestQuizIdsByMaterial = <String, int>{
+      for (final row in latestQuizRows)
+        row['material_id'].toString(): _asInt(row['result_id']),
+    };
     final now = DateTime.now().toIso8601String();
 
     await db.transaction((txn) async {
@@ -981,6 +1044,7 @@ class TechStepDatabase {
         final competencyId = competency['id'] as String;
         final materialId = competency['material_id'] as String;
         final title = competency['title'] as String;
+        final latestQuizId = latestQuizIdsByMaterial[materialId];
 
         final quizScore = latestQuizId == null
             ? null
@@ -1202,62 +1266,65 @@ class TechStepDatabase {
     );
   }
 
+  /// Returns the latest score for each material independently.
+  /// Each material can now be completed in its own 10-question quiz.
   Future<Map<String, int>> latestQuizScoresByMaterial() async {
     if (kIsWeb) {
       await _initializeWebStore();
-      if (_webQuizResults.isEmpty) {
-        return const {};
-      }
+      final latestResultByMaterial = <String, int>{};
+      final validResultIds = _webQuizResults
+          .where((result) => _asInt(result['student_id']) == studentId)
+          .map((result) => _asInt(result['id']))
+          .toSet();
 
-      final latestQuizId = _asInt(_webQuizResults.last['id']);
-      final rows = _webQuizAnswers.where((answer) {
-        return _asInt(answer['result_id']) == latestQuizId;
-      });
-      final totals = <String, int>{};
-      final correct = <String, int>{};
-
-      for (final row in rows) {
-        final materialId = row['material_id'].toString();
-        totals[materialId] = (totals[materialId] ?? 0) + 1;
-        if (row['is_correct'] == 1) {
-          correct[materialId] = (correct[materialId] ?? 0) + 1;
+      for (final answer in _webQuizAnswers) {
+        final resultId = _asInt(answer['result_id']);
+        if (!validResultIds.contains(resultId)) {
+          continue;
+        }
+        final materialId = answer['material_id'].toString();
+        final previousId = latestResultByMaterial[materialId] ?? 0;
+        if (resultId > previousId) {
+          latestResultByMaterial[materialId] = resultId;
         }
       }
 
-      return {
-        for (final entry in totals.entries)
-          entry.key: _percentage(correct[entry.key] ?? 0, entry.value),
-      };
+      final scores = <String, int>{};
+      for (final entry in latestResultByMaterial.entries) {
+        final rows = _webQuizAnswers.where((answer) {
+          return _asInt(answer['result_id']) == entry.value &&
+              answer['material_id'].toString() == entry.key;
+        }).toList();
+        final correct = rows.where((row) => row['is_correct'] == 1).length;
+        scores[entry.key] = _percentage(correct, rows.length);
+      }
+      return scores;
     }
 
     final db = await database;
-    final latestQuizId = Sqflite.firstIntValue(
-      await db.rawQuery(
-        'SELECT MAX(id) FROM quiz_results WHERE student_id = ?',
-        [studentId],
-      ),
-    );
-
-    if (latestQuizId == null) {
-      return const {};
-    }
-
     final rows = await db.rawQuery(
       '''
-      SELECT material_id, is_correct
-      FROM quiz_answers
-      WHERE result_id = ?
-    ''',
-      [latestQuizId],
+      SELECT qa.material_id, qa.is_correct
+      FROM quiz_answers qa
+      INNER JOIN (
+        SELECT qa2.material_id, MAX(qr2.id) AS latest_result_id
+        FROM quiz_answers qa2
+        INNER JOIN quiz_results qr2 ON qr2.id = qa2.result_id
+        WHERE qr2.student_id = ?
+        GROUP BY qa2.material_id
+      ) latest
+        ON latest.material_id = qa.material_id
+       AND latest.latest_result_id = qa.result_id
+      ''',
+      [studentId],
     );
 
     final totals = <String, int>{};
     final correct = <String, int>{};
-
     for (final row in rows) {
-      final materialId = row['material_id'] as String;
+      final materialId = row['material_id'].toString();
       totals[materialId] = (totals[materialId] ?? 0) + 1;
-      if (row['is_correct'] == 1) {
+      if (_asInt(row['is_correct']) == 1) {
         correct[materialId] = (correct[materialId] ?? 0) + 1;
       }
     }
@@ -1266,6 +1333,110 @@ class TechStepDatabase {
       for (final entry in totals.entries)
         entry.key: _percentage(correct[entry.key] ?? 0, entry.value),
     };
+  }
+
+  /// Returns quiz attempts grouped by material, newest first.
+  /// Older combined attempts are separated by material in the history view.
+  Future<List<Map<String, Object?>>> getQuizHistory({int limit = 30}) async {
+    if (kIsWeb) {
+      await _initializeWebStore();
+      final rows = <Map<String, Object?>>[];
+      final results = _webQuizResults
+          .where((result) => _asInt(result['student_id']) == studentId)
+          .toList();
+
+      for (final result in results) {
+        final resultId = _asInt(result['id']);
+        final answersByMaterial = <String, List<Map<String, Object?>>>{};
+        for (final answer in _webQuizAnswers) {
+          if (_asInt(answer['result_id']) != resultId) {
+            continue;
+          }
+          final materialId = answer['material_id'].toString();
+          answersByMaterial.putIfAbsent(materialId, () => []);
+          answersByMaterial[materialId]!.add(answer);
+        }
+
+        for (final entry in answersByMaterial.entries) {
+          final material = _webMaterials().firstWhere(
+            (item) => item['id'].toString() == entry.key,
+            orElse: () => const <String, dynamic>{},
+          );
+          final answers = entry.value;
+          final correct = answers.where((row) => row['is_correct'] == 1).length;
+          rows.add({
+            'id': resultId,
+            'material_id': entry.key,
+            'material_title': material['title']?.toString() ?? entry.key,
+            'score_percent': _percentage(correct, answers.length),
+            'total_correct': correct,
+            'total_questions': answers.length,
+            'created_at': result['created_at']?.toString() ?? '',
+          });
+        }
+      }
+
+      rows.sort((a, b) {
+        final dateCompare = (b['created_at']?.toString() ?? '').compareTo(
+          a['created_at']?.toString() ?? '',
+        );
+        if (dateCompare != 0) return dateCompare;
+        return _asInt(b['id']).compareTo(_asInt(a['id']));
+      });
+      return rows.take(limit < 0 ? 0 : limit).toList();
+    }
+
+    final db = await database;
+    return db.rawQuery(
+      '''
+      SELECT
+        qr.id,
+        qa.material_id,
+        m.title AS material_title,
+        COUNT(qa.id) AS total_questions,
+        SUM(CASE WHEN qa.is_correct = 1 THEN 1 ELSE 0 END) AS total_correct,
+        CAST(ROUND(
+          100.0 * SUM(CASE WHEN qa.is_correct = 1 THEN 1 ELSE 0 END)
+          / COUNT(qa.id)
+        ) AS INTEGER) AS score_percent,
+        qr.created_at
+      FROM quiz_results qr
+      INNER JOIN quiz_answers qa ON qa.result_id = qr.id
+      INNER JOIN materials m ON m.id = qa.material_id
+      WHERE qr.student_id = ?
+      GROUP BY qr.id, qa.material_id, m.title
+      ORDER BY qr.created_at DESC, qr.id DESC
+      LIMIT ?
+      ''',
+      [studentId, limit < 0 ? 0 : limit],
+    );
+  }
+
+  /// Materials for which at least one quiz attempt has been saved.
+  Future<Set<String>> completedQuizMaterialIds() async {
+    if (kIsWeb) {
+      await _initializeWebStore();
+      final resultIds = _webQuizResults
+          .where((result) => _asInt(result['student_id']) == studentId)
+          .map((result) => _asInt(result['id']))
+          .toSet();
+      return _webQuizAnswers
+          .where((answer) => resultIds.contains(_asInt(answer['result_id'])))
+          .map((answer) => answer['material_id'].toString())
+          .toSet();
+    }
+
+    final db = await database;
+    final rows = await db.rawQuery(
+      '''
+      SELECT DISTINCT qa.material_id
+      FROM quiz_answers qa
+      INNER JOIN quiz_results qr ON qr.id = qa.result_id
+      WHERE qr.student_id = ?
+      ''',
+      [studentId],
+    );
+    return rows.map((row) => row['material_id'].toString()).toSet();
   }
 
   Future<Map<String, int>> materialMasteryScores() async {
@@ -1429,6 +1600,8 @@ class TechStepDatabase {
         'description': description,
         'created_at': DateTime.now().toIso8601String(),
       });
+      // Results/progress are appended before addActivity is called, so saving
+      // here persists the complete event and its associated learning data.
       await _persistWebState();
       return;
     }
@@ -1466,17 +1639,31 @@ class TechStepDatabase {
   }
 
   Future<void> _initializeWebStore() async {
-    if (_webSeed != null) {
+    if (_webSeed == null) {
+      final seedRaw = await rootBundle.loadString(
+        'assets/data/techstep_seed.json',
+      );
+      _webSeed = jsonDecode(seedRaw) as Map<String, dynamic>;
+    }
+
+    // The seed content is shared; learning results are not. Avoid restoring
+    // another account's state when the active authenticated user changes.
+    if (_webLoadedStudentId == _studentId) {
       return;
     }
 
-    final seedRaw = await rootBundle.loadString(
-      'assets/data/techstep_seed.json',
-    );
-    _webSeed = jsonDecode(seedRaw) as Map<String, dynamic>;
+    _clearWebUserState();
 
-    final savedState =
-        await _webPreferences.getString(_webStateKey);
+    var savedState = await _webPreferences.getString(_webStateKey);
+
+    // Migrate the old single-user Web data to the first registered account
+    // only. Never copy that legacy state into a newly registered account.
+    if ((savedState == null || savedState.isEmpty) && _studentId == 1) {
+      savedState = await _webPreferences.getString(_legacyWebStateKey);
+      if (savedState != null && savedState.isNotEmpty) {
+        await _webPreferences.setString(_webStateKey, savedState);
+      }
+    }
 
     if (savedState != null && savedState.isNotEmpty) {
       try {
@@ -1485,11 +1672,25 @@ class TechStepDatabase {
           _restoreWebState(decoded);
         }
       } catch (_) {
-        // Abaikan state web yang rusak.
+        // Keep the app usable if the saved browser state is malformed.
       }
     }
 
+    _webLoadedStudentId = _studentId;
     _refreshWebCompetencyMapping();
+  }
+
+  void _clearWebUserState() {
+    _webCompletedSubmaterials.clear();
+    _webSubmaterialViewedAt.clear();
+    _webActivities.clear();
+    _webQuizResults.clear();
+    _webQuizAnswers.clear();
+    _webChallengeResults.clear();
+    _webChallengeAnswers.clear();
+    _webCompetencyMapping.clear();
+    _webRecommendations.clear();
+    _webReports.clear();
   }
 
   void _restoreWebState(Map decoded) {
@@ -1512,29 +1713,20 @@ class TechStepDatabase {
     final viewedAt = decoded['submaterial_viewed_at'];
     if (viewedAt is Map) {
       for (final entry in viewedAt.entries) {
-        _webSubmaterialViewedAt[entry.key.toString()] =
-            entry.value.toString();
+        _webSubmaterialViewedAt[entry.key.toString()] = entry.value.toString();
       }
     }
 
-    _webActivities.addAll(
-      _decodeWebMapList(decoded['activities']),
-    );
-    _webQuizResults.addAll(
-      _decodeWebMapList(decoded['quiz_results']),
-    );
-    _webQuizAnswers.addAll(
-      _decodeWebMapList(decoded['quiz_answers']),
-    );
+    _webActivities.addAll(_decodeWebMapList(decoded['activities']));
+    _webQuizResults.addAll(_decodeWebMapList(decoded['quiz_results']));
+    _webQuizAnswers.addAll(_decodeWebMapList(decoded['quiz_answers']));
     _webChallengeResults.addAll(
       _decodeWebMapList(decoded['challenge_results']),
     );
     _webChallengeAnswers.addAll(
       _decodeWebMapList(decoded['challenge_answers']),
     );
-    _webReports.addAll(
-      _decodeWebMapList(decoded['reports']),
-    );
+    _webReports.addAll(_decodeWebMapList(decoded['reports']));
   }
 
   List<Map<String, Object?>> _decodeWebMapList(Object? value) {
@@ -1554,10 +1746,8 @@ class TechStepDatabase {
 
   Future<void> _persistWebState() async {
     final state = <String, Object?>{
-      'completed_submaterials':
-          _webCompletedSubmaterials.toList(),
-      'submaterial_viewed_at':
-          _webSubmaterialViewedAt,
+      'completed_submaterials': _webCompletedSubmaterials.toList(),
+      'submaterial_viewed_at': _webSubmaterialViewedAt,
       'activities': _webActivities,
       'quiz_results': _webQuizResults,
       'quiz_answers': _webQuizAnswers,
@@ -1566,10 +1756,7 @@ class TechStepDatabase {
       'reports': _webReports,
     };
 
-    await _webPreferences.setString(
-      _webStateKey,
-      jsonEncode(state),
-    );
+    await _webPreferences.setString(_webStateKey, jsonEncode(state));
   }
 
   List<Map<String, dynamic>> _webMaterials() {
@@ -1659,25 +1846,39 @@ class TechStepDatabase {
     _webCompetencyMapping.clear();
     _webRecommendations.clear();
 
-    final latestQuizId = _webQuizResults.isEmpty
-        ? null
-        : _asInt(_webQuizResults.last['id']);
+    final latestQuizIdByMaterial = <String, int>{};
+    final validResultIds = _webQuizResults
+        .where((result) => _asInt(result['student_id']) == studentId)
+        .map((result) => _asInt(result['id']))
+        .toSet();
+    for (final answer in _webQuizAnswers) {
+      final resultId = _asInt(answer['result_id']);
+      if (!validResultIds.contains(resultId)) {
+        continue;
+      }
+      final materialId = answer['material_id'].toString();
+      final previousId = latestQuizIdByMaterial[materialId] ?? 0;
+      if (resultId > previousId) {
+        latestQuizIdByMaterial[materialId] = resultId;
+      }
+    }
 
     for (final competency in _webCompetencies()) {
       final competencyId = competency['id'].toString();
       final materialId = competency['material_id'].toString();
       final title = competency['title'].toString();
+      final latestQuizId = latestQuizIdByMaterial[materialId];
       final quizScore = latestQuizId == null
           ? null
           : _webScoreForRows(
               _webQuizAnswers.where((answer) {
                 return _asInt(answer['result_id']) == latestQuizId &&
-                    answer['competency_id'] == competencyId;
+                    answer['competency_id'].toString() == competencyId;
               }).toList(),
             );
       final challengeScore = _webScoreForRows(
         _webChallengeAnswers.where((answer) {
-          return answer['competency_id'] == competencyId;
+          return answer['competency_id'].toString() == competencyId;
         }).toList(),
       );
       final activityScore = _webActivityScore(materialId);
