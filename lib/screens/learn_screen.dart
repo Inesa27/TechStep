@@ -419,6 +419,8 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                       submaterial: submaterials[index],
                       number: index + 1,
                       color: color,
+                      submaterials: submaterials,
+                      currentIndex: index,
                     ),
                   ),
                 ],
@@ -507,6 +509,8 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     required Submaterial submaterial,
     required int number,
     required Color color,
+    required List<Submaterial> submaterials,
+    required int currentIndex,
   }) {
     return InkWell(
       onTap: () async {
@@ -523,7 +527,8 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
           MaterialPageRoute(
             builder: (context) => SubmaterialScreen(
               material: widget.material,
-              submaterial: submaterial,
+              submaterials: submaterials,
+              currentIndex: currentIndex,
             ),
           ),
         );
@@ -604,17 +609,41 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
 
 class SubmaterialScreen extends StatelessWidget {
   final LearningMaterial material;
-  final Submaterial submaterial;
+  final List<Submaterial> submaterials;
+  final int currentIndex;
 
   const SubmaterialScreen({
     super.key,
     required this.material,
-    required this.submaterial,
+    required this.submaterials,
+    required this.currentIndex,
   });
+
+  Future<void> _openSubmaterialAt(BuildContext context, int targetIndex) async {
+    final target = submaterials[targetIndex];
+    await LearningAnalyticsService.instance.recordSubmaterialOpened(target);
+
+    if (!context.mounted) {
+      return;
+    }
+
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute<void>(
+        builder: (context) => SubmaterialScreen(
+          material: material,
+          submaterials: submaterials,
+          currentIndex: targetIndex,
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final color = _colorFromHex(material.colorHex);
+    final submaterial = submaterials[currentIndex];
+    final hasPrevious = currentIndex > 0;
+    final hasNext = currentIndex < submaterials.length - 1;
 
     return Scaffold(
       backgroundColor: const Color(0xFFF6F7FB),
@@ -673,6 +702,80 @@ class SubmaterialScreen extends StatelessWidget {
                 (block) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: _buildContentBlock(block, color),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (hasPrevious)
+                    OutlinedButton.icon(
+                      onPressed: () =>
+                          _openSubmaterialAt(context, currentIndex - 1),
+                      icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                      label: const Text('Sebelumnya'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: const Color(0xFF4F46E5),
+                        side: const BorderSide(color: Color(0xFFD1D5DB)),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 13,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                    )
+                  else
+                    const SizedBox.shrink(),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          if (hasNext) {
+                            _openSubmaterialAt(context, currentIndex + 1);
+                          } else {
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        icon: Icon(
+                          hasNext
+                              ? Icons.arrow_forward_rounded
+                              : Icons.check_rounded,
+                          size: 18,
+                        ),
+                        label: Text(
+                          hasNext ? 'Submateri Berikutnya' : 'Selesai',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4F46E5),
+                          foregroundColor: Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 6),
+              Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Submateri ${currentIndex + 1} dari ${submaterials.length}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF9CA3AF),
+                  ),
                 ),
               ),
             ],
