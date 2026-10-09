@@ -359,14 +359,18 @@ class TechStepDatabase {
       await db.rawQuery('SELECT COUNT(*) FROM materials'),
     );
 
-    if ((materialCount ?? 0) > 0) {
-      return;
-    }
-
     final seedRaw = await rootBundle.loadString(
       'assets/data/techstep_seed.json',
     );
     final seed = jsonDecode(seedRaw) as Map<String, dynamic>;
+
+    // Update the lesson text from the bundled seed even when the database
+    // already exists. This preserves quiz history and other student records.
+    if ((materialCount ?? 0) > 0) {
+      await _syncExistingSeedContent(db, seed);
+      await refreshCompetencyMapping();
+      return;
+    }
 
     await db.transaction((txn) async {
       final batch = txn.batch();
@@ -466,6 +470,107 @@ class TechStepDatabase {
     });
 
     await refreshCompetencyMapping();
+  }
+
+  Future<void> _syncExistingSeedContent(
+    Database db,
+    Map<String, dynamic> seed,
+  ) async {
+    final seedMaterials = (seed['materials'] as List<dynamic>)
+        .cast<Map<String, dynamic>>();
+    final validSubmaterialIds = <String>{
+      for (final material in seedMaterials)
+        for (final submaterial
+            in (material['submaterials'] as List<dynamic>?) ?? const [])
+          (submaterial as Map<String, dynamic>)['id'].toString(),
+    };
+
+    await db.transaction((txn) async {
+      // Keep material IDs stable while updating their visible descriptions.
+      for (final material in seedMaterials) {
+        final materialId = material['id'].toString();
+        final values = <String, Object?>{
+          'title': material['title'],
+          'subtitle': material['subtitle'],
+          'description': material['description'],
+          'icon_key': material['icon_key'],
+          'color_hex': material['color_hex'],
+          'image_asset': material['image_asset'] ?? '',
+          'order_index': material['order'],
+        };
+        final updated = await txn.update(
+          'materials',
+          values,
+          where: 'id = ?',
+          whereArgs: [materialId],
+        );
+        if (updated == 0) {
+          await txn.insert('materials', {'id': materialId, ...values});
+        }
+
+        final submaterials = (material['submaterials'] as List<dynamic>)
+            .cast<Map<String, dynamic>>();
+        for (final submaterial in submaterials) {
+          final submaterialId = submaterial['id'].toString();
+          final subValues = <String, Object?>{
+            'material_id': materialId,
+            'title': submaterial['title'],
+            'summary': submaterial['summary'] ?? '',
+            'content_json': jsonEncode(submaterial['blocks']),
+            'order_index': submaterial['order'],
+          };
+          final subUpdated = await txn.update(
+            'submaterials',
+            subValues,
+            where: 'id = ?',
+            whereArgs: [submaterialId],
+          );
+          if (subUpdated == 0) {
+            await txn.insert('submaterials', {
+              'id': submaterialId,
+              ...subValues,
+            });
+          }
+        }
+      }
+
+      // Remove obsolete "Aktivitas Belajar Singkat" lesson rows requested by
+      // the author, including their old progress/link records, but preserve
+      // every remaining lesson and all quiz/challenge history.
+      final existingSubmaterials = await txn.query('submaterials');
+      for (final row in existingSubmaterials) {
+        final id = row['id'].toString();
+        final title = row['title'].toString().toLowerCase();
+        final isRemovedActivity =
+            title.contains('aktivitas belajar singkat') &&
+            !validSubmaterialIds.contains(id);
+        if (!isRemovedActivity) {
+          continue;
+        }
+
+        await txn.delete(
+          'learning_progress',
+          where: 'submaterial_id = ?',
+          whereArgs: [id],
+        );
+        await txn.delete(
+          'submaterial_competencies',
+          where: 'submaterial_id = ?',
+          whereArgs: [id],
+        );
+        await txn.delete(
+          'activities',
+          where: 'type = ? AND ref_id = ?',
+          whereArgs: ['learn', id],
+        );
+        await txn.delete('submaterials', where: 'id = ?', whereArgs: [id]);
+      }
+
+      await txn.insert('metadata', {
+        'key': 'content_seed_version',
+        'value': '2',
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
+    });
   }
 
   void _insertQuestionBatch(
@@ -1676,8 +1781,41 @@ class TechStepDatabase {
       }
     }
 
+    // Remove progress pointers to submaterials no longer present in the
+    // revised seed, without clearing the user's remaining learning history.
+    final validSubmaterialIds = <String>{
+      for (final material in _webMaterials())
+        for (final submaterial
+            in (material['submaterials'] as List<dynamic>?) ?? const [])
+          (submaterial as Map<String, dynamic>)['id'].toString(),
+    };
+    final previousCompletedCount = _webCompletedSubmaterials.length;
+    final previousViewedCount = _webSubmaterialViewedAt.length;
+    _webCompletedSubmaterials.removeWhere(
+      (id) => !validSubmaterialIds.contains(id),
+    );
+    _webSubmaterialViewedAt.removeWhere(
+      (id, _) => !validSubmaterialIds.contains(id),
+    );
+    final removedActivityIds = <String>{
+      for (final activity in _webActivities)
+        if (activity['type'] == 'learn' &&
+            !validSubmaterialIds.contains(activity['ref_id']?.toString()))
+          activity['ref_id']?.toString() ?? '',
+    }..remove('');
+    _webActivities.removeWhere(
+      (activity) => removedActivityIds.contains(activity['ref_id']?.toString()),
+    );
+    final webProgressChanged =
+        previousCompletedCount != _webCompletedSubmaterials.length ||
+        previousViewedCount != _webSubmaterialViewedAt.length ||
+        removedActivityIds.isNotEmpty;
+
     _webLoadedStudentId = _studentId;
     _refreshWebCompetencyMapping();
+    if (webProgressChanged) {
+      await _persistWebState();
+    }
   }
 
   void _clearWebUserState() {

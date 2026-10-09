@@ -35,19 +35,19 @@
       "icon_key": "memory",
       "color_hex": "#4F46E5",
       "order": 1,
-      "description": "Hardware adalah seluruh bagian fisik komputer yang dapat dilihat dan disentuh. Untuk siswa TJKT, hardware bukan sekadar \"nama komponen\", tetapi perlu dipahami dari fungsi, hubungan antarkomponen, spesifikasi dasar, serta cara menentukan komponen yang sesuai kebutuhan.",
+      "description": "Hardware adalah bagian fisik komputer yang bisa dilihat dan disentuh, seperti keyboard, monitor, RAM, dan SSD. Pada materi ini, siswa akan mengenal fungsi komponen, cara komponen bekerja sama, cara membaca spesifikasi, serta langkah perawatan dan pemeriksaan masalah sederhana dengan aman.",
       "image_asset": "assets/images/learn/image1.png",
       "submaterials": [
         {
           "id": "hardware_1_1_sistem_komputer_dan_posisi_hardware",
           "material_id": "hardware",
           "title": "1.1 Sistem komputer dan posisi hardware",
-          "summary": "Sistem komputer bekerja melalui kerja sama hardware, software, dan brainware. Hardware menyediakan sumber daya fisik, software menyediakan instruksi, sedangkan brainware menggunaka",
+          "summary": "Mengenal kerja sama hardware, software, dan brainware melalui contoh saat mengetik, menyimpan, atau membuka aplikasi di komputer.",
           "order": 1,
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Sistem komputer bekerja melalui kerja sama hardware, software, dan brainware. Hardware menyediakan sumber daya fisik, software menyediakan instruksi, sedangkan brainware menggunakan sistem untuk mencapai tujuan tertentu."
+              "text": "Sistem komputer terdiri dari tiga unsur yang saling membantu. Hardware adalah bagian fisik yang dapat disentuh, software adalah program yang memberi instruksi, dan brainware adalah orang yang menggunakan atau mengelola komputer. Ketiganya perlu bekerja bersama agar komputer berguna."
             },
             {
               "type": "image",
@@ -56,7 +56,23 @@
             },
             {
               "type": "paragraph",
-              "text": "Contoh sederhana Saat siswa membuka browser: brainware memilih browser, software menjalankan perintah, lalu hardware seperti CPU, RAM, storage, GPU, keyboard, dan monitor bekerja sesuai kebutuhan proses tersebut."
+              "text": "Contoh: saat kamu membuka browser, kamu sebagai brainware memberi perintah dengan mouse atau keyboard. Browser dan sistem operasi sebagai software menerjemahkan permintaan, lalu CPU, RAM, storage, dan monitor sebagai hardware bekerja agar halaman bisa tampil."
+            },
+            {
+              "type": "heading",
+              "text": "Analogi sederhana"
+            },
+            {
+              "type": "paragraph",
+              "text": "Bayangkan bengkel sekolah. Hardware seperti alat-alat bengkel, software seperti petunjuk kerja, dan brainware seperti teknisi yang menggunakan alat. Alat lengkap saja tidak cukup jika tidak ada petunjuk dan orang yang mengoperasikannya."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh alur saat mengetik tugas"
+            },
+            {
+              "type": "paragraph",
+              "text": "Keyboard menerima ketikan (input), CPU mengolah instruksi, RAM menampung data yang sedang dipakai, monitor menampilkan tulisan (output), dan SSD atau HDD menyimpan file ketika kamu menekan Simpan. Alur ini menunjukkan bahwa satu pekerjaan biasanya melibatkan beberapa komponen sekaligus."
             }
           ],
           "competency_ids": [
@@ -69,12 +85,12 @@
           "id": "hardware_1_2_klasifikasi_hardware_berdasarkan_fungsi",
           "material_id": "hardware",
           "title": "1.2 Klasifikasi hardware berdasarkan fungsi",
-          "summary": "Klasifikasi paling mudah untuk pemula adalah berdasarkan alur informasi: input -> process -> output, dengan storage sebagai tempat menyimpan data secara sementara atau permanen.",
+          "summary": "Perangkat keras dapat dikelompokkan berdasarkan tugasnya: menerima input, membantu proses, menampilkan output, dan menyimpan data.",
           "order": 2,
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Klasifikasi paling mudah untuk pemula adalah berdasarkan alur informasi: input -> process -> output, dengan storage sebagai tempat menyimpan data secara sementara atau permanen."
+              "text": "Untuk pemula, hardware mudah dipahami dengan mengikuti alur data: input (data masuk), process (data diolah), output (hasil ditampilkan), dan storage (data disimpan). Dalam pekerjaan nyata, komponen-komponen ini saling bekerja sama, bukan berjalan sendiri-sendiri."
             },
             {
               "type": "image",
@@ -96,8 +112,8 @@
                 ],
                 [
                   "Process",
-                  "Mengolah data dan menjalankan instruksi.",
-                  "CPU, GPU, RAM, motherboard, chipset."
+                  "Mengolah instruksi dan membantu jalannya program.",
+                  "CPU/GPU; RAM membantu menyediakan ruang kerja sementara."
                 ],
                 [
                   "Output",
@@ -110,6 +126,18 @@
                   "HDD, SSD/NVMe, flashdisk, memory card."
                 ]
               ]
+            },
+            {
+              "type": "heading",
+              "text": "Contoh: mencetak tugas sekolah"
+            },
+            {
+              "type": "paragraph",
+              "text": "Saat kamu mengetik tugas, keyboard menjadi input. CPU mengolah instruksi dan RAM membantu menampung data yang sedang digunakan. Monitor menampilkan dokumen sebagai output. Ketika dicetak, printer menghasilkan salinan fisik. File dapat disimpan di SSD/HDD agar bisa dibuka lagi nanti."
+            },
+            {
+              "type": "bullet",
+              "text": "Jangan tertukar: RAM adalah tempat kerja sementara saat komputer aktif, sedangkan SSD/HDD menyimpan file meskipun komputer dimatikan."
             }
           ],
           "competency_ids": [
@@ -124,7 +152,7 @@
           "id": "hardware_1_3_komponen_utama_pc",
           "material_id": "hardware",
           "title": "1.3 Komponen utama PC",
-          "summary": "CPU sering disebut sebagai \"otak\" komputer karena menjalankan instruksi dan mengolah data. CPU memiliki core untuk mengeksekusi tugas, cache untuk penyimpanan data/instruksi yang s",
+          "summary": "Mengenal CPU, motherboard, RAM, storage, PSU, GPU, NIC, port, dan konektor yang membuat komputer dapat bekerja.",
           "order": 3,
           "blocks": [
             {
@@ -248,6 +276,26 @@
                   "Tempat pemasangan RAM, SSD M.2, atau kartu ekspansi sesuai dukungan motherboard."
                 ]
               ]
+            },
+            {
+              "type": "heading",
+              "text": "Cara mudah mengingat komponen"
+            },
+            {
+              "type": "paragraph",
+              "text": "Bayangkan komputer seperti dapur. CPU adalah koki yang mengerjakan instruksi; RAM seperti meja kerja untuk bahan yang sedang dipakai; SSD/HDD seperti lemari penyimpanan; motherboard seperti jalur penghubung antarbagian; dan PSU seperti sumber tenaga. Analogi ini tidak sama persis dengan cara kerja elektronik, tetapi membantu mengingat fungsi utama tiap komponen."
+            },
+            {
+              "type": "paragraph",
+              "text": "GPU membantu pekerjaan gambar dan video, sedangkan NIC menghubungkan komputer ke jaringan. Karena tugasnya berbeda, komputer untuk mengetik tugas tidak selalu memerlukan GPU mahal, tetapi komputer untuk desain 3D atau gim berat biasanya membutuhkan kemampuan grafis lebih tinggi."
+            },
+            {
+              "type": "heading",
+              "text": "Apa yang terjadi ketika aplikasi dibuka?"
+            },
+            {
+              "type": "paragraph",
+              "text": "Sistem membaca program dari storage, lalu bagian yang diperlukan dimuat ke RAM. CPU menjalankan instruksi, dan GPU membantu menggambar tampilan bila diperlukan. Motherboard menyediakan jalur komunikasi, sedangkan PSU memasok daya untuk komponen."
             }
           ],
           "competency_ids": [
@@ -263,7 +311,7 @@
           "id": "hardware_1_4_spesifikasi_dan_kompatibilitas",
           "material_id": "hardware",
           "title": "1.4 Spesifikasi dan kompatibilitas",
-          "summary": "Spesifikasi adalah informasi teknis yang menjelaskan kemampuan suatu komponen. Saat memilih atau merakit PC, spesifikasi harus dibaca sebagai satu sistem, bukan hanya mengejar angk",
+          "summary": "Spesifikasi menunjukkan kemampuan komponen. Sebelum membeli atau mengganti komponen, periksa kecocokan dan sesuaikan dengan kebutuhan pengguna.",
           "order": 4,
           "blocks": [
             {
@@ -305,7 +353,27 @@
             },
             {
               "type": "paragraph",
-              "text": "Kunci berpikir TJKT Komponen yang \"paling mahal\" belum tentu paling tepat. Yang penting adalah kecocokan antar-komponen, kebutuhan kerja, stabilitas, dan kemudahan pemeliharaan."
+              "text": "Kunci berpikir untuk TJKT: komponen yang paling mahal belum tentu paling tepat. Utamakan kecocokan antar-komponen, kebutuhan pengguna, kestabilan, dan kemudahan perawatan."
+            },
+            {
+              "type": "heading",
+              "text": "Analogi: potongan puzzle"
+            },
+            {
+              "type": "paragraph",
+              "text": "Komponen komputer seperti potongan puzzle. Bentuk dan ukurannya harus cocok agar dapat dipasang dan bekerja bersama. Misalnya, CPU harus sesuai dengan socket dan dukungan motherboard; RAM harus sesuai dengan jenis yang didukung; SSD juga harus cocok dengan koneksi dan slot yang tersedia."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh menentukan spesifikasi"
+            },
+            {
+              "type": "paragraph",
+              "text": "Untuk komputer laboratorium yang dipakai mengetik, browsing, dan menjalankan aplikasi pembelajaran, utamakan RAM yang cukup, storage yang responsif, serta komponen yang mudah dirawat. Untuk penyuntingan video atau desain 3D, kemampuan CPU dan GPU mungkin lebih penting. Tentukan kebutuhan lebih dahulu, baru bandingkan spesifikasi dan anggaran."
+            },
+            {
+              "type": "bullet",
+              "text": "Sebelum upgrade, catat model motherboard dan CPU, jenis RAM, slot storage yang tersedia, dimensi casing, kebutuhan daya, serta konektor PSU. Periksa informasi resmi produsen jika belum yakin."
             }
           ],
           "competency_ids": [
@@ -321,7 +389,7 @@
           "id": "hardware_1_5_perawatan_hardware",
           "material_id": "hardware",
           "title": "1.5 Perawatan hardware",
-          "summary": "",
+          "summary": "Perawatan rutin membantu komputer tetap bersih, sejuk, dan lebih stabil. Lakukan pemeriksaan dengan prosedur aman, bukan asal membuka komponen.",
           "order": 5,
           "blocks": [
             {
@@ -343,6 +411,30 @@
             {
               "type": "bullet",
               "text": "Periksa kabel, konektor, dan kondisi fisik sebelum melakukan diagnosis lebih lanjut."
+            },
+            {
+              "type": "paragraph",
+              "text": "Perawatan hardware bukan berarti harus membongkar komputer setiap hari. Tujuannya mencegah debu menumpuk, aliran udara terhambat, kabel longgar, dan kerusakan akibat cara penggunaan yang kurang tepat."
+            },
+            {
+              "type": "heading",
+              "text": "Urutan perawatan yang aman"
+            },
+            {
+              "type": "bullet",
+              "text": "Simpan pekerjaan, matikan komputer melalui sistem operasi, cabut sumber listrik, lalu tunggu beberapa saat sebelum memeriksa bagian luar atau kabel."
+            },
+            {
+              "type": "bullet",
+              "text": "Bersihkan permukaan meja, ventilasi luar, keyboard, dan monitor dengan alat serta cairan yang sesuai. Jangan menyemprotkan cairan langsung ke perangkat."
+            },
+            {
+              "type": "bullet",
+              "text": "Jika harus menangani komponen di dalam casing, ikuti SOP laboratorium dan prosedur antistatis/ESD. Jangan membuka PSU karena bagian dalamnya dapat menyimpan tegangan berbahaya."
+            },
+            {
+              "type": "paragraph",
+              "text": "Analogi: seperti sepeda yang perlu dibersihkan dan diperiksa sebelum dipakai, komputer juga lebih aman jika kondisi fisik dan sambungannya diperhatikan secara berkala."
             }
           ],
           "competency_ids": [
@@ -354,7 +446,7 @@
           "id": "hardware_1_6_troubleshooting_hardware_dasar",
           "material_id": "hardware",
           "title": "1.6 Troubleshooting hardware dasar",
-          "summary": "",
+          "summary": "Troubleshooting adalah proses mencari penyebab masalah secara teratur. Mulailah dari pemeriksaan sederhana sebelum mengganti atau membongkar komponen.",
           "order": 6,
           "blocks": [
             {
@@ -386,6 +478,34 @@
                   "Pastikan ventilasi tidak tertutup dan periksa beban kerja; lanjutkan diagnosis sesuai SOP."
                 ]
               ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Troubleshooting berarti mencari penyebab masalah berdasarkan gejala dan bukti. Satu gejala bisa memiliki beberapa penyebab, jadi jangan langsung menyimpulkan satu komponen rusak."
+            },
+            {
+              "type": "heading",
+              "text": "Langkah berpikir saat komputer bermasalah"
+            },
+            {
+              "type": "bullet",
+              "text": "Amati gejalanya: apakah komputer tidak menyala, menyala tanpa gambar, lambat, atau cepat panas? Catat pesan atau lampu indikator yang terlihat."
+            },
+            {
+              "type": "bullet",
+              "text": "Periksa hal yang paling mudah dan aman terlebih dahulu, misalnya kabel listrik, kabel monitor, pilihan input monitor, atau apakah ventilasi tertutup."
+            },
+            {
+              "type": "bullet",
+              "text": "Ubah satu hal dalam satu waktu, lalu uji lagi. Cara ini membantu mengetahui langkah mana yang memberi pengaruh."
+            },
+            {
+              "type": "bullet",
+              "text": "Jika perlu membuka casing atau memasang ulang komponen, matikan perangkat, lepaskan listrik, ikuti SOP, dan minta pendampingan guru/laboran."
+            },
+            {
+              "type": "paragraph",
+              "text": "Ingat: teknisi yang baik tidak asal menebak. Ia mengumpulkan gejala, menguji kemungkinan, mencatat hasil, lalu menyimpulkan berdasarkan bukti."
             }
           ],
           "competency_ids": [
@@ -393,37 +513,6 @@
             "hardware_klasifikasi_input",
             "hardware_storage",
             "hardware_troubleshooting_display",
-            "hardware_pemilihan_komponen_sesuai_kebutuhan"
-          ]
-        },
-        {
-          "id": "hardware_1_7_aktivitas_belajar_singkat",
-          "material_id": "hardware",
-          "title": "1.7 Aktivitas belajar singkat",
-          "summary": "1. Kelompokkan 12 perangkat di laboratorium ke dalam input, process, output, atau storage.",
-          "order": 7,
-          "blocks": [
-            {
-              "type": "paragraph",
-              "text": "1. Kelompokkan 12 perangkat di laboratorium ke dalam input, process, output, atau storage."
-            },
-            {
-              "type": "paragraph",
-              "text": "2. Buka informasi spesifikasi satu PC/laptop dan catat CPU, RAM, storage, GPU, dan NIC."
-            },
-            {
-              "type": "paragraph",
-              "text": "3. Buat pasangan \"kebutuhan pengguna -> komponen yang perlu diperhatikan\", misalnya lab kantor, editing video, atau server file sederhana."
-            },
-            {
-              "type": "paragraph",
-              "text": "4. Buat daftar pemeriksaan awal saat komputer tidak menampilkan gambar."
-            }
-          ],
-          "competency_ids": [
-            "hardware_cpu_dan_fungsi_komponen",
-            "hardware_klasifikasi_input",
-            "hardware_storage",
             "hardware_pemilihan_komponen_sesuai_kebutuhan"
           ]
         }
@@ -436,14 +525,14 @@
       "icon_key": "apps",
       "color_hex": "#7C3AED",
       "order": 2,
-      "description": "Software adalah sekumpulan program, instruksi, dan data yang membuat komputer dapat melakukan tugas tertentu. Software tidak dapat disentuh seperti hardware, tetapi dapat dijalankan, diperbarui, disalin, dipindahkan, atau dihapus sesuai aturan dan lisensinya.",
+      "description": "Software adalah program dan instruksi yang membuat komputer bisa melakukan tugas. Contohnya sistem operasi, aplikasi, driver, dan alat pemeliharaan. Materi ini membahas fungsi software, cara memilih dan memasangnya dengan aman, serta cara membedakan lisensi dan sumber software.",
       "image_asset": "assets/images/learn/image3.png",
       "submaterials": [
         {
           "id": "software_2_1_hubungan_software_dengan_hardware",
           "material_id": "software",
           "title": "2.1 Hubungan software dengan hardware",
-          "summary": "Aplikasi pengguna tidak berkomunikasi langsung dengan seluruh detail hardware. Sistem operasi menjadi penghubung penting, sedangkan driver membantu OS mengenali dan menggunakan per",
+          "summary": "Aplikasi, sistem operasi, driver, dan hardware bekerja berlapis. OS membantu aplikasi menggunakan perangkat tanpa harus mengatur setiap detail hardware sendiri.",
           "order": 1,
           "blocks": [
             {
@@ -453,7 +542,23 @@
             },
             {
               "type": "paragraph",
-              "text": "Aplikasi pengguna tidak berkomunikasi langsung dengan seluruh detail hardware. Sistem operasi menjadi penghubung penting, sedangkan driver membantu OS mengenali dan menggunakan perangkat tertentu."
+              "text": "Aplikasi biasanya meminta layanan melalui sistem operasi (OS). OS mengatur sumber daya komputer, sedangkan driver membantu OS berkomunikasi dengan perangkat tertentu, seperti printer, kartu grafis, atau kartu jaringan."
+            },
+            {
+              "type": "heading",
+              "text": "Analogi: penerjemah"
+            },
+            {
+              "type": "paragraph",
+              "text": "Bayangkan aplikasi sebagai pelanggan yang menyampaikan permintaan, OS sebagai petugas yang mengatur pekerjaan, driver sebagai penerjemah instruksi perangkat, dan hardware sebagai alat yang melakukan pekerjaan. Aplikasi tidak perlu mengetahui semua detail elektronik printer agar dapat meminta dokumen dicetak."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh saat mencetak"
+            },
+            {
+              "type": "paragraph",
+              "text": "Kamu menekan tombol Print pada aplikasi. OS mengatur permintaan cetak dan antrean, lalu driver membantu menerjemahkan perintah ke bentuk yang dipahami printer. Jika printer tidak bekerja, penyebabnya tidak selalu aplikasinya: koneksi, antrean cetak, driver, atau kondisi printer juga perlu diperiksa."
             }
           ],
           "competency_ids": [
@@ -470,7 +575,7 @@
           "id": "software_2_2_jenis_jenis_software",
           "material_id": "software",
           "title": "2.2 Jenis-jenis software",
-          "summary": "",
+          "summary": "Software memiliki jenis dan tugas berbeda: OS mengelola sistem, aplikasi membantu pekerjaan, utility merawat sistem, driver menghubungkan OS dengan perangkat, dan firmware tertanam pada perangkat.",
           "order": 2,
           "blocks": [
             {
@@ -507,6 +612,38 @@
                   "UEFI/firmware motherboard, firmware router, firmware perangkat IoT."
                 ]
               ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Software bukan hanya aplikasi yang terlihat di layar. Ada software yang mengatur keseluruhan komputer dan ada yang mendukung fungsi khusus. Mengenali jenisnya membantu kita memilih alat yang tepat ketika menggunakan atau memperbaiki komputer."
+            },
+            {
+              "type": "heading",
+              "text": "Cara membedakannya melalui contoh"
+            },
+            {
+              "type": "bullet",
+              "text": "Sistem operasi: mengelola komputer dan menjadi tempat aplikasi berjalan, contohnya Windows atau Linux."
+            },
+            {
+              "type": "bullet",
+              "text": "Aplikasi: membantu tugas tertentu, misalnya pengolah kata untuk membuat laporan atau browser untuk membuka situs."
+            },
+            {
+              "type": "bullet",
+              "text": "Utility: membantu pemeliharaan, seperti alat backup atau kompresi file."
+            },
+            {
+              "type": "bullet",
+              "text": "Driver: membantu OS menggunakan perangkat tertentu, seperti printer atau kartu jaringan."
+            },
+            {
+              "type": "bullet",
+              "text": "Firmware: perangkat lunak yang tertanam di perangkat untuk mengendalikan fungsi dasarnya, misalnya firmware router."
+            },
+            {
+              "type": "paragraph",
+              "text": "Analogi: OS seperti pengelola bengkel, aplikasi seperti alat kerja khusus, utility seperti alat perawatan, driver seperti penerjemah instruksi, sedangkan firmware seperti aturan dasar yang tertanam pada alat."
             }
           ],
           "competency_ids": [
@@ -525,7 +662,7 @@
           "id": "software_2_3_aplikasi_berdasarkan_kebutuhan",
           "material_id": "software",
           "title": "2.3 Aplikasi berdasarkan kebutuhan",
-          "summary": "",
+          "summary": "Pilih aplikasi berdasarkan tugas yang ingin diselesaikan, kemampuan komputer, kebutuhan pengguna, dan keamanan sumber unduhan.",
           "order": 3,
           "blocks": [
             {
@@ -551,6 +688,38 @@
             {
               "type": "bullet",
               "text": "Jaringan/TJKT: simulator jaringan, terminal, tools diagnosis, dan aplikasi konfigurasi perangkat."
+            },
+            {
+              "type": "paragraph",
+              "text": "Tidak ada satu aplikasi yang cocok untuk semua pekerjaan. Sebelum memasang aplikasi, tanyakan: pekerjaan apa yang ingin diselesaikan, format file apa yang dibutuhkan, apakah komputer mampu menjalankannya, dan apakah sumbernya tepercaya?"
+            },
+            {
+              "type": "heading",
+              "text": "Contoh untuk siswa kelas X TJKT"
+            },
+            {
+              "type": "bullet",
+              "text": "Menyusun laporan praktikum: gunakan aplikasi pengolah kata."
+            },
+            {
+              "type": "bullet",
+              "text": "Menghitung hasil pengukuran atau membuat tabel: gunakan spreadsheet."
+            },
+            {
+              "type": "bullet",
+              "text": "Membuat presentasi: gunakan aplikasi presentasi."
+            },
+            {
+              "type": "bullet",
+              "text": "Belajar membuat program: gunakan code editor atau IDE sesuai bahasa yang dipelajari."
+            },
+            {
+              "type": "bullet",
+              "text": "Belajar topologi jaringan: gunakan simulator jaringan yang direkomendasikan guru."
+            },
+            {
+              "type": "paragraph",
+              "text": "Aplikasi dengan fitur terbanyak belum tentu paling tepat. Pilih yang benar-benar dibutuhkan, mudah dipelajari, sesuai kemampuan perangkat, serta memiliki lisensi dan sumber unduhan yang jelas."
             }
           ],
           "competency_ids": [
@@ -563,7 +732,7 @@
           "id": "software_2_4_lisensi_software",
           "material_id": "software",
           "title": "2.4 Lisensi software",
-          "summary": "Lisensi menentukan apa yang boleh dilakukan pengguna terhadap sebuah software. \"Gratis\" tidak selalu berarti \"bebas melakukan apa saja\"; pengguna tetap perlu membaca ketentuan lise",
+          "summary": "Lisensi adalah aturan penggunaan software. Gratis, open source, proprietary, dan trial memiliki arti berbeda sehingga perlu dipahami sebelum memasang atau membagikannya.",
           "order": 4,
           "blocks": [
             {
@@ -602,7 +771,31 @@
             },
             {
               "type": "paragraph",
-              "text": "Jangan menyamakan istilah \"open source\" dan \"gratis\" Open source membahas keterbukaan kode sumber dan hak berdasarkan lisensi. Gratis membahas biaya penggunaan. Sebuah software dapat gratis tetapi bukan open source, dan software open source tidak selalu bebas dari seluruh bentuk biaya."
+              "text": "Jangan menyamakan \"open source\" dengan \"gratis\". Open source berkaitan dengan ketersediaan kode sumber dan hak yang diberikan lisensi, sedangkan gratis berkaitan dengan biaya penggunaan. Software yang gratis belum tentu boleh diubah kodenya, dan software open source tetap dapat memiliki layanan atau versi berbayar."
+            },
+            {
+              "type": "heading",
+              "text": "Analogi: aturan peminjaman"
+            },
+            {
+              "type": "paragraph",
+              "text": "Lisensi seperti aturan ketika meminjam buku atau menggunakan fasilitas. Ada aturan tentang siapa yang boleh memakai, apakah boleh menyalin, membagikan, atau mengubah. Membayar atau tidak membayar hanyalah salah satu aspek; hak penggunaan tetap mengikuti lisensi."
+            },
+            {
+              "type": "heading",
+              "text": "Apa yang perlu dilakukan pengguna?"
+            },
+            {
+              "type": "bullet",
+              "text": "Baca ketentuan penggunaan dan periksa apakah software boleh dipakai untuk keperluan sekolah, pribadi, atau komersial."
+            },
+            {
+              "type": "bullet",
+              "text": "Jangan menganggap semua software yang ditemukan gratis di internet boleh disalin atau dibagikan sesuka hati."
+            },
+            {
+              "type": "bullet",
+              "text": "Untuk tugas sekolah dan praktik laboratorium, gunakan software legal atau open source yang sesuai dengan kebutuhan dan arahan guru."
             }
           ],
           "competency_ids": [
@@ -617,7 +810,7 @@
           "id": "software_2_5_instalasi_update_dan_uninstall",
           "material_id": "software",
           "title": "2.5 Instalasi, update, dan uninstall",
-          "summary": "1. Pastikan sumber software tepercaya dan sesuai sistem.",
+          "summary": "Instal software dari sumber tepercaya, periksa kecocokan dan izin, lakukan update seperlunya, serta hapus aplikasi melalui cara resmi.",
           "order": 5,
           "blocks": [
             {
@@ -643,6 +836,30 @@
             {
               "type": "paragraph",
               "text": "6. Uninstall menggunakan mekanisme yang benar agar konfigurasi tidak rusak."
+            },
+            {
+              "type": "paragraph",
+              "text": "Instalasi menambahkan software ke komputer, update memasang versi atau perbaikan terbaru, sedangkan uninstall menghapus aplikasi melalui mekanisme yang disediakan sistem. Ketiga proses ini perlu dilakukan dengan benar agar sistem tetap aman dan stabil."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh sebelum menekan tombol Install"
+            },
+            {
+              "type": "paragraph",
+              "text": "Misalnya kamu ingin memasang aplikasi untuk praktikum. Pastikan aplikasi berasal dari situs resmi atau sumber yang direkomendasikan, sesuai sistem operasi dan spesifikasi komputer, serta tidak meminta izin yang tidak masuk akal. Jangan menonaktifkan fitur keamanan hanya karena installer meminta demikian tanpa alasan yang jelas."
+            },
+            {
+              "type": "bullet",
+              "text": "Simpan pekerjaan dan cadangkan data penting sebelum pembaruan besar atau perubahan sistem."
+            },
+            {
+              "type": "bullet",
+              "text": "Baca pilihan instalasi agar tidak ikut memasang aplikasi tambahan yang tidak diperlukan."
+            },
+            {
+              "type": "bullet",
+              "text": "Jika aplikasi mengalami masalah setelah update, catat pesan kesalahan dan laporkan kepada guru/laboran sebelum mencoba langkah berisiko."
             }
           ],
           "competency_ids": [
@@ -656,12 +873,12 @@
           "id": "software_2_6_driver_dan_utility",
           "material_id": "software",
           "title": "2.6 Driver dan utility",
-          "summary": "Driver membantu sistem operasi mengenali serta mengendalikan hardware. Contohnya driver NIC, printer, audio, dan GPU. Utility membantu pemeliharaan seperti backup, kompresi, keaman",
+          "summary": "Driver membantu OS menggunakan hardware, sedangkan utility membantu pemeliharaan dan diagnosis. Keduanya memiliki tujuan berbeda.",
           "order": 6,
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Driver membantu sistem operasi mengenali serta mengendalikan hardware. Contohnya driver NIC, printer, audio, dan GPU. Utility membantu pemeliharaan seperti backup, kompresi, keamanan, atau diagnosis."
+              "text": "Driver membantu sistem operasi mengenali dan menggunakan perangkat keras tertentu, misalnya printer, audio, GPU, dan NIC. Utility adalah alat bantu untuk merawat atau mengelola sistem, misalnya membuat backup, mengompres file, memindai keamanan, atau memeriksa kondisi komputer."
             },
             {
               "type": "table",
@@ -687,6 +904,22 @@
                   "Driver GPU, pengaturan display, dan diagnosis sistem."
                 ]
               ]
+            },
+            {
+              "type": "heading",
+              "text": "Analogi yang mudah"
+            },
+            {
+              "type": "paragraph",
+              "text": "Driver seperti penerjemah yang membantu OS memberi instruksi kepada perangkat. Utility seperti kotak perkakas untuk tugas perawatan tertentu. Menginstal utility tidak otomatis menggantikan driver yang dibutuhkan perangkat."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh pemilihan alat"
+            },
+            {
+              "type": "paragraph",
+              "text": "Jika printer tidak dikenali, periksa kabel atau koneksi, kemudian status perangkat dan driver printer. Jika ingin mengirim banyak file dengan ukuran lebih kecil, gunakan utility kompresi. Jika ingin mencegah kehilangan dokumen, gunakan alat backup. Pilih alat sesuai masalahnya, dan unduh dari sumber tepercaya."
             }
           ],
           "competency_ids": [
@@ -704,7 +937,7 @@
           "id": "software_2_7_keamanan_software_dasar",
           "material_id": "software",
           "title": "2.7 Keamanan software dasar",
-          "summary": "",
+          "summary": "Keamanan software dimulai dari sumber yang tepercaya, pembaruan, izin aplikasi yang masuk akal, perlindungan akun, dan kebiasaan mencadangkan data.",
           "order": 7,
           "blocks": [
             {
@@ -726,46 +959,43 @@
             {
               "type": "bullet",
               "text": "Buat cadangan data penting secara berkala."
+            },
+            {
+              "type": "paragraph",
+              "text": "Software yang tidak aman dapat membawa program berbahaya, mencuri data, atau mengubah sistem tanpa izin. Risiko tidak hanya berasal dari aplikasi, tetapi juga dari tautan, lampiran, installer palsu, dan file yang dibagikan orang lain."
+            },
+            {
+              "type": "heading",
+              "text": "Kebiasaan aman saat menggunakan komputer"
+            },
+            {
+              "type": "bullet",
+              "text": "Periksa alamat situs dan nama penerbit sebelum mengunduh atau memasang program."
+            },
+            {
+              "type": "bullet",
+              "text": "Jangan membuka lampiran atau tautan mencurigakan hanya karena dikirim oleh akun yang dikenal; konfirmasikan dulu bila perlu."
+            },
+            {
+              "type": "bullet",
+              "text": "Gunakan password yang tidak mudah ditebak dan jangan membagikannya kepada orang lain."
+            },
+            {
+              "type": "bullet",
+              "text": "Perhatikan izin yang diminta aplikasi. Aplikasi sederhana tidak selalu memerlukan akses administrator atau akses ke banyak data pribadi."
+            },
+            {
+              "type": "bullet",
+              "text": "Lakukan pembaruan keamanan dan buat salinan data penting pada tempat yang aman."
+            },
+            {
+              "type": "paragraph",
+              "text": "Antivirus dan fitur keamanan membantu mengurangi risiko, tetapi bukan jaminan mutlak. Kebiasaan memeriksa sumber, izin, dan perilaku aplikasi tetap penting."
             }
           ],
           "competency_ids": [
             "software_software_aplikasi",
             "software_update_software",
-            "software_lisensi_software",
-            "software_keamanan_sumber_software"
-          ]
-        },
-        {
-          "id": "software_2_8_aktivitas_belajar_singkat",
-          "material_id": "software",
-          "title": "2.8 Aktivitas belajar singkat",
-          "summary": "1. Pilih 10 software yang ada di komputer laboratorium lalu klasifikasikan sebagai OS, aplikasi, utility, driver, atau kategori lain yang relevan.",
-          "order": 8,
-          "blocks": [
-            {
-              "type": "paragraph",
-              "text": "1. Pilih 10 software yang ada di komputer laboratorium lalu klasifikasikan sebagai OS, aplikasi, utility, driver, atau kategori lain yang relevan."
-            },
-            {
-              "type": "paragraph",
-              "text": "2. Bandingkan satu software open source dengan satu software proprietary dari sisi lisensi dan penggunaan."
-            },
-            {
-              "type": "paragraph",
-              "text": "3. Cari satu masalah komputer yang dapat diselesaikan dengan driver dan satu masalah yang lebih tepat ditangani dengan utility."
-            },
-            {
-              "type": "paragraph",
-              "text": "4. Buat alur sederhana instalasi software yang aman."
-            }
-          ],
-          "competency_ids": [
-            "software_software_aplikasi",
-            "software_driver",
-            "software_open_source",
-            "software_utility_kompresi",
-            "software_update_software",
-            "software_driver_perangkat",
             "software_lisensi_software",
             "software_keamanan_sumber_software"
           ]
@@ -779,14 +1009,14 @@
       "icon_key": "desktop",
       "color_hex": "#2563EB",
       "order": 3,
-      "description": "Sistem operasi (Operating System/OS) adalah software sistem yang mengelola sumber daya komputer dan menyediakan layanan agar aplikasi dapat berjalan. Dalam konteks TJKT, OS penting karena banyak pekerjaan teknis seperti konfigurasi, diagnosis, instalasi, manajemen file, dan akses jaringan dilakukan melalui OS.",
+      "description": "Sistem operasi (Operating System/OS) adalah software utama yang mengatur kerja komputer dan menjadi penghubung antara pengguna, aplikasi, dan perangkat keras. Siswa akan mempelajari fungsi OS, cara kerja dasar, manajemen file, booting, penggunaan GUI/CLI, serta pemeriksaan masalah umum.",
       "image_asset": "assets/images/learn/image4.png",
       "submaterials": [
         {
           "id": "sistem_operasi_3_1_apa_yang_dilakukan_sistem_operasi",
           "material_id": "sistem_operasi",
           "title": "3.1 Apa yang dilakukan sistem operasi?",
-          "summary": "",
+          "summary": "Sistem operasi mengatur proses, memori, file, perangkat, akun, keamanan, dan antarmuka agar komputer dapat digunakan dengan teratur.",
           "order": 1,
           "blocks": [
             {
@@ -833,6 +1063,22 @@
                   "GUI atau CLI/terminal."
                 ]
               ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Saat komputer dinyalakan, OS membantu mengelola sumber daya yang diperlukan aplikasi. Ketika beberapa aplikasi terbuka bersamaan, OS membantu mengatur waktu pemakaian CPU, penggunaan RAM, akses file, perangkat input/output, dan hak akses pengguna."
+            },
+            {
+              "type": "heading",
+              "text": "Analogi: pengatur lalu lintas"
+            },
+            {
+              "type": "paragraph",
+              "text": "Bayangkan persimpangan yang ramai. Tanpa pengaturan, kendaraan akan saling menghalangi. OS berperan seperti pengatur lalu lintas yang mengatur giliran dan penggunaan sumber daya agar berbagai program bisa berjalan tanpa berebut secara sembarangan."
+            },
+            {
+              "type": "paragraph",
+              "text": "Contoh yang bisa diamati: Task Manager di Windows menunjukkan aplikasi dan proses yang sedang berjalan, sedangkan File Explorer membantu mengelola file dan folder. Keduanya memberi gambaran tentang fungsi OS yang digunakan sehari-hari."
             }
           ],
           "competency_ids": [
@@ -848,16 +1094,28 @@
           "id": "sistem_operasi_3_2_kernel_dan_layanan_os",
           "material_id": "sistem_operasi",
           "title": "3.2 Kernel dan layanan OS",
-          "summary": "Kernel adalah inti dari sistem operasi yang berhubungan dekat dengan pengelolaan sumber daya. Kernel membantu mengatur proses, memori, perangkat, dan layanan tingkat rendah agar ap",
+          "summary": "Kernel adalah inti OS yang membantu mengatur sumber daya, sementara layanan OS menyediakan fungsi yang dibutuhkan aplikasi dan pengguna.",
           "order": 2,
           "blocks": [
             {
               "type": "paragraph",
-              "text": "Kernel adalah inti dari sistem operasi yang berhubungan dekat dengan pengelolaan sumber daya. Kernel membantu mengatur proses, memori, perangkat, dan layanan tingkat rendah agar aplikasi tidak harus mengendalikan hardware secara langsung."
+              "text": "Kernel adalah bagian inti dari sistem operasi. Kernel membantu mengatur hal penting seperti proses yang berjalan, penggunaan memori, dan komunikasi dengan perangkat. Dengan adanya kernel, aplikasi tidak perlu mengatur hardware secara langsung untuk setiap tugas."
             },
             {
               "type": "paragraph",
-              "text": "Gambaran mudah Aplikasi dapat dianggap sebagai \"pekerja\" yang membutuhkan sumber daya. OS berperan seperti pengelola yang menentukan sumber daya mana yang digunakan, kapan digunakan, dan bagaimana pengguna berinteraksi dengannya."
+              "text": "Gambaran mudah: aplikasi seperti pekerja yang memerlukan tempat dan alat untuk menyelesaikan tugas. OS menjadi pengelola sumber daya, sedangkan kernel adalah bagian inti yang menangani pengaturan penting di balik layar."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh saat membuka dua aplikasi"
+            },
+            {
+              "type": "paragraph",
+              "text": "Ketika browser dan pemutar musik berjalan bersamaan, keduanya memerlukan waktu CPU dan ruang RAM. OS mengatur pemakaian sumber daya sehingga keduanya dapat berjalan bergantian atau bersamaan sesuai kemampuan komputer. Jika sumber daya terbatas, respons komputer mungkin menjadi lambat."
+            },
+            {
+              "type": "bullet",
+              "text": "Intinya: pengguna biasanya berinteraksi dengan antarmuka dan aplikasi, tetapi kernel bekerja di balik layar untuk membantu OS mengatur sumber daya."
             }
           ],
           "competency_ids": [
@@ -871,7 +1129,7 @@
           "id": "sistem_operasi_3_3_gui_dan_cli",
           "material_id": "sistem_operasi",
           "title": "3.3 GUI dan CLI",
-          "summary": "Siswa TJKT perlu memahami keduanya. GUI memudahkan pekerjaan sehari-hari, sedangkan CLI membantu memahami cara sistem bekerja dan mempermudah pekerjaan tertentu yang berulang atau ",
+          "summary": "GUI menggunakan elemen visual seperti ikon dan jendela, sedangkan CLI menerima instruksi yang diketik pada terminal. Keduanya berguna untuk tugas berbeda.",
           "order": 3,
           "blocks": [
             {
@@ -896,7 +1154,19 @@
             },
             {
               "type": "paragraph",
-              "text": "Siswa TJKT perlu memahami keduanya. GUI memudahkan pekerjaan sehari-hari, sedangkan CLI membantu memahami cara sistem bekerja dan mempermudah pekerjaan tertentu yang berulang atau membutuhkan presisi."
+              "text": "Siswa TJKT perlu mengenal keduanya. GUI cocok untuk pekerjaan visual sehari-hari, sedangkan CLI berguna untuk diagnosis, konfigurasi, dan pekerjaan teknis tertentu yang dilakukan melalui perintah."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh yang bisa dicoba"
+            },
+            {
+              "type": "paragraph",
+              "text": "Melalui GUI, kamu dapat membuka File Explorer untuk melihat folder dan menyalin file dengan menu. Pada Windows, terminal/Command Prompt dapat menggunakan perintah dir untuk menampilkan isi folder atau ipconfig untuk melihat informasi konfigurasi jaringan dasar. Jalankan perintah hanya pada komputer yang kamu gunakan dengan izin guru/laboran."
+            },
+            {
+              "type": "paragraph",
+              "text": "Analogi: GUI seperti memesan makanan dengan melihat menu dan menekan pilihan, sedangkan CLI seperti menyampaikan pesanan dengan instruksi tertulis yang jelas. CLI tidak selalu lebih baik untuk semua orang; pilih antarmuka yang paling sesuai dengan tugas."
             }
           ],
           "competency_ids": [
@@ -908,7 +1178,7 @@
           "id": "sistem_operasi_3_4_booting_komputer",
           "material_id": "sistem_operasi",
           "title": "3.4 Booting komputer",
-          "summary": "Ketika komputer dinyalakan, sistem melakukan beberapa tahap pemeriksaan dan pemuatan sebelum pengguna mendapatkan desktop. Firmware melakukan inisialisasi awal, kemudian proses boo",
+          "summary": "Booting adalah proses awal sejak komputer dinyalakan sampai sistem operasi siap digunakan, termasuk pemeriksaan awal dan pemuatan komponen OS.",
           "order": 4,
           "blocks": [
             {
@@ -918,7 +1188,31 @@
             },
             {
               "type": "paragraph",
-              "text": "Ketika komputer dinyalakan, sistem melakukan beberapa tahap pemeriksaan dan pemuatan sebelum pengguna mendapatkan desktop. Firmware melakukan inisialisasi awal, kemudian proses boot mencari media yang berisi sistem operasi. Selanjutnya OS memuat komponen inti dan driver hingga sistem siap digunakan."
+              "text": "Saat komputer dinyalakan, perangkat menjalani beberapa tahap sebelum desktop muncul. Secara sederhana, firmware seperti UEFI melakukan inisialisasi awal dan pemeriksaan perangkat, lalu proses boot memuat sistem operasi dari media penyimpanan. OS kemudian memuat komponen yang diperlukan, termasuk driver, sampai sistem siap digunakan."
+            },
+            {
+              "type": "heading",
+              "text": "Urutan sederhananya"
+            },
+            {
+              "type": "bullet",
+              "text": "Komputer menerima daya dan firmware memulai pemeriksaan awal perangkat."
+            },
+            {
+              "type": "bullet",
+              "text": "Sistem mencari perangkat atau media yang berisi sistem operasi."
+            },
+            {
+              "type": "bullet",
+              "text": "Komponen inti OS dan driver yang diperlukan dimuat."
+            },
+            {
+              "type": "bullet",
+              "text": "Layar masuk atau desktop tampil sehingga pengguna dapat mulai bekerja."
+            },
+            {
+              "type": "paragraph",
+              "text": "Analogi: seperti membuka laboratorium. Listrik dan perangkat diperiksa terlebih dahulu, alat utama disiapkan, lalu ruangan siap digunakan. Jika booting bermasalah, perhatikan pesan yang muncul dan catat kapan masalah terjadi sebelum melakukan perbaikan."
             }
           ],
           "competency_ids": [
@@ -931,12 +1225,12 @@
           "id": "sistem_operasi_3_5_file_system_dan_manajemen_file",
           "material_id": "sistem_operasi",
           "title": "3.5 File system dan manajemen file",
-          "summary": "File system adalah mekanisme yang digunakan untuk mengatur bagaimana data disimpan dan ditemukan pada media penyimpanan. Sebagai pengguna, siswa perlu memahami konsep dasar file, f",
+          "summary": "File system membantu OS menyusun dan menemukan data. Memahami folder, path, ekstensi, serta operasi file membantu mencegah file hilang atau tertukar.",
           "order": 5,
           "blocks": [
             {
               "type": "paragraph",
-              "text": "File system adalah mekanisme yang digunakan untuk mengatur bagaimana data disimpan dan ditemukan pada media penyimpanan. Sebagai pengguna, siswa perlu memahami konsep dasar file, folder, ekstensi, path, copy, move, rename, delete, dan permission."
+              "text": "File system adalah cara OS mengatur data pada media penyimpanan agar file dapat disimpan dan ditemukan. Pengguna perlu memahami file, folder, ekstensi, path (alamat lokasi file), copy, move, rename, delete, serta permission atau hak akses."
             },
             {
               "type": "table",
@@ -966,6 +1260,26 @@
                   "Menentukan siapa yang dapat membaca, menulis, menjalankan, atau mengubah data pada sistem tertentu."
                 ]
               ]
+            },
+            {
+              "type": "heading",
+              "text": "Analogi: lemari arsip"
+            },
+            {
+              "type": "paragraph",
+              "text": "Bayangkan folder seperti laci lemari arsip dan file seperti dokumen di dalamnya. Nama folder dan path membantu kamu menemukan dokumen dengan tepat. Jika semua file disimpan tanpa penamaan dan pengelompokan, dokumen akan sulit dicari."
+            },
+            {
+              "type": "heading",
+              "text": "Contoh pengelolaan file tugas"
+            },
+            {
+              "type": "paragraph",
+              "text": "Buat folder dengan nama yang jelas, misalnya TJKT/Kelas_X/Praktikum_Hardware. Simpan file dengan nama yang mudah dikenali dan periksa lokasi sebelum memindahkan atau menghapusnya. Copy membuat salinan, sedangkan move memindahkan lokasi file. Sebelum menghapus file penting, pastikan ada salinan cadangan bila diperlukan."
+            },
+            {
+              "type": "bullet",
+              "text": "Ekstensi seperti .docx, .jpg, .mp4, atau .zip memberi petunjuk jenis file, tetapi jangan menganggap file pasti aman hanya berdasarkan ekstensinya."
             }
           ],
           "competency_ids": [
@@ -978,7 +1292,7 @@
           "id": "sistem_operasi_3_6_windows_dan_linux_secara_umum",
           "material_id": "sistem_operasi",
           "title": "3.6 Windows dan Linux secara umum",
-          "summary": "",
+          "summary": "Windows dan Linux sama-sama dapat menjadi sistem operasi, tetapi berbeda pada lisensi, distribusi, cara pengelolaan, dan lingkungan penggunaannya.",
           "order": 6,
           "blocks": [
             {
@@ -1013,7 +1327,19 @@
             },
             {
               "type": "paragraph",
-              "text": "Fokus kelas X Siswa tidak harus menghafal semua perintah Linux atau pengaturan Windows. Yang utama adalah memahami konsep OS dan mampu memilih tindakan yang tepat saat menghadapi masalah sederhana."
+              "text": "Fokus kelas X: kamu tidak harus menghafal semua perintah Linux atau seluruh pengaturan Windows. Yang utama adalah memahami konsep dasar, mampu melakukan tugas umum dengan benar, dan mengetahui cara mencari bantuan ketika menemui masalah."
+            },
+            {
+              "type": "heading",
+              "text": "Analogi: alat kerja yang berbeda"
+            },
+            {
+              "type": "paragraph",
+              "text": "Windows dan Linux seperti dua sistem alat kerja yang memiliki cara pengoperasian berbeda, tetapi sama-sama dapat membantu menyelesaikan pekerjaan. Pilihan tergantung aplikasi yang dibutuhkan, dukungan perangkat, kebijakan sekolah atau tempat kerja, dan kemampuan pengguna."
+            },
+            {
+              "type": "paragraph",
+              "text": "Linux memiliki banyak distribusi (distro), yaitu paket sistem yang menyertakan kernel Linux dan komponen lain dengan pilihan berbeda. Dalam bidang TJKT, Linux sering dijumpai pada server dan lingkungan jaringan, sementara Windows umum digunakan pada PC klien dan aplikasi desktop. Keduanya dapat digunakan untuk administrasi dan pembelajaran sesuai kebutuhan."
             }
           ],
           "competency_ids": [
@@ -1027,7 +1353,7 @@
           "id": "sistem_operasi_3_7_shutdown_restart_sleep_dan_hibernate",
           "material_id": "sistem_operasi",
           "title": "3.7 Shutdown, restart, sleep, dan hibernate",
-          "summary": "",
+          "summary": "Shutdown mematikan komputer secara normal, restart menyalakan ulang, sleep menghemat daya sambil mempertahankan sesi di memori, dan hibernate menyimpan sesi ke storage.",
           "order": 7,
           "blocks": [
             {
@@ -1054,6 +1380,34 @@
                   "Menyimpan keadaan sesi ke media penyimpanan lalu mematikan daya; saat dilanjutkan sesi dapat dipulihkan."
                 ]
               ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Keempat pilihan ini tidak sama. Memilih tindakan yang tepat membantu menjaga pekerjaan tetap aman dan menghindari kehilangan data, terutama saat menggunakan komputer laboratorium."
+            },
+            {
+              "type": "heading",
+              "text": "Kapan digunakan?"
+            },
+            {
+              "type": "bullet",
+              "text": "Gunakan Shutdown saat pekerjaan selesai dan komputer tidak akan dipakai lagi untuk sementara."
+            },
+            {
+              "type": "bullet",
+              "text": "Gunakan Restart ketika sistem meminta restart setelah update atau ketika perlu memulai ulang OS untuk menguji perbaikan masalah."
+            },
+            {
+              "type": "bullet",
+              "text": "Gunakan Sleep untuk jeda singkat karena sesi tetap ada di RAM dan komputer masih memakai sedikit daya."
+            },
+            {
+              "type": "bullet",
+              "text": "Gunakan Hibernate bila ingin melanjutkan sesi setelah jeda lebih lama dengan menyimpan keadaan sesi ke storage; fitur ini bergantung pada dukungan sistem."
+            },
+            {
+              "type": "paragraph",
+              "text": "Sebelum memilih tindakan apa pun, simpan pekerjaan dan tutup aplikasi penting. Jangan mematikan komputer dengan mencabut listrik saat sistem masih bekerja kecuali berada dalam keadaan darurat dan mengikuti prosedur yang tepat."
             }
           ],
           "competency_ids": [
@@ -1066,7 +1420,7 @@
           "id": "sistem_operasi_3_8_troubleshooting_os_dasar",
           "material_id": "sistem_operasi",
           "title": "3.8 Troubleshooting OS dasar",
-          "summary": "",
+          "summary": "Saat OS bermasalah, periksa gejala dan pesan kesalahan, lalu lakukan langkah aman dari yang paling sederhana sebelum mencoba perubahan besar.",
           "order": 8,
           "blocks": [
             {
@@ -1097,6 +1451,38 @@
                   "Periksa aplikasi startup, penggunaan storage/RAM, update, dan kondisi sistem."
                 ]
               ]
+            },
+            {
+              "type": "paragraph",
+              "text": "Masalah yang tampak mirip belum tentu memiliki penyebab yang sama. Aplikasi lambat bisa disebabkan penggunaan CPU/RAM yang tinggi, ruang storage yang hampir penuh, atau proses lain di latar belakang. Periksa bukti terlebih dahulu sebelum mengambil tindakan."
+            },
+            {
+              "type": "heading",
+              "text": "Urutan pemeriksaan sederhana"
+            },
+            {
+              "type": "bullet",
+              "text": "Simpan pekerjaan jika masih memungkinkan dan catat pesan kesalahan persis seperti yang muncul."
+            },
+            {
+              "type": "bullet",
+              "text": "Periksa hal dasar yang sesuai dengan masalah, misalnya koneksi perangkat, ruang storage, atau aplikasi yang menggunakan banyak sumber daya."
+            },
+            {
+              "type": "bullet",
+              "text": "Jika aman, tutup dan buka kembali aplikasi atau restart OS setelah memastikan pekerjaan tersimpan."
+            },
+            {
+              "type": "bullet",
+              "text": "Hindari langsung menghapus data, mengubah konfigurasi penting, atau memasang ulang OS sebagai langkah pertama."
+            },
+            {
+              "type": "bullet",
+              "text": "Jika masalah tetap terjadi, catat langkah yang sudah dicoba dan minta bantuan guru/laboran atau teknisi yang berwenang."
+            },
+            {
+              "type": "paragraph",
+              "text": "Catatan gejala dan hasil pemeriksaan membantu teknisi lain memahami masalah tanpa harus mengulang seluruh langkah dari awal."
             }
           ],
           "competency_ids": [
@@ -1104,42 +1490,6 @@
             "sistem_operasi_file_system",
             "sistem_operasi_monitoring_proses",
             "sistem_operasi_troubleshooting_perangkat"
-          ]
-        },
-        {
-          "id": "sistem_operasi_3_9_aktivitas_belajar_singkat",
-          "material_id": "sistem_operasi",
-          "title": "3.9 Aktivitas belajar singkat",
-          "summary": "1. Buka Task Manager/monitor proses dan identifikasi 3 proses yang sedang berjalan.",
-          "order": 9,
-          "blocks": [
-            {
-              "type": "paragraph",
-              "text": "1. Buka Task Manager/monitor proses dan identifikasi 3 proses yang sedang berjalan."
-            },
-            {
-              "type": "paragraph",
-              "text": "2. Buka pengelola file dan amati path, folder, ekstensi file, serta ukuran file."
-            },
-            {
-              "type": "paragraph",
-              "text": "3. Bandingkan GUI dan CLI melalui satu tugas sederhana, misalnya melihat isi folder."
-            },
-            {
-              "type": "paragraph",
-              "text": "4. Buat flowchart troubleshooting ketika sebuah perangkat eksternal tidak dikenali OS."
-            },
-            {
-              "type": "paragraph",
-              "text": "5. Jelaskan mengapa shutdown melalui menu OS lebih aman daripada langsung memutus listrik."
-            }
-          ],
-          "competency_ids": [
-            "sistem_operasi_manajemen_proses",
-            "sistem_operasi_file_system",
-            "sistem_operasi_monitoring_proses",
-            "sistem_operasi_troubleshooting_perangkat",
-            "sistem_operasi_shutdown_aman"
           ]
         }
       ]
