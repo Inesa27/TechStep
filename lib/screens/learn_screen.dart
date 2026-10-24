@@ -1,11 +1,22 @@
+
 import 'package:flutter/material.dart';
 
 import '../models/learning_content.dart';
 import '../services/learning_analytics_service.dart';
 import '../services/techstep_database.dart';
 
+// ============================================================
+// LEARN SCREEN
+// ============================================================
+
 class LearnScreen extends StatelessWidget {
   const LearnScreen({super.key});
+
+  static const Color _background = Color(0xFFF4F3FC);
+  static const Color _primary = Color(0xFF5547E8);
+  static const Color _textPrimary = Color(0xFF242438);
+  static const Color _textSecondary = Color(0xFF77778B);
+  static const Color _border = Color(0xFFE7E5F2);
 
   @override
   Widget build(BuildContext context) {
@@ -15,63 +26,112 @@ class LearnScreen extends StatelessWidget {
       animation: analytics,
       builder: (context, child) {
         return Scaffold(
-          backgroundColor: const Color(0xFFF6F7FB),
+          backgroundColor: _background,
           appBar: AppBar(
-            backgroundColor: Colors.transparent,
+            backgroundColor: _background,
             elevation: 0,
             scrolledUnderElevation: 0,
+            titleSpacing: 20,
             title: const Text(
               'Learn',
               style: TextStyle(
-                fontSize: 22,
+                fontSize: 23,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF111827),
+                color: _textPrimary,
+                letterSpacing: -0.5,
               ),
             ),
-            centerTitle: false,
           ),
           body: SafeArea(
             child: FutureBuilder<List<LearningMaterial>>(
               future: TechStepDatabase.instance.getMaterialsWithProgress(),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: _primary,
+                    ),
+                  );
                 }
 
-                final materials = snapshot.data!;
+                if (snapshot.hasError) {
+                  return _buildErrorState();
+                }
+
+                final materials = snapshot.data ?? [];
+
+                if (materials.isEmpty) {
+                  return _buildEmptyState();
+                }
 
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildIntroCard(analytics.learningProgress),
-                      const SizedBox(height: 24),
-                      const Text(
-                        'Materi Pembelajaran',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F2937),
-                        ),
+                      const SizedBox(height: 30),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Pilih Materi',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: _textPrimary,
+                                    letterSpacing: -0.4,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  'Tentukan topik yang ingin kamu pelajari.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    height: 1.5,
+                                    color: _textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 9,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEEEDFF),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              '${materials.length} Topik',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                                color: _primary,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Pelajari materi dari dokumen bahan ajar. Riwayat submateri yang sudah dibuka akan tersimpan otomatis.',
-                        style: TextStyle(
-                          fontSize: 13,
-                          height: 1.5,
-                          color: Color(0xFF6B7280),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+
+                      const SizedBox(height: 18),
+
                       ...materials.map(
                         (material) => Padding(
-                          padding: const EdgeInsets.only(bottom: 14),
+                          padding: const EdgeInsets.only(bottom: 16),
                           child: _buildMaterialCard(context, material),
                         ),
                       ),
-                      const SizedBox(height: 10),
+
+                      const SizedBox(height: 4),
                       _buildLearningTip(),
                     ],
                   ),
@@ -84,71 +144,229 @@ class LearnScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildErrorState() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.cloud_off_rounded,
+              size: 48,
+              color: _textSecondary,
+            ),
+            const SizedBox(height: 14),
+            const Text(
+              'Materi belum dapat dimuat',
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: _textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Silakan periksa kembali dan coba buka halaman Learn.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                height: 1.5,
+                color: _textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.all(28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.menu_book_rounded,
+              size: 48,
+              color: _primary,
+            ),
+            SizedBox(height: 14),
+            Text(
+              'Belum ada materi',
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.bold,
+                color: _textPrimary,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Materi pembelajaran akan ditampilkan di sini.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 13,
+                color: _textSecondary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ------------------------------------------------------------
+  // KARTU PEMBUKA DAN RINGKASAN PROGRES
+  // ------------------------------------------------------------
+
   Widget _buildIntroCard(int learningProgress) {
+    final progress =
+        (learningProgress / 100).clamp(0.0, 1.0).toDouble();
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(21),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [Color(0xFF4F46E5), Color(0xFF6366F1)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(22),
+        color: _primary,
+        borderRadius: BorderRadius.circular(26),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(14),
-            ),
-            child: const Icon(
-              Icons.menu_book_rounded,
-              color: Colors.white,
-              size: 25,
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Mulai Langkah Belajarmu',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+          Positioned(
+            right: -35,
+            top: 55,
+            child: Container(
+              width: 125,
+              height: 125,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white.withValues(alpha: 0.045),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Materi Hardware, Software, dan Sistem Operasi sudah tersusun per submateri sesuai bahan ajar.',
-            style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.5),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: LinearProgressIndicator(
-                    value: learningProgress / 100,
-                    minHeight: 7,
-                    backgroundColor: Colors.white.withValues(alpha: 0.18),
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      Colors.white,
-                    ),
-                  ),
+          Positioned(
+            right: 18,
+            top: 90,
+            child: Container(
+              width: 68,
+              height: 68,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withValues(alpha: 0.08),
+                  width: 12,
                 ),
               ),
-              const SizedBox(width: 12),
-              Text(
-                '$learningProgress%',
-                style: const TextStyle(
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 11,
+                      vertical: 7,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: const Text(
+                      'RUANG BELAJAR',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: 49,
+                    height: 49,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.14),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.auto_stories_rounded,
+                      color: Colors.white,
+                      size: 27,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 19),
+              const Text(
+                'Ayo Tingkatkan\nPemahamanmu!',
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 12,
+                  fontSize: 25,
+                  height: 1.23,
                   fontWeight: FontWeight.bold,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Pelajari Hardware, Software, dan Sistem Operasi secara bertahap.',
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 13,
+                  height: 1.6,
+                ),
+              ),
+              const SizedBox(height: 22),
+              Container(
+                padding: const EdgeInsets.all(15),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(17),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Expanded(
+                          child: Text(
+                            'Progres Belajar',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '$learningProgress%',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: LinearProgressIndicator(
+                        value: progress,
+                        minHeight: 8,
+                        backgroundColor:
+                            Colors.white.withValues(alpha: 0.2),
+                        valueColor:
+                            const AlwaysStoppedAnimation<Color>(
+                          Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -158,152 +376,240 @@ class LearnScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMaterialCard(BuildContext context, LearningMaterial material) {
+  // ------------------------------------------------------------
+  // KARTU PILIHAN MATERI
+  // ------------------------------------------------------------
+
+  Widget _buildMaterialCard(
+    BuildContext context,
+    LearningMaterial material,
+  ) {
     final color = _colorFromHex(material.colorHex);
     final percentage = (material.progress * 100).round();
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => MaterialDetailScreen(material: material),
-          ),
-        );
-      },
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFE5E7EB)),
-        ),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 54,
-                  height: 54,
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Icon(
-                    _iconFromKey(material.iconKey),
-                    color: color,
-                    size: 28,
-                  ),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        material.title,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1F2937),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        material.subtitle,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          height: 1.4,
-                          color: Color(0xFF6B7280),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 16,
-                  color: Color(0xFF9CA3AF),
-                ),
-              ],
+    final isComplete = material.totalSubmaterials > 0 &&
+        material.completedSubmaterials >= material.totalSubmaterials;
+
+    final statusText = isComplete
+        ? 'Selesai'
+        : material.completedSubmaterials == 0
+            ? 'Belum dipelajari'
+            : 'Sedang dipelajari';
+
+    final statusColor = isComplete
+        ? const Color(0xFF239B70)
+        : _primary;
+
+    final statusBackground = isComplete
+        ? const Color(0xFFE7F7EF)
+        : const Color(0xFFEEEDFF);
+
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(24),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MaterialDetailScreen(
+                material: material,
+              ),
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: material.progress,
-                      minHeight: 7,
-                      backgroundColor: const Color(0xFFE5E7EB),
-                      valueColor: AlwaysStoppedAnimation<Color>(color),
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: _border),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(19),
+                    ),
+                    child: Icon(
+                      _iconFromKey(material.iconKey),
+                      color: color,
+                      size: 30,
                     ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Text(
-                  '$percentage%',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF6B7280),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            material.title,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: _textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            material.subtitle,
+                            style: const TextStyle(
+                              fontSize: 12,
+                              height: 1.5,
+                              color: _textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  material.completedSubmaterials == 0
-                      ? 'Belum dipelajari'
-                      : '${material.completedSubmaterials}/${material.totalSubmaterials} submateri dibuka',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: Color(0xFF9CA3AF),
+                  const Icon(
+                    Icons.chevron_right_rounded,
+                    color: Color(0xFF9292A7),
+                    size: 26,
                   ),
+                ],
+              ),
+              const SizedBox(height: 17),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 7,
                 ),
-                Text(
-                  material.completedSubmaterials == 0
-                      ? 'Mulai belajar'
-                      : 'Lanjutkan',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: color,
+                decoration: BoxDecoration(
+                  color: statusBackground,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isComplete
+                          ? Icons.check_circle_rounded
+                          : Icons.menu_book_rounded,
+                      size: 14,
+                      color: statusColor,
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      statusText,
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: statusColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 17),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Progres materi',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: _textSecondary,
+                    ),
                   ),
+                  Text(
+                    '$percentage%',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 9),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: LinearProgressIndicator(
+                  value:
+                      material.progress.clamp(0.0, 1.0).toDouble(),
+                  minHeight: 8,
+                  backgroundColor: const Color(0xFFF0EFF7),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      '${material.completedSubmaterials}/${material.totalSubmaterials} submateri dibuka',
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF9292A7),
+                      ),
+                    ),
+                  ),
+                  Text(
+                    isComplete ? 'Pelajari lagi' : 'Mulai belajar',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: _primary,
+                    ),
+                  ),
+                  const SizedBox(width: 5),
+                  const Icon(
+                    Icons.arrow_forward_rounded,
+                    size: 16,
+                    color: _primary,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  // ------------------------------------------------------------
+  // TIPS BELAJAR
+  // ------------------------------------------------------------
 
   Widget _buildLearningTip() {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: const Color(0xFFEEF2FF),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE0E7FF)),
+        color: const Color(0xFFEEEDFF),
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: const Color(0xFFDDDBFF)),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.lightbulb_outline_rounded,
-            color: Color(0xFF4F46E5),
-            size: 25,
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(
+              Icons.lightbulb_rounded,
+              color: _primary,
+              size: 24,
+            ),
           ),
-          SizedBox(width: 12),
-          Expanded(
+          const SizedBox(width: 13),
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -312,16 +618,16 @@ class LearnScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1F2937),
+                    color: _textPrimary,
                   ),
                 ),
-                SizedBox(height: 5),
+                SizedBox(height: 6),
                 Text(
-                  'Buka submateri secara bertahap. Progress Learn ikut menjadi bukti aktivitas pada pemetaan kompetensi.',
+                  'Pelajari setiap submateri secara bertahap dan pahami konsepnya sebelum melanjutkan ke topik berikutnya.',
                   style: TextStyle(
                     fontSize: 12,
-                    height: 1.5,
-                    color: Color(0xFF6B7280),
+                    height: 1.6,
+                    color: _textSecondary,
                   ),
                 ),
               ],
@@ -333,13 +639,21 @@ class LearnScreen extends StatelessWidget {
   }
 }
 
+// ============================================================
+// MATERIAL DETAIL SCREEN
+// ============================================================
+
 class MaterialDetailScreen extends StatefulWidget {
   final LearningMaterial material;
 
-  const MaterialDetailScreen({super.key, required this.material});
+  const MaterialDetailScreen({
+    super.key,
+    required this.material,
+  });
 
   @override
-  State<MaterialDetailScreen> createState() => _MaterialDetailScreenState();
+  State<MaterialDetailScreen> createState() =>
+      _MaterialDetailScreenState();
 }
 
 class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
@@ -362,9 +676,9 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     final color = _colorFromHex(widget.material.colorHex);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7FB),
+      backgroundColor: const Color(0xFFF4F3FC),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFF4F3FC),
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
@@ -372,7 +686,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            color: Color(0xFF242438),
           ),
         ),
       ),
@@ -380,49 +694,98 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         child: FutureBuilder<List<Submaterial>>(
           future: _submaterialsFuture,
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Color(0xFF5547E8),
+                ),
+              );
             }
 
-            final submaterials = snapshot.data!;
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text('Submateri belum dapat dimuat.'),
+              );
+            }
+
+            final submaterials = snapshot.data ?? [];
 
             return SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeaderCard(color),
-                  const SizedBox(height: 24),
+                  _buildHeaderCard(color, submaterials.length),
+                  const SizedBox(height: 25),
+
                   const Text(
                     'Tentang Materi',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Color(0xFF1F2937),
+                      color: Color(0xFF242438),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 11),
                   _buildDescriptionCard(),
-                  const SizedBox(height: 24),
+
+                  const SizedBox(height: 26),
+
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Daftar Submateri',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF242438),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 11,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFEEEDFF),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          '${submaterials.length} bagian',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF5547E8),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 7),
                   const Text(
-                    'Submateri',
+                    'Pilih bagian yang ingin kamu pelajari.',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1F2937),
+                      fontSize: 12,
+                      color: Color(0xFF77778B),
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  ...List.generate(
-                    submaterials.length,
-                    (index) => _buildSubmaterialItem(
-                      submaterial: submaterials[index],
-                      number: index + 1,
-                      color: color,
-                      submaterials: submaterials,
-                      currentIndex: index,
+                  const SizedBox(height: 16),
+
+                  if (submaterials.isEmpty)
+                    _buildNoSubmaterials()
+                  else
+                    ...List.generate(
+                      submaterials.length,
+                      (index) => _buildSubmaterialItem(
+                        submaterial: submaterials[index],
+                        number: index + 1,
+                        color: color,
+                        submaterials: submaterials,
+                        currentIndex: index,
+                      ),
                     ),
-                  ),
                 ],
               ),
             );
@@ -432,50 +795,103 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     );
   }
 
-  Widget _buildHeaderCard(Color color) {
+  Widget _buildHeaderCard(Color color, int totalSubmaterials) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(22),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: const Color(0xFFE7E5F2)),
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 58,
-            height: 58,
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Icon(
-              _iconFromKey(widget.material.iconKey),
-              color: Colors.white,
-              size: 30,
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.material.title,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 21,
+          Row(
+            children: [
+              Container(
+                width: 66,
+                height: 66,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.13),
+                  borderRadius: BorderRadius.circular(21),
+                ),
+                child: Icon(
+                  _iconFromKey(widget.material.iconKey),
+                  color: color,
+                  size: 34,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 7,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEEEDFF),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Text(
+                  'MATERI',
+                  style: TextStyle(
+                    color: Color(0xFF5547E8),
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
+                    letterSpacing: 0.7,
                   ),
                 ),
-                const SizedBox(height: 5),
-                Text(
-                  widget.material.subtitle,
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                    height: 1.4,
+              ),
+            ],
+          ),
+          const SizedBox(height: 19),
+          Text(
+            widget.material.title,
+            style: const TextStyle(
+              fontSize: 23,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF242438),
+              letterSpacing: -0.4,
+            ),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            widget.material.subtitle,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.6,
+              color: Color(0xFF77778B),
+            ),
+          ),
+          const SizedBox(height: 18),
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF7F6FC),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.menu_book_rounded,
+                  color: color,
+                  size: 21,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    '$totalSubmaterials submateri tersedia',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF55556A),
+                    ),
                   ),
+                ),
+                const Icon(
+                  Icons.arrow_forward_rounded,
+                  color: Color(0xFF9292A7),
+                  size: 19,
                 ),
               ],
             ),
@@ -491,16 +907,45 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE7E5F2)),
       ),
       child: Text(
         widget.material.description,
         style: const TextStyle(
           fontSize: 13,
-          height: 1.7,
-          color: Color(0xFF4B5563),
+          height: 1.8,
+          color: Color(0xFF55556A),
         ),
+      ),
+    );
+  }
+
+  Widget _buildNoSubmaterials() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(22),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE7E5F2)),
+      ),
+      child: const Column(
+        children: [
+          Icon(
+            Icons.menu_book_rounded,
+            color: Color(0xFF9292A7),
+            size: 36,
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Belum ada submateri',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF242438),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -512,100 +957,137 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     required List<Submaterial> submaterials,
     required int currentIndex,
   }) {
-    return InkWell(
-      onTap: () async {
-        await LearningAnalyticsService.instance.recordSubmaterialOpened(
-          submaterial,
-        );
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () async {
+            await LearningAnalyticsService.instance
+                .recordSubmaterialOpened(submaterial);
 
-        if (!mounted) {
-          return;
-        }
+            if (!mounted) {
+              return;
+            }
 
-        await Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => SubmaterialScreen(
-              material: widget.material,
-              submaterials: submaterials,
-              currentIndex: currentIndex,
-            ),
-          ),
-        );
-
-        if (mounted) {
-          setState(_loadSubmaterials);
-        }
-      },
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(15),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: submaterial.completed ? color : const Color(0xFFE5E7EB),
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 34,
-              height: 34,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.10),
-                borderRadius: BorderRadius.circular(10),
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SubmaterialScreen(
+                  material: widget.material,
+                  submaterials: submaterials,
+                  currentIndex: currentIndex,
+                ),
               ),
-              child: submaterial.completed
-                  ? Icon(Icons.check_rounded, color: color, size: 18)
-                  : Text(
-                      '$number',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold,
-                        color: color,
-                      ),
-                    ),
+            );
+
+            if (mounted) {
+              setState(_loadSubmaterials);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: submaterial.completed
+                    ? color.withValues(alpha: 0.55)
+                    : const Color(0xFFE7E5F2),
+              ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    submaterial.title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF374151),
-                    ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 43,
+                  height: 43,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: submaterial.completed
+                        ? const Color(0xFFE7F7EF)
+                        : color.withValues(alpha: 0.11),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  if (submaterial.summary.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      submaterial.summary,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        height: 1.4,
-                        color: Color(0xFF6B7280),
+                  child: submaterial.completed
+                      ? const Icon(
+                          Icons.check_rounded,
+                          color: Color(0xFF239B70),
+                          size: 22,
+                        )
+                      : Text(
+                          number.toString().padLeft(2, '0'),
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                          ),
+                        ),
+                ),
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        submaterial.title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          height: 1.4,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF242438),
+                        ),
                       ),
-                    ),
-                  ],
-                ],
-              ),
+                      if (submaterial.summary.isNotEmpty) ...[
+                        const SizedBox(height: 5),
+                        Text(
+                          submaterial.summary,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            height: 1.5,
+                            color: Color(0xFF77778B),
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 7),
+                      Text(
+                        submaterial.completed
+                            ? 'Sudah dipelajari'
+                            : 'Ketuk untuk mempelajari',
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: submaterial.completed
+                              ? const Color(0xFF239B70)
+                              : color,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: submaterial.completed
+                      ? color
+                      : const Color(0xFF9292A7),
+                  size: 24,
+                ),
+              ],
             ),
-            const Icon(Icons.chevron_right_rounded, color: Color(0xFF9CA3AF)),
-          ],
+          ),
         ),
       ),
     );
   }
 }
+
+// ============================================================
+// SUBMATERIAL SCREEN
+// ============================================================
 
 class SubmaterialScreen extends StatelessWidget {
   final LearningMaterial material;
@@ -619,9 +1101,15 @@ class SubmaterialScreen extends StatelessWidget {
     required this.currentIndex,
   });
 
-  Future<void> _openSubmaterialAt(BuildContext context, int targetIndex) async {
+  Future<void> _openSubmaterialAt(
+    BuildContext context,
+    int targetIndex,
+  ) async {
     final target = submaterials[targetIndex];
-    await LearningAnalyticsService.instance.recordSubmaterialOpened(target);
+
+    await LearningAnalyticsService.instance.recordSubmaterialOpened(
+      target,
+    );
 
     if (!context.mounted) {
       return;
@@ -645,18 +1133,20 @@ class SubmaterialScreen extends StatelessWidget {
     final hasPrevious = currentIndex > 0;
     final hasNext = currentIndex < submaterials.length - 1;
 
+    final progress = (currentIndex + 1) / submaterials.length;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7FB),
+      backgroundColor: const Color(0xFFF4F3FC),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color(0xFFF4F3FC),
         elevation: 0,
         scrolledUnderElevation: 0,
         title: Text(
           material.title,
           style: const TextStyle(
-            fontSize: 20,
+            fontSize: 19,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF111827),
+            color: Color(0xFF242438),
           ),
         ),
       ),
@@ -670,111 +1160,176 @@ class SubmaterialScreen extends StatelessWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(22),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(
+                    color: const Color(0xFFE7E5F2),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      material.title,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    Row(
+                      children: [
+                        Container(
+                          width: 42,
+                          height: 42,
+                          decoration: BoxDecoration(
+                            color: color.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(
+                            _iconFromKey(material.iconKey),
+                            color: color,
+                            size: 23,
+                          ),
+                        ),
+                        const SizedBox(width: 11),
+                        Expanded(
+                          child: Text(
+                            material.title,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: color,
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${currentIndex + 1}/${submaterials.length}',
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFF77778B),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 7),
+                    const SizedBox(height: 20),
                     Text(
                       submaterial.title,
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        height: 1.25,
+                        color: Color(0xFF242438),
+                        fontSize: 23,
+                        height: 1.3,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 17),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: LinearProgressIndicator(
+                        value: progress.clamp(0.0, 1.0).toDouble(),
+                        minHeight: 6,
+                        backgroundColor: const Color(0xFFF0EFF7),
+                        valueColor: AlwaysStoppedAnimation<Color>(color),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Lanjutkan belajar sesuai urutan submateri.',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Color(0xFF77778B),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
+
+              const SizedBox(height: 22),
+
               ...submaterial.blocks.map(
                 (block) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.only(bottom: 13),
                   child: _buildContentBlock(block, color),
                 ),
               ),
+
               const SizedBox(height: 12),
+
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if (hasPrevious)
-                    OutlinedButton.icon(
-                      onPressed: () =>
-                          _openSubmaterialAt(context, currentIndex - 1),
-                      icon: const Icon(Icons.arrow_back_rounded, size: 18),
-                      label: const Text('Sebelumnya'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: const Color(0xFF4F46E5),
-                        side: const BorderSide(color: Color(0xFFD1D5DB)),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 13,
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _openSubmaterialAt(
+                          context,
+                          currentIndex - 1,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                        icon: const Icon(
+                          Icons.arrow_back_rounded,
+                          size: 18,
+                        ),
+                        label: const Text('Sebelumnya'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: const Color(0xFF5547E8),
+                          side: const BorderSide(
+                            color: Color(0xFFDDD9F0),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 14,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
                         ),
                       ),
                     )
                   else
-                    const SizedBox.shrink(),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          if (hasNext) {
-                            _openSubmaterialAt(context, currentIndex + 1);
-                          } else {
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        icon: Icon(
-                          hasNext
-                              ? Icons.arrow_forward_rounded
-                              : Icons.check_rounded,
-                          size: 18,
+                    const Spacer(),
+
+                  const SizedBox(width: 10),
+
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        if (hasNext) {
+                          _openSubmaterialAt(
+                            context,
+                            currentIndex + 1,
+                          );
+                        } else {
+                          Navigator.of(context).pop();
+                        }
+                      },
+                      icon: Icon(
+                        hasNext
+                            ? Icons.arrow_forward_rounded
+                            : Icons.check_rounded,
+                        size: 18,
+                      ),
+                      label: Text(
+                        hasNext ? 'Berikutnya' : 'Selesai',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF5547E8),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 14,
                         ),
-                        label: Text(
-                          hasNext ? 'Submateri Berikutnya' : 'Selesai',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4F46E5),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 14,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 6),
-              Align(
-                alignment: Alignment.centerRight,
+
+              const SizedBox(height: 10),
+
+              Center(
                 child: Text(
                   'Submateri ${currentIndex + 1} dari ${submaterials.length}',
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Color(0xFF9CA3AF),
+                    color: Color(0xFF9292A7),
                   ),
                 ),
               ),
@@ -785,58 +1340,69 @@ class SubmaterialScreen extends StatelessWidget {
     );
   }
 
+  // ------------------------------------------------------------
+  // ISI MATERI BERDASARKAN JENIS BLOK
+  // ------------------------------------------------------------
+
   Widget _buildContentBlock(ContentBlock block, Color color) {
     switch (block.type) {
       case 'heading':
         return Padding(
-          padding: const EdgeInsets.only(top: 4, bottom: 2),
+          padding: const EdgeInsets.only(top: 5, bottom: 3),
           child: Text(
             block.text,
             style: const TextStyle(
-              fontSize: 17,
-              height: 1.35,
+              fontSize: 18,
+              height: 1.4,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
+              color: Color(0xFF242438),
             ),
           ),
         );
+
       case 'bullet':
         return _buildTextCard(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                width: 7,
-                height: 7,
+                width: 8,
+                height: 8,
                 margin: const EdgeInsets.only(top: 7),
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 11),
               Expanded(
                 child: Text(
                   block.text,
                   style: const TextStyle(
                     fontSize: 13,
-                    height: 1.65,
-                    color: Color(0xFF4B5563),
+                    height: 1.75,
+                    color: Color(0xFF55556A),
                   ),
                 ),
               ),
             ],
           ),
         );
+
       case 'image':
         return _buildImageCard(block);
+
       case 'table':
         return _buildTableCard(block);
+
       default:
         return _buildTextCard(
           child: Text(
             block.text,
             style: const TextStyle(
               fontSize: 13,
-              height: 1.7,
-              color: Color(0xFF4B5563),
+              height: 1.8,
+              color: Color(0xFF55556A),
             ),
           ),
         );
@@ -846,11 +1412,13 @@ class SubmaterialScreen extends StatelessWidget {
   Widget _buildTextCard({required Widget child}) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        borderRadius: BorderRadius.circular(19),
+        border: Border.all(
+          color: const Color(0xFFE7E5F2),
+        ),
       ),
       child: child,
     );
@@ -862,14 +1430,16 @@ class SubmaterialScreen extends StatelessWidget {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        borderRadius: BorderRadius.circular(19),
+        border: Border.all(
+          color: const Color(0xFFE7E5F2),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(13),
             child: Image.asset(
               block.asset,
               width: double.infinity,
@@ -877,13 +1447,13 @@ class SubmaterialScreen extends StatelessWidget {
             ),
           ),
           if (block.caption.isNotEmpty) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: 11),
             Text(
               block.caption,
               style: const TextStyle(
                 fontSize: 11,
-                height: 1.4,
-                color: Color(0xFF6B7280),
+                height: 1.5,
+                color: Color(0xFF77778B),
               ),
             ),
           ],
@@ -895,16 +1465,20 @@ class SubmaterialScreen extends StatelessWidget {
   Widget _buildTableCard(ContentBlock block) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        borderRadius: BorderRadius.circular(19),
+        border: Border.all(
+          color: const Color(0xFFE7E5F2),
+        ),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-          headingRowColor: const WidgetStatePropertyAll(Color(0xFFEEF2FF)),
+          headingRowColor: const WidgetStatePropertyAll(
+            Color(0xFFEEEDFF),
+          ),
           columnSpacing: 22,
           horizontalMargin: 12,
           columns: block.headers.map((header) {
@@ -914,7 +1488,7 @@ class SubmaterialScreen extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1F2937),
+                  color: Color(0xFF242438),
                 ),
               ),
             );
@@ -929,8 +1503,8 @@ class SubmaterialScreen extends StatelessWidget {
                       cell,
                       style: const TextStyle(
                         fontSize: 12,
-                        height: 1.35,
-                        color: Color(0xFF4B5563),
+                        height: 1.45,
+                        color: Color(0xFF55556A),
                       ),
                     ),
                   ),
@@ -943,6 +1517,10 @@ class SubmaterialScreen extends StatelessWidget {
     );
   }
 }
+
+// ============================================================
+// HELPER
+// ============================================================
 
 IconData _iconFromKey(String key) {
   switch (key) {
@@ -959,6 +1537,5 @@ IconData _iconFromKey(String key) {
 
 Color _colorFromHex(String hex) {
   final normalized = hex.replaceFirst('#', '');
-
   return Color(int.parse('FF$normalized', radix: 16));
 }
