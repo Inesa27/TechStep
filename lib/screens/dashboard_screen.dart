@@ -1,4 +1,6 @@
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../services/learning_analytics_service.dart';
 
@@ -35,7 +37,7 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(context),
+                  _buildHeader(context, analytics),
 
                   const SizedBox(height: 24),
 
@@ -106,9 +108,9 @@ class DashboardScreen extends StatelessWidget {
                     subtitle:
                         'Pahami pengelolaan sumber daya komputer.',
                     icon: Icons.desktop_windows_rounded,
-                    progress: analytics
-                            .operatingSystemMastery /
-                        100,
+                    progress:
+                        analytics.operatingSystemMastery /
+                            100,
                     iconColor: const Color(0xFFB56A20),
                     iconBackground:
                         const Color(0xFFFFF1E2),
@@ -198,7 +200,10 @@ class DashboardScreen extends StatelessWidget {
   // HEADER
   // ============================================================
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(
+    BuildContext context,
+    LearningAnalyticsService analytics,
+  ) {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
@@ -246,6 +251,12 @@ class DashboardScreen extends StatelessWidget {
             ],
           ),
         ),
+
+        _NotificationBell(
+          analytics: analytics,
+        ),
+
+        const SizedBox(width: 8),
 
         Container(
           padding: const EdgeInsets.symmetric(
@@ -1150,6 +1161,644 @@ class _IconBadge extends StatelessWidget {
         icon,
         color: color,
         size: size * 0.50,
+      ),
+    );
+  }
+}
+
+// ============================================================
+// DASHBOARD NOTIFICATIONS
+// ============================================================
+
+class _DashboardNotification {
+  final String id;
+  final String title;
+  final String message;
+  final String category;
+  final IconData icon;
+  final DateTime? time;
+
+  const _DashboardNotification({
+    required this.id,
+    required this.title,
+    required this.message,
+    required this.category,
+    required this.icon,
+    this.time,
+  });
+}
+
+// ============================================================
+// NOTIFICATION BELL
+// ============================================================
+
+class _NotificationBell extends StatefulWidget {
+  final LearningAnalyticsService analytics;
+
+  const _NotificationBell({
+    required this.analytics,
+  });
+
+  @override
+  State<_NotificationBell> createState() =>
+      _NotificationBellState();
+}
+
+class _NotificationBellState extends State<_NotificationBell> {
+  static const String _storageKey =
+      'techstep_dashboard_read_notifications_v1';
+
+  final SharedPreferencesAsync _preferences =
+      SharedPreferencesAsync();
+
+  Set<String> _readIds = <String>{};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadReadNotifications();
+  }
+
+  Future<void> _loadReadNotifications() async {
+    try {
+      final savedIds =
+          await _preferences.getStringList(_storageKey);
+
+      if (!mounted) return;
+
+      setState(() {
+        _readIds = savedIds?.toSet() ?? <String>{};
+      });
+    } catch (_) {
+      // Aplikasi tetap dapat digunakan jika penyimpanan gagal.
+    }
+  }
+
+  // ============================================================
+  // MEMBENTUK DAFTAR NOTIFIKASI
+  // ============================================================
+
+  List<_DashboardNotification> _buildNotifications() {
+    final analytics = widget.analytics;
+    final activities = analytics.activities.take(30).toList();
+
+    final notifications = <_DashboardNotification>[];
+
+    // Notifikasi dibuat dari aktivitas belajar yang tercatat.
+    for (final activity in activities) {
+      final titleLower = activity.title.toLowerCase();
+
+      final isQuiz = titleLower.contains('quiz') ||
+          titleLower.contains('kuis');
+
+      final isChallenge =
+          titleLower.contains('challenge') ||
+              titleLower.contains('tantangan');
+
+      final icon = isQuiz
+          ? Icons.quiz_rounded
+          : isChallenge
+              ? Icons.sports_esports_rounded
+              : Icons.menu_book_rounded;
+
+      final category = isQuiz
+          ? 'Quiz'
+          : isChallenge
+              ? 'Challenge'
+              : 'Aktivitas belajar';
+
+      final safeTitle = activity.title.replaceAll(
+        RegExp(r'[^a-zA-Z0-9]+'),
+        '_',
+      );
+
+      notifications.add(
+        _DashboardNotification(
+          id: 'activity_'
+              '${activity.time.microsecondsSinceEpoch}_'
+              '$safeTitle',
+          title: activity.title,
+          message: activity.description,
+          category: category,
+          icon: icon,
+          time: activity.time,
+        ),
+      );
+    }
+
+    // Tambahkan pemberitahuan kuis jika belum ada
+    // aktivitas kuis yang tercatat.
+    final hasQuizActivity = activities.any((activity) {
+      final title = activity.title.toLowerCase();
+      return title.contains('quiz') || title.contains('kuis');
+    });
+
+    if (analytics.quizCompleted && !hasQuizActivity) {
+      notifications.add(
+        const _DashboardNotification(
+          id: 'quiz_completed',
+          title: 'Quiz telah diselesaikan',
+          message:
+              'Bagus! Kamu sudah menyelesaikan quiz. '
+              'Terus tingkatkan pemahamanmu.',
+          category: 'Quiz',
+          icon: Icons.quiz_rounded,
+        ),
+      );
+    }
+
+    // Pemberitahuan progres Computer Challenge.
+    final totalLevels =
+        LearningAnalyticsService.totalChallengeLevels;
+
+    final completedLevels =
+        analytics.completedChallengeLevels
+            .clamp(0, totalLevels)
+            .toInt();
+
+    final hasChallengeActivity = activities.any((activity) {
+      final title = activity.title.toLowerCase();
+
+      return title.contains('challenge') ||
+          title.contains('tantangan');
+    });
+
+    if (completedLevels > 0 && !hasChallengeActivity) {
+      notifications.add(
+        _DashboardNotification(
+          id: 'challenge_progress_$completedLevels',
+          title: 'Progres Challenge diperbarui',
+          message:
+              'Kamu telah menyelesaikan $completedLevels '
+              'dari $totalLevels level Computer Challenge.',
+          category: 'Challenge',
+          icon: Icons.sports_esports_rounded,
+        ),
+      );
+    }
+
+    // Informasi progres jika belum ada aktivitas
+    // yang tercatat pada riwayat belajar.
+    if (analytics.overallProgress > 0 &&
+        activities.isEmpty) {
+      final progress = analytics.overallProgress
+          .clamp(0, 100)
+          .toInt();
+
+      notifications.add(
+        _DashboardNotification(
+          id: 'learning_progress_$progress',
+          title: 'Progres belajarmu',
+          message:
+              'Progres belajar keseluruhanmu saat ini '
+              'mencapai $progress%.',
+          category: 'Progres',
+          icon: Icons.insights_rounded,
+        ),
+      );
+    }
+
+    // Notifikasi informasi awal.
+    notifications.add(
+      const _DashboardNotification(
+        id: 'welcome',
+        title: 'Selamat datang di TechStep!',
+        message:
+            'Mulai pelajari materi, kerjakan quiz, dan '
+            'ikuti Computer Challenge untuk meningkatkan '
+            'kemampuanmu.',
+        category: 'Informasi',
+        icon: Icons.school_rounded,
+      ),
+    );
+
+    // Notifikasi terbaru ditampilkan lebih dahulu.
+    notifications.sort((a, b) {
+      if (a.time == null && b.time == null) return 0;
+      if (a.time == null) return 1;
+      if (b.time == null) return -1;
+      return b.time!.compareTo(a.time!);
+    });
+
+    return notifications;
+  }
+
+  // ============================================================
+  // MENYIMPAN STATUS BACA
+  // ============================================================
+
+  Future<void> _markAsRead(String id) async {
+    if (_readIds.contains(id)) return;
+
+    final updatedIds = <String>{
+      ..._readIds,
+      id,
+    };
+
+    setState(() {
+      _readIds = updatedIds;
+    });
+
+    try {
+      await _preferences.setStringList(
+        _storageKey,
+        updatedIds.toList(),
+      );
+    } catch (_) {
+      // Status tetap diperbarui selama sesi aplikasi.
+    }
+  }
+
+  Future<void> _markAllAsRead(
+    Iterable<String> ids,
+  ) async {
+    final updatedIds = <String>{
+      ..._readIds,
+      ...ids,
+    };
+
+    setState(() {
+      _readIds = updatedIds;
+    });
+
+    try {
+      await _preferences.setStringList(
+        _storageKey,
+        updatedIds.toList(),
+      );
+    } catch (_) {
+      // Status tetap diperbarui selama sesi aplikasi.
+    }
+  }
+
+  // ============================================================
+  // PANEL NOTIFIKASI
+  // ============================================================
+
+  void _showNotifications(BuildContext context) {
+    final notifications = _buildNotifications();
+    final localReadIds = Set<String>.from(_readIds);
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        final scheme = Theme.of(sheetContext).colorScheme;
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final unreadCount = notifications
+                .where(
+                  (item) => !localReadIds.contains(item.id),
+                )
+                .length;
+
+            return SafeArea(
+              top: false,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight:
+                      MediaQuery.sizeOf(context).height *
+                          0.78,
+                ),
+                padding: const EdgeInsets.fromLTRB(
+                  20,
+                  12,
+                  20,
+                  20,
+                ),
+                decoration: BoxDecoration(
+                  color: scheme.surface,
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(26),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 42,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: scheme.outlineVariant,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+
+                    const SizedBox(height: 18),
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Notifikasi',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontWeight:
+                                          FontWeight.w800,
+                                    ),
+                              ),
+
+                              const SizedBox(height: 4),
+
+                              Text(
+                                unreadCount > 0
+                                    ? '$unreadCount belum dibaca'
+                                    : 'Semua notifikasi sudah dibaca',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        if (unreadCount > 0)
+                          TextButton(
+                            onPressed: () async {
+                              final ids = notifications
+                                  .map((item) => item.id)
+                                  .toList();
+
+                              await _markAllAsRead(ids);
+
+                              setSheetState(() {
+                                localReadIds.addAll(ids);
+                              });
+                            },
+                            child: const Text('Baca semua'),
+                          ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 14),
+
+                    Flexible(
+                      child: ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: notifications.length,
+                        separatorBuilder: (_, _) =>
+                        const SizedBox(height: 10),
+                        itemBuilder: (context, index) {
+                          final notification =
+                              notifications[index];
+
+                          final isRead = localReadIds.contains(
+                            notification.id,
+                          );
+
+                          return _buildNotificationTile(
+                            context,
+                            notification,
+                            isRead,
+                            onMarkRead: () async {
+                              await _markAsRead(
+                                notification.id,
+                              );
+
+                              if (context.mounted) {
+                                setSheetState(() {
+                                  localReadIds.add(
+                                    notification.id,
+                                  );
+                                });
+                              }
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  // KARTU NOTIFIKASI
+  // ============================================================
+
+  Widget _buildNotificationTile(
+    BuildContext context,
+    _DashboardNotification notification,
+    bool isRead, {
+    required VoidCallback onMarkRead,
+  }) {
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      padding: const EdgeInsets.all(13),
+      decoration: BoxDecoration(
+        color: isRead
+            ? scheme.surfaceContainerHighest.withValues(
+                alpha: 0.35,
+              )
+            : scheme.primary.withValues(alpha: 0.07),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isRead
+              ? scheme.outlineVariant
+              : scheme.primary.withValues(alpha: 0.25),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: scheme.primaryContainer,
+              borderRadius: BorderRadius.circular(13),
+            ),
+            child: Icon(
+              notification.icon,
+              color: scheme.primary,
+              size: 22,
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        notification.title,
+                        style: textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+
+                    if (!isRead) ...[
+                      const SizedBox(width: 6),
+
+                      Container(
+                        width: 8,
+                        height: 8,
+                        margin: const EdgeInsets.only(top: 5),
+                        decoration: BoxDecoration(
+                          color: scheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+
+                const SizedBox(height: 5),
+
+                Text(
+                  notification.message,
+                  style: textTheme.bodySmall?.copyWith(
+                    height: 1.45,
+                  ),
+                ),
+
+                const SizedBox(height: 8),
+
+                Text(
+                  _formatNotificationTime(notification.time),
+                  style: textTheme.labelSmall?.copyWith(
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
+
+                if (!isRead)
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: onMarkRead,
+                      style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                      ),
+                      child: const Text('Tandai dibaca'),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // FORMAT WAKTU NOTIFIKASI
+  // ============================================================
+
+  String _formatNotificationTime(DateTime? time) {
+    if (time == null) return 'Informasi TechStep';
+
+    final difference = DateTime.now().difference(time);
+
+    if (difference.isNegative || difference.inMinutes < 1) {
+      return 'Baru saja';
+    }
+
+    if (difference.inHours < 1) {
+      return '${difference.inMinutes} menit lalu';
+    }
+
+    if (difference.inDays < 1) {
+      return '${difference.inHours} jam lalu';
+    }
+
+    if (difference.inDays < 7) {
+      return '${difference.inDays} hari lalu';
+    }
+
+    final day = time.day.toString().padLeft(2, '0');
+    final month = time.month.toString().padLeft(2, '0');
+
+    return '$day/$month/${time.year}';
+  }
+
+  // ============================================================
+  // TOMBOL LONCENG DAN BADGE
+  // ============================================================
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final notifications = _buildNotifications();
+
+    final unreadCount = notifications
+        .where((item) => !_readIds.contains(item.id))
+        .length;
+
+    return IconButton(
+      tooltip: 'Notifikasi',
+      onPressed: () => _showNotifications(context),
+      style: IconButton.styleFrom(
+        backgroundColor: scheme.surface,
+        side: BorderSide(color: scheme.outlineVariant),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(13),
+        ),
+      ),
+      icon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Icon(
+            Icons.notifications_none_rounded,
+            color: scheme.onSurface,
+            size: 24,
+          ),
+
+          if (unreadCount > 0)
+            Positioned(
+              right: -7,
+              top: -6,
+              child: Container(
+                constraints: const BoxConstraints(
+                  minWidth: 17,
+                  minHeight: 17,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 4,
+                  vertical: 2,
+                ),
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: scheme.error,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: scheme.surface,
+                    width: 1.5,
+                  ),
+                ),
+                child: Text(
+                  unreadCount > 99
+                      ? '99+'
+                      : '$unreadCount',
+                  style: TextStyle(
+                    color: scheme.onError,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
