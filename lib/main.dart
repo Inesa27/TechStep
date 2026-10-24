@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import 'services/learning_analytics_service.dart';
@@ -7,6 +8,7 @@ import 'screens/learn_screen.dart';
 import 'screens/quiz_screen.dart';
 import 'screens/challenge_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/onboarding_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,12 +33,54 @@ class TechStepApp extends StatelessWidget {
       theme: _buildTechStepTheme(),
       home: AuthGate(
         authenticatedHomeBuilder: (user, onLogout) {
-          return TechStepHome(
+          return TechStepPostLoginFlow(
             user: user,
             onLogout: onLogout,
           );
         },
       ),
+    );
+  }
+}
+
+// ============================================================
+// POST-LOGIN FLOW
+// ============================================================
+
+class TechStepPostLoginFlow extends StatefulWidget {
+  final Map<String, dynamic> user;
+  final VoidCallback onLogout;
+
+  const TechStepPostLoginFlow({
+    super.key,
+    required this.user,
+    required this.onLogout,
+  });
+
+  @override
+  State<TechStepPostLoginFlow> createState() =>
+      _TechStepPostLoginFlowState();
+}
+
+class _TechStepPostLoginFlowState
+    extends State<TechStepPostLoginFlow> {
+  bool _showOnboarding = true;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showOnboarding) {
+      return OnboardingScreen(
+        onContinue: () {
+          setState(() {
+            _showOnboarding = false;
+          });
+        },
+      );
+    }
+
+    return TechStepHome(
+      user: widget.user,
+      onLogout: widget.onLogout,
     );
   }
 }
@@ -77,12 +121,9 @@ ThemeData _buildTechStepTheme() {
     useMaterial3: true,
     colorScheme: colorScheme,
 
-    // Latar belakang halaman.
     scaffoldBackgroundColor: background,
 
-    // ----------------------------------------------------------
     // TYPOGRAPHY
-    // ----------------------------------------------------------
 
     textTheme: const TextTheme(
       displayLarge: TextStyle(
@@ -133,9 +174,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // APP BAR
-    // ----------------------------------------------------------
 
     appBarTheme: const AppBarTheme(
       backgroundColor: background,
@@ -150,9 +189,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // CARD
-    // ----------------------------------------------------------
 
     cardTheme: CardThemeData(
       color: surface,
@@ -167,9 +204,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // INPUT
-    // ----------------------------------------------------------
 
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -218,9 +253,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // PRIMARY BUTTON
-    // ----------------------------------------------------------
 
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
@@ -248,9 +281,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // OUTLINED BUTTON
-    // ----------------------------------------------------------
 
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
@@ -271,9 +302,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // TEXT BUTTON
-    // ----------------------------------------------------------
 
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
@@ -288,9 +317,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // BOTTOM NAVIGATION
-    // ----------------------------------------------------------
 
     navigationBarTheme: NavigationBarThemeData(
       height: 72,
@@ -331,9 +358,7 @@ ThemeData _buildTechStepTheme() {
       ),
     ),
 
-    // ----------------------------------------------------------
     // PROGRESS INDICATORS
-    // ----------------------------------------------------------
 
     progressIndicatorTheme:
         const ProgressIndicatorThemeData(
@@ -342,9 +367,7 @@ ThemeData _buildTechStepTheme() {
       circularTrackColor: border,
     ),
 
-    // ----------------------------------------------------------
-    // DIVIDER AND ICON
-    // ----------------------------------------------------------
+    // DIVIDER DAN ICON
 
     dividerColor: border,
 
@@ -352,7 +375,8 @@ ThemeData _buildTechStepTheme() {
       color: textSecondary,
     ),
 
-    // Warna interaksi.
+    // WARNA INTERAKSI
+
     splashColor: primary.withValues(alpha: 0.08),
     highlightColor: primary.withValues(alpha: 0.04),
     hoverColor: primary.withValues(alpha: 0.04),
@@ -361,7 +385,8 @@ ThemeData _buildTechStepTheme() {
     shadowColor: Colors.black.withValues(alpha: 0.05),
     primaryColor: primary,
 
-    // Warna status bisa digunakan oleh semua halaman.
+    // WARNA STATUS
+
     extensions: const <ThemeExtension<dynamic>>[
       _TechStepStatusColors(
         success: success,
