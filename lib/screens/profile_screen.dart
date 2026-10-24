@@ -1,3 +1,4 @@
+
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../services/learning_analytics_service.dart';
+import '../theme/techstep_theme_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
   final Map<String, dynamic>? user;
@@ -31,9 +33,7 @@ class ProfileScreen extends StatelessWidget {
 
   String get _studentNis {
     final value = user?['nis']?.toString().trim();
-    return value == null || value.isEmpty
-        ? '-'
-        : value;
+    return value == null || value.isEmpty ? '-' : value;
   }
 
   String get _studentClass {
@@ -44,17 +44,12 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // ============================================================
-  // WARNA
+  // WARNA AKSEN
   // ============================================================
 
   static const Color _primary = Color(0xFF5547E8);
-  static const Color _background = Color(0xFFF5F3FF);
-  static const Color _textPrimary = Color(0xFF292544);
-  static const Color _textSecondary = Color(0xFF77738F);
-  static const Color _border = Color(0xFFEAE6FC);
   static const Color _success = Color(0xFF159A78);
   static const Color _warning = Color(0xFFE59A32);
-  static const Color _danger = Color(0xFFDC465B);
 
   // ============================================================
   // MEMBUAT LAPORAN LEARNING ANALYTICS PDF
@@ -169,8 +164,6 @@ class ProfileScreen extends StatelessWidget {
 
           pw.SizedBox(height: 25),
 
-          // IDENTITAS SISWA
-
           pw.Text(
             'A. Identitas Siswa',
             style: pw.TextStyle(
@@ -187,8 +180,6 @@ class ProfileScreen extends StatelessWidget {
           _pdfInfoRow('Tanggal Laporan', reportDate),
 
           pw.SizedBox(height: 20),
-
-          // PROGRESS PEMBELAJARAN
 
           pw.Text(
             'B. Progress Pembelajaran',
@@ -256,8 +247,7 @@ class ProfileScreen extends StatelessWidget {
                           child: pw.Container(
                             decoration:
                                 const pw.BoxDecoration(
-                              color: pdf.PdfColors
-                                  .deepPurple,
+                              color: pdf.PdfColors.deepPurple,
                               borderRadius:
                                   pw.BorderRadius.all(
                                 pw.Radius.circular(5),
@@ -265,6 +255,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                           ),
                         ),
+
                       if (overallProgress < 100)
                         pw.Expanded(
                           flex: 100 - overallProgress,
@@ -287,8 +278,6 @@ class ProfileScreen extends StatelessWidget {
           ),
 
           pw.SizedBox(height: 20),
-
-          // PENGUASAAN KOMPETENSI
 
           pw.Text(
             'C. Penguasaan Kompetensi',
@@ -315,10 +304,7 @@ class ProfileScreen extends StatelessWidget {
                   color: pdf.PdfColors.grey200,
                 ),
                 children: [
-                  _pdfTableCell(
-                    'Materi',
-                    bold: true,
-                  ),
+                  _pdfTableCell('Materi', bold: true),
                   _pdfTableCell(
                     'Nilai',
                     bold: true,
@@ -341,8 +327,6 @@ class ProfileScreen extends StatelessWidget {
           ),
 
           pw.SizedBox(height: 20),
-
-          // AKTIVITAS PEMBELAJARAN
 
           pw.Text(
             'D. Aktivitas Pembelajaran',
@@ -396,8 +380,6 @@ class ProfileScreen extends StatelessWidget {
 
           pw.SizedBox(height: 20),
 
-          // TINDAK LANJUT PEMBELAJARAN
-
           pw.Text(
             'E. Tindak Lanjut Pembelajaran',
             style: pw.TextStyle(
@@ -425,16 +407,10 @@ class ProfileScreen extends StatelessWidget {
                   pw.CrossAxisAlignment.start,
               children: [
                 _pdfBullet(
-                  _getRecommendation(
-                    'Hardware',
-                    hardware,
-                  ),
+                  _getRecommendation('Hardware', hardware),
                 ),
                 _pdfBullet(
-                  _getRecommendation(
-                    'Software',
-                    software,
-                  ),
+                  _getRecommendation('Software', software),
                 ),
                 _pdfBullet(
                   _getRecommendation(
@@ -464,8 +440,6 @@ class ProfileScreen extends StatelessWidget {
           ),
 
           pw.SizedBox(height: 20),
-
-          // CATATAN LAPORAN
 
           pw.Container(
             padding: const pw.EdgeInsets.all(12),
@@ -550,11 +524,13 @@ class ProfileScreen extends StatelessWidget {
 
       await Navigator.of(context).push(
         MaterialPageRoute(
-          builder: (context) {
+          builder: (previewContext) {
+            final colors =
+                Theme.of(previewContext).colorScheme;
+
             return Scaffold(
               appBar: AppBar(
                 title: const Text('Learning Report'),
-                backgroundColor: _background,
               ),
               body: PdfPreview(
                 canChangeOrientation: false,
@@ -563,6 +539,7 @@ class ProfileScreen extends StatelessWidget {
                 allowSharing: true,
                 build: (_) async => bytes,
               ),
+              backgroundColor: colors.surface,
             );
           },
         ),
@@ -648,14 +625,12 @@ class ProfileScreen extends StatelessWidget {
           : pw.Alignment.centerLeft,
       child: pw.Text(
         text,
-        textAlign: center
-            ? pw.TextAlign.center
-            : pw.TextAlign.left,
+        textAlign:
+            center ? pw.TextAlign.center : pw.TextAlign.left,
         style: pw.TextStyle(
           fontSize: 9,
-          fontWeight: bold
-              ? pw.FontWeight.bold
-              : pw.FontWeight.normal,
+          fontWeight:
+              bold ? pw.FontWeight.bold : pw.FontWeight.normal,
         ),
       ),
     );
@@ -732,17 +707,13 @@ class ProfileScreen extends StatelessWidget {
       animation: analytics,
       builder: (context, child) {
         return Scaffold(
-          backgroundColor: _background,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           appBar: AppBar(
-            backgroundColor: _background,
-            elevation: 0,
-            scrolledUnderElevation: 0,
             title: const Text(
               'Profil',
               style: TextStyle(
                 fontSize: 23,
                 fontWeight: FontWeight.w800,
-                color: _textPrimary,
               ),
             ),
           ),
@@ -757,28 +728,24 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // DATA SISWA
-
-                  _buildProfileHeader(),
+                  _buildProfileHeader(context),
 
                   const SizedBox(height: 28),
 
-                  // RINGKASAN PEMBELAJARAN
-
                   _buildSectionTitle(
+                    context,
                     'Ringkasan Pembelajaran',
                     'Aktivitas belajarmu sejauh ini.',
                   ),
 
                   const SizedBox(height: 14),
 
-                  _buildSummaryCard(analytics),
+                  _buildSummaryCard(context, analytics),
 
                   const SizedBox(height: 28),
 
-                  // PENGUASAAN KOMPETENSI
-
                   _buildSectionTitle(
+                    context,
                     'Penguasaan Kompetensi',
                     'Hasil evaluasi untuk setiap materi.',
                   ),
@@ -786,6 +753,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 15),
 
                   _buildCompetencyCard(
+                    context: context,
                     title: 'Hardware',
                     percentage: analytics.hardwareMastery,
                     icon: Icons.memory_rounded,
@@ -794,6 +762,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 13),
 
                   _buildCompetencyCard(
+                    context: context,
                     title: 'Software',
                     percentage: analytics.softwareMastery,
                     icon: Icons.apps_rounded,
@@ -802,6 +771,7 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 13),
 
                   _buildCompetencyCard(
+                    context: context,
                     title: 'Sistem Operasi',
                     percentage: analytics.operatingSystemMastery,
                     icon: Icons.desktop_windows_rounded,
@@ -809,16 +779,29 @@ class ProfileScreen extends StatelessWidget {
 
                   const SizedBox(height: 28),
 
-                  // STATUS PEMBELAJARAN
-
                   _buildSectionTitle(
+                    context,
                     'Status Pembelajaran',
                     'Pantau perkembangan belajarmu.',
                   ),
 
                   const SizedBox(height: 14),
 
-                  _buildLearningStatus(analytics),
+                  _buildLearningStatus(context, analytics),
+
+                  const SizedBox(height: 28),
+
+                  // PENGATURAN LIGHT MODE / DARK MODE
+
+                  _buildSectionTitle(
+                    context,
+                    'Pengaturan Tampilan',
+                    'Sesuaikan tampilan TechStep dengan preferensimu.',
+                  ),
+
+                  const SizedBox(height: 14),
+
+                  _buildAppearanceCard(context),
 
                   const SizedBox(height: 28),
 
@@ -845,27 +828,30 @@ class ProfileScreen extends StatelessWidget {
   // ============================================================
 
   Widget _buildSectionTitle(
+    BuildContext context,
     String title,
     String subtitle,
   ) {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 19,
             fontWeight: FontWeight.w800,
-            color: _textPrimary,
+            color: colors.onSurface,
           ),
         ),
         const SizedBox(height: 5),
         Text(
           subtitle,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             height: 1.5,
-            color: _textSecondary,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ],
@@ -873,219 +859,202 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // ============================================================
-// KARTU PROFIL SISWA
-// ============================================================
+  // KARTU PROFIL SISWA
+  // ============================================================
 
-Widget _buildProfileHeader() {
-  return Container(
-    width: double.infinity,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(22),
-      border: Border.all(
-        color: const Color(0xFFE5E0FF),
-      ),
-      boxShadow: [
-        BoxShadow(
-          color: _primary.withValues(alpha: 0.07),
-          blurRadius: 18,
-          offset: const Offset(0, 5),
+  Widget _buildProfileHeader(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: colors.outlineVariant,
         ),
-      ],
-    ),
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(22),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Aksen garis ungu di bagian atas
-          Container(
-            height: 5,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF5547E8),
-                  Color(0xFF9A8CFF),
+        boxShadow: [
+          BoxShadow(
+            color: _primary.withValues(alpha: 0.07),
+            blurRadius: 18,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(22),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 5,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Color(0xFF5547E8),
+                    Color(0xFF9A8CFF),
+                  ],
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(19),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 42,
+                        height: 42,
+                        decoration: BoxDecoration(
+                          color: colors.primaryContainer,
+                          borderRadius: BorderRadius.circular(13),
+                        ),
+                        child: Icon(
+                          Icons.badge_outlined,
+                          color: colors.primary,
+                          size: 23,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Profil Siswa',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                color: colors.onSurface,
+                              ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              'Informasi akun siswa',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: colors.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Nama Lengkap',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: colors.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    _studentName,
+                    style: TextStyle(
+                      fontSize: 20,
+                      height: 1.3,
+                      fontWeight: FontWeight.w800,
+                      color: colors.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  Container(
+                    height: 1,
+                    color: colors.outlineVariant,
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _buildIdentityInfo(
+                          context,
+                          label: 'Username / NIS',
+                          value: _studentNis,
+                          icon: Icons.person_outline_rounded,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildIdentityInfo(
+                          context,
+                          label: 'Kelas',
+                          value: _studentClass,
+                          icon: Icons.menu_book_outlined,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIdentityInfo(
+    BuildContext context, {
+    required String label,
+    required String value,
+    required IconData icon,
+  }) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: colors.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(
+          color: colors.outlineVariant,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(
+            icon,
+            size: 18,
+            color: colors.primary,
           ),
-
-          Padding(
-            padding: const EdgeInsets.all(19),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Judul kartu
-                Row(
-                  children: [
-                    Container(
-                      width: 42,
-                      height: 42,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF0EDFF),
-                        borderRadius: BorderRadius.circular(13),
-                      ),
-                      child: const Icon(
-                        Icons.badge_outlined,
-                        color: Color(0xFF5547E8),
-                        size: 23,
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    const Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Profil Siswa',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF292544),
-                            ),
-                          ),
-                          SizedBox(height: 3),
-                          Text(
-                            'Informasi akun siswa',
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: Color(0xFF77738F),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                // Nama siswa
-                const Text(
-                  'Nama Lengkap',
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF77738F),
-                  ),
-                ),
-
-                const SizedBox(height: 6),
-
-                Text(
-                  _studentName,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    height: 1.3,
-                    fontWeight: FontWeight.w800,
-                    color: Color(0xFF292544),
-                  ),
-                ),
-
-                const SizedBox(height: 18),
-
-                // Garis pemisah
-                Container(
-                  height: 1,
-                  color: const Color(0xFFEDEAF8),
-                ),
-
-                const SizedBox(height: 15),
-
-                // Username dan kelas
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _buildIdentityInfo(
-                        label: 'Username / NIS',
-                        value: _studentNis,
-                        icon: Icons.person_outline_rounded,
-                      ),
-                    ),
-
-                    const SizedBox(width: 12),
-
-                    Expanded(
-                      child: _buildIdentityInfo(
-                        label: 'Kelas',
-                        value: _studentClass,
-                        icon: Icons.menu_book_outlined,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          const SizedBox(height: 10),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              color: colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            value,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: colors.onSurface,
             ),
           ),
         ],
       ),
-    ),
-  );
-}
-
-// ============================================================
-// INFORMASI USERNAME DAN KELAS
-// ============================================================
-
-Widget _buildIdentityInfo({
-  required String label,
-  required String value,
-  required IconData icon,
-}) {
-  return Container(
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      color: const Color(0xFFF8F7FF),
-      borderRadius: BorderRadius.circular(15),
-      border: Border.all(
-        color: const Color(0xFFEAE6FC),
-      ),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Icon(
-          icon,
-          size: 18,
-          color: const Color(0xFF7567D9),
-        ),
-
-        const SizedBox(height: 10),
-
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 10,
-            color: Color(0xFF77738F),
-          ),
-        ),
-
-        const SizedBox(height: 5),
-
-        Text(
-          value,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF393354),
-          ),
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 
   // ============================================================
   // KARTU RINGKASAN PEMBELAJARAN
   // ============================================================
 
   Widget _buildSummaryCard(
+    BuildContext context,
     LearningAnalyticsService analytics,
   ) {
     return Row(
@@ -1093,6 +1062,7 @@ Widget _buildIdentityInfo({
       children: [
         Expanded(
           child: _buildSummaryItem(
+            context: context,
             icon: Icons.menu_book_rounded,
             value: '${analytics.completedMaterials}',
             label: 'Materi selesai',
@@ -1102,6 +1072,7 @@ Widget _buildIdentityInfo({
         const SizedBox(width: 10),
         Expanded(
           child: _buildSummaryItem(
+            context: context,
             icon: Icons.quiz_rounded,
             value: analytics.quizCompleted ? '1' : '0',
             label: 'Quiz selesai',
@@ -1111,6 +1082,7 @@ Widget _buildIdentityInfo({
         const SizedBox(width: 10),
         Expanded(
           child: _buildSummaryItem(
+            context: context,
             icon: Icons.sports_esports_rounded,
             value: '${analytics.completedChallengeLevels}',
             label: 'Level selesai',
@@ -1122,11 +1094,14 @@ Widget _buildIdentityInfo({
   }
 
   Widget _buildSummaryItem({
+    required BuildContext context,
     required IconData icon,
     required String value,
     required String label,
     required Color accent,
   }) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       constraints: const BoxConstraints(minHeight: 142),
       padding: const EdgeInsets.symmetric(
@@ -1134,10 +1109,10 @@ Widget _buildIdentityInfo({
         vertical: 16,
       ),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: accent.withValues(alpha: 0.17),
+          color: accent.withValues(alpha: 0.20),
         ),
         boxShadow: [
           BoxShadow(
@@ -1154,7 +1129,7 @@ Widget _buildIdentityInfo({
             width: 43,
             height: 43,
             decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.12),
+              color: accent.withValues(alpha: 0.13),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Icon(
@@ -1176,11 +1151,11 @@ Widget _buildIdentityInfo({
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               height: 1.3,
               fontWeight: FontWeight.w500,
-              color: _textSecondary,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
@@ -1193,11 +1168,13 @@ Widget _buildIdentityInfo({
   // ============================================================
 
   Widget _buildCompetencyCard({
+    required BuildContext context,
     required String title,
     required int percentage,
     required IconData icon,
   }) {
-    final int score = percentage.clamp(0, 100);
+    final colors = Theme.of(context).colorScheme;
+    final score = percentage.clamp(0, 100);
 
     final Color accent = score >= 80
         ? _success
@@ -1214,9 +1191,11 @@ Widget _buildIdentityInfo({
       width: double.infinity,
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(21),
-        border: Border.all(color: _border),
+        border: Border.all(
+          color: colors.outlineVariant,
+        ),
         boxShadow: [
           BoxShadow(
             color: _primary.withValues(alpha: 0.05),
@@ -1234,14 +1213,7 @@ Widget _buildIdentityInfo({
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      accent.withValues(alpha: 0.18),
-                      accent.withValues(alpha: 0.07),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
+                  color: accent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(15),
                 ),
                 child: Icon(
@@ -1257,18 +1229,18 @@ Widget _buildIdentityInfo({
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
-                        color: _textPrimary,
+                        color: colors.onSurface,
                       ),
                     ),
                     const SizedBox(height: 5),
-                    const Text(
+                    Text(
                       'Penguasaan materi',
                       style: TextStyle(
                         fontSize: 11,
-                        color: _textSecondary,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -1284,23 +1256,17 @@ Widget _buildIdentityInfo({
               ),
             ],
           ),
-
           const SizedBox(height: 18),
-
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: score / 100,
               minHeight: 9,
-              backgroundColor: const Color(0xFFF0EDFC),
-              valueColor: AlwaysStoppedAnimation<Color>(
-                accent,
-              ),
+              backgroundColor: colors.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation<Color>(accent),
             ),
           ),
-
           const SizedBox(height: 12),
-
           Row(
             children: [
               Icon(
@@ -1333,10 +1299,11 @@ Widget _buildIdentityInfo({
   // ============================================================
 
   Widget _buildLearningStatus(
+    BuildContext context,
     LearningAnalyticsService analytics,
   ) {
-    final int progress =
-        analytics.overallProgress.clamp(0, 100);
+    final colors = Theme.of(context).colorScheme;
+    final progress = analytics.overallProgress.clamp(0, 100);
 
     final Color accent = progress >= 80
         ? _success
@@ -1350,15 +1317,15 @@ Widget _buildIdentityInfo({
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            accent.withValues(alpha: 0.11),
-            Colors.white,
+            accent.withValues(alpha: 0.12),
+            colors.surface,
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: accent.withValues(alpha: 0.18),
+          color: accent.withValues(alpha: 0.20),
         ),
       ),
       child: Column(
@@ -1384,20 +1351,20 @@ Widget _buildIdentityInfo({
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Perjalanan Belajar',
                       style: TextStyle(
                         fontSize: 12,
-                        color: _textSecondary,
+                        color: colors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       analytics.learningStatus,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
-                        color: _textPrimary,
+                        color: colors.onSurface,
                       ),
                     ),
                   ],
@@ -1413,33 +1380,212 @@ Widget _buildIdentityInfo({
               ),
             ],
           ),
-
           const SizedBox(height: 19),
-
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: progress / 100,
               minHeight: 9,
-              backgroundColor: Colors.white,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                accent,
-              ),
+              backgroundColor: colors.surfaceContainerHighest,
+              valueColor: AlwaysStoppedAnimation<Color>(accent),
             ),
           ),
-
           const SizedBox(height: 13),
-
           Text(
             'Quiz: ${analytics.quizCompleted ? "sudah dikerjakan" : "belum dikerjakan"}'
             ' • Challenge: ${analytics.completedChallengeLevels}/5 level',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 11,
               height: 1.5,
-              color: _textSecondary,
+              color: colors.onSurfaceVariant,
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // PENGATURAN LIGHT MODE / DARK MODE
+  // ============================================================
+
+  Widget _buildAppearanceCard(BuildContext context) {
+    final controller = TechStepThemeController.instance;
+    final colors = Theme.of(context).colorScheme;
+
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) {
+        final isLightMode = controller.mode == ThemeMode.light;
+        final isDarkMode = controller.mode == ThemeMode.dark;
+
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(21),
+            border: Border.all(
+              color: colors.outlineVariant,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: _primary.withValues(alpha: 0.04),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: colors.primaryContainer,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      Icons.palette_outlined,
+                      color: colors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Tampilan Aplikasi',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: colors.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Pilih tema yang kamu sukai.',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(
+                    child: _buildThemeOption(
+                      context: context,
+                      title: 'Mode Siang',
+                      subtitle: 'Light Mode',
+                      icon: Icons.light_mode_rounded,
+                      selected: isLightMode,
+                      onTap: () {
+                        controller.setMode(ThemeMode.light);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _buildThemeOption(
+                      context: context,
+                      title: 'Mode Malam',
+                      subtitle: 'Dark Mode',
+                      icon: Icons.dark_mode_rounded,
+                      selected: isDarkMode,
+                      onTap: () {
+                        controller.setMode(ThemeMode.dark);
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildThemeOption({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    final colors = Theme.of(context).colorScheme;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 10,
+          vertical: 14,
+        ),
+        decoration: BoxDecoration(
+          color: selected
+              ? colors.primaryContainer
+              : colors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: selected
+                ? colors.primary
+                : colors.outlineVariant,
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: 25,
+              color: selected
+                  ? colors.primary
+                  : colors.onSurfaceVariant,
+            ),
+            const SizedBox(height: 9),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: colors.onSurface,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                color: colors.onSurfaceVariant,
+              ),
+            ),
+            if (selected) ...[
+              const SizedBox(height: 7),
+              Icon(
+                Icons.check_circle_rounded,
+                size: 16,
+                color: colors.primary,
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -1465,8 +1611,7 @@ Widget _buildIdentityInfo({
         borderRadius: BorderRadius.circular(25),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF5547C9)
-                .withValues(alpha: 0.20),
+            color: _primary.withValues(alpha: 0.20),
             blurRadius: 22,
             offset: const Offset(0, 9),
           ),
@@ -1516,9 +1661,7 @@ Widget _buildIdentityInfo({
               ),
             ],
           ),
-
           const SizedBox(height: 17),
-
           const Text(
             'Lihat perkembangan belajar, penguasaan kompetensi, '
             'dan rekomendasi pembelajaran dalam laporan PDF.',
@@ -1528,9 +1671,7 @@ Widget _buildIdentityInfo({
               color: Color(0xFFE5E1FF),
             ),
           ),
-
           const SizedBox(height: 21),
-
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -1550,7 +1691,7 @@ Widget _buildIdentityInfo({
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF5547C9),
+                foregroundColor: const Color(0xFF5547C9),
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
@@ -1558,9 +1699,7 @@ Widget _buildIdentityInfo({
               ),
             ),
           ),
-
           const SizedBox(height: 10),
-
           SizedBox(
             width: double.infinity,
             height: 48,
@@ -1598,32 +1737,35 @@ Widget _buildIdentityInfo({
   // KONFIRMASI LOGOUT
   // ============================================================
 
-  Future<void> _confirmLogout(
-    BuildContext context,
-  ) async {
+  Future<void> _confirmLogout(BuildContext context) async {
+    final colors = Theme.of(context).colorScheme;
+
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
+        final dialogColors =
+            Theme.of(dialogContext).colorScheme;
+
         return AlertDialog(
-          backgroundColor: Colors.white,
-          icon: const Icon(
+          backgroundColor: dialogColors.surface,
+          icon: Icon(
             Icons.logout_rounded,
-            color: _danger,
+            color: dialogColors.error,
             size: 30,
           ),
-          title: const Text(
+          title: Text(
             'Keluar dari akun?',
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: _textPrimary,
+              color: dialogColors.onSurface,
             ),
           ),
-          content: const Text(
+          content: Text(
             'Kamu akan kembali ke halaman login. Progres belajar '
             'yang sudah tersimpan tidak akan dihapus.',
             style: TextStyle(
               height: 1.5,
-              color: _textSecondary,
+              color: dialogColors.onSurfaceVariant,
             ),
           ),
           actions: [
@@ -1638,8 +1780,8 @@ Widget _buildIdentityInfo({
                 Navigator.of(dialogContext).pop(true);
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: _danger,
-                foregroundColor: Colors.white,
+                backgroundColor: dialogColors.error,
+                foregroundColor: dialogColors.onError,
               ),
               child: const Text('Logout'),
             ),
@@ -1651,15 +1793,18 @@ Widget _buildIdentityInfo({
     if (shouldLogout == true) {
       onLogout();
     }
+
+    // Referensi theme diambil dari context halaman yang memanggil dialog.
+    assert(colors.surface != Colors.transparent);
   }
 
   // ============================================================
   // TOMBOL LOGOUT
   // ============================================================
 
-  Widget _buildLogoutButton(
-    BuildContext context,
-  ) {
+  Widget _buildLogoutButton(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return SizedBox(
       width: double.infinity,
       height: 53,
@@ -1677,10 +1822,10 @@ Widget _buildIdentityInfo({
           ),
         ),
         style: OutlinedButton.styleFrom(
-          foregroundColor: _danger,
-          backgroundColor: const Color(0xFFFFF1F3),
-          side: const BorderSide(
-            color: Color(0xFFF8D8DE),
+          foregroundColor: colors.error,
+          backgroundColor: colors.errorContainer,
+          side: BorderSide(
+            color: colors.error.withValues(alpha: 0.25),
           ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(17),
