@@ -580,9 +580,9 @@ class DashboardScreen extends StatelessWidget {
 
               Expanded(
                 child: Text(
-                  analytics.quizCompleted
-                      ? 'Quiz sudah dikerjakan'
-                      : 'Tersedia 3 materi pembelajaran',
+                  'Quiz selesai: '
+                  '${analytics.completedQuizMaterialIds.length}/'
+                  '${LearningAnalyticsService.totalQuizMaterials} materi',
                   style: textTheme.bodySmall?.copyWith(
                     fontWeight: FontWeight.w500,
                   ),

@@ -77,7 +77,7 @@ class ProfileScreen extends StatelessWidget {
         analytics.completedMaterials;
 
     final int completedQuiz =
-        analytics.quizCompleted ? 1 : 0;
+        analytics.completedQuizMaterialIds.length;
 
     final int completedLevels =
         analytics.completedChallengeLevels;
@@ -1074,7 +1074,8 @@ class ProfileScreen extends StatelessWidget {
           child: _buildSummaryItem(
             context: context,
             icon: Icons.quiz_rounded,
-            value: analytics.quizCompleted ? '1' : '0',
+            value: '${analytics.completedQuizMaterialIds.length}/'
+                '${LearningAnalyticsService.totalQuizMaterials}',
             label: 'Quiz selesai',
             accent: _success,
           ),
@@ -1392,7 +1393,8 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 13),
           Text(
-            'Quiz: ${analytics.quizCompleted ? "sudah dikerjakan" : "belum dikerjakan"}'
+            'Quiz: ${analytics.completedQuizMaterialIds.length}/'
+            '${LearningAnalyticsService.totalQuizMaterials} materi selesai'
             ' • Challenge: ${analytics.completedChallengeLevels}/5 level',
             style: TextStyle(
               fontSize: 11,

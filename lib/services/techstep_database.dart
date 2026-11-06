@@ -1163,8 +1163,13 @@ class TechStepDatabase {
         final challengeScore = await _scoreForRows(
           txn,
           table: 'challenge_answers',
-          where: 'competency_id = ?',
-          args: [competencyId],
+          where: '''
+            competency_id = ?
+            AND result_id IN (
+              SELECT id FROM challenge_results WHERE student_id = ?
+            )
+          ''',
+          args: [competencyId, studentId],
         );
 
         final activityScore = await _activityScore(txn, materialId);
