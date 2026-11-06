@@ -8,22 +8,34 @@ import 'package:sqflite/sqflite.dart';
 class TechStepAuthDatabase {
   TechStepAuthDatabase._();
 
-  static final TechStepAuthDatabase instance =
-      TechStepAuthDatabase._();
+  static final TechStepAuthDatabase instance = TechStepAuthDatabase._();
 
   static const _databaseName = 'techstep_auth.db';
   static const _databaseVersion = 1;
   static const _webUsersKey = 'techstep_auth_users_v1';
+  static const _activeSessionKey = 'techstep_auth_active_nis_v1';
 
   Database? _database;
-  final SharedPreferencesAsync _webPreferences =
-      SharedPreferencesAsync();
+  final SharedPreferencesAsync _webPreferences = SharedPreferencesAsync();
+
+  Future<String?> getActiveSessionNis() {
+    return _webPreferences.getString(_activeSessionKey);
+  }
+
+  Future<void> saveActiveSessionNis(String nis) {
+    return _webPreferences.setString(
+      _activeSessionKey,
+      nis.trim().toLowerCase(),
+    );
+  }
+
+  Future<void> clearActiveSession() {
+    return _webPreferences.remove(_activeSessionKey);
+  }
 
   Future<Database> get database async {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'Native SQLite is not used on Flutter Web.',
-      );
+      throw UnsupportedError('Native SQLite is not used on Flutter Web.');
     }
 
     if (_database != null) {
@@ -69,22 +81,15 @@ class TechStepAuthDatabase {
 
       return decoded
           .whereType<Map>()
-          .map(
-            (item) => Map<String, dynamic>.from(item),
-          )
+          .map((item) => Map<String, dynamic>.from(item))
           .toList();
     } catch (_) {
       return <Map<String, dynamic>>[];
     }
   }
 
-  Future<void> _saveWebUsers(
-    List<Map<String, dynamic>> users,
-  ) async {
-    await _webPreferences.setString(
-      _webUsersKey,
-      jsonEncode(users),
-    );
+  Future<void> _saveWebUsers(List<Map<String, dynamic>> users) async {
+    await _webPreferences.setString(_webUsersKey, jsonEncode(users));
   }
 
   Future<bool> registerUser({
@@ -109,15 +114,9 @@ class TechStepAuthDatabase {
       final nextId = users.isEmpty
           ? 1
           : users
-                  .map(
-                    (user) =>
-                        int.tryParse(user['id'].toString()) ?? 0,
-                  )
-                  .fold<int>(
-                    0,
-                    (max, id) => id > max ? id : max,
-                  ) +
-              1;
+                    .map((user) => int.tryParse(user['id'].toString()) ?? 0)
+                    .fold<int>(0, (max, id) => id > max ? id : max) +
+                1;
 
       users.add({
         'id': nextId,
@@ -135,16 +134,13 @@ class TechStepAuthDatabase {
     final db = await database;
 
     try {
-      await db.insert(
-        'users',
-        {
-          'name': name.trim(),
-          'nis': normalizedNis,
-          'class_name': className.trim(),
-          'password': password,
-          'created_at': DateTime.now().toIso8601String(),
-        },
-      );
+      await db.insert('users', {
+        'name': name.trim(),
+        'nis': normalizedNis,
+        'class_name': className.trim(),
+        'password': password,
+        'created_at': DateTime.now().toIso8601String(),
+      });
 
       return true;
     } on DatabaseException {
@@ -181,9 +177,7 @@ class TechStepAuthDatabase {
     return result.isNotEmpty;
   }
 
-  Future<Map<String, dynamic>?> getUserByNis(
-    String nis,
-  ) async {
+  Future<Map<String, dynamic>?> getUserByNis(String nis) async {
     final normalizedNis = nis.trim().toLowerCase();
 
     if (kIsWeb) {

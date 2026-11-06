@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'services/learning_analytics_service.dart';
@@ -54,12 +53,14 @@ class _TechStepAppState extends State<TechStepApp> {
           themeMode: _themeController.mode,
 
           home: AuthGate(
-            authenticatedHomeBuilder: (user, onLogout) {
-              return TechStepPostLoginFlow(
-                user: user,
-                onLogout: onLogout,
-              );
-            },
+            authenticatedHomeBuilder:
+                (user, onLogout, {required showOnboarding}) {
+                  return TechStepPostLoginFlow(
+                    user: user,
+                    onLogout: onLogout,
+                    initiallyShowOnboarding: showOnboarding,
+                  );
+                },
           ),
         );
       },
@@ -74,21 +75,21 @@ class _TechStepAppState extends State<TechStepApp> {
 class TechStepPostLoginFlow extends StatefulWidget {
   final Map<String, dynamic> user;
   final VoidCallback onLogout;
+  final bool initiallyShowOnboarding;
 
   const TechStepPostLoginFlow({
     super.key,
     required this.user,
     required this.onLogout,
+    required this.initiallyShowOnboarding,
   });
 
   @override
-  State<TechStepPostLoginFlow> createState() =>
-      _TechStepPostLoginFlowState();
+  State<TechStepPostLoginFlow> createState() => _TechStepPostLoginFlowState();
 }
 
-class _TechStepPostLoginFlowState
-    extends State<TechStepPostLoginFlow> {
-  bool _showOnboarding = true;
+class _TechStepPostLoginFlowState extends State<TechStepPostLoginFlow> {
+  late bool _showOnboarding = widget.initiallyShowOnboarding;
 
   @override
   Widget build(BuildContext context) {
@@ -102,10 +103,7 @@ class _TechStepPostLoginFlowState
       );
     }
 
-    return TechStepHome(
-      user: widget.user,
-      onLogout: widget.onLogout,
-    );
+    return TechStepHome(user: widget.user, onLogout: widget.onLogout);
   }
 }
 
@@ -127,19 +125,20 @@ ThemeData _buildTechStepTheme() {
   const success = Color(0xFF239B70);
   const danger = Color(0xFFD93649);
 
-  final colorScheme = ColorScheme.fromSeed(
-    seedColor: primary,
-    brightness: Brightness.light,
-  ).copyWith(
-    primary: primary,
-    onPrimary: Colors.white,
-    secondary: primarySoft,
-    onSecondary: textPrimary,
-    surface: surface,
-    onSurface: textPrimary,
-    error: danger,
-    onError: Colors.white,
-  );
+  final colorScheme =
+      ColorScheme.fromSeed(
+        seedColor: primary,
+        brightness: Brightness.light,
+      ).copyWith(
+        primary: primary,
+        onPrimary: Colors.white,
+        secondary: primarySoft,
+        onSecondary: textPrimary,
+        surface: surface,
+        onSurface: textPrimary,
+        error: danger,
+        onError: Colors.white,
+      );
 
   return ThemeData(
     useMaterial3: true,
@@ -147,7 +146,6 @@ ThemeData _buildTechStepTheme() {
     scaffoldBackgroundColor: background,
 
     // TYPOGRAPHY
-
     textTheme: const TextTheme(
       displayLarge: TextStyle(
         fontSize: 32,
@@ -176,29 +174,13 @@ ThemeData _buildTechStepTheme() {
         fontWeight: FontWeight.w600,
         color: textPrimary,
       ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        color: textPrimary,
-        height: 1.5,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        color: textPrimary,
-        height: 1.45,
-      ),
-      bodySmall: TextStyle(
-        fontSize: 12,
-        color: textSecondary,
-        height: 1.4,
-      ),
-      labelLarge: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
+      bodyLarge: TextStyle(fontSize: 16, color: textPrimary, height: 1.5),
+      bodyMedium: TextStyle(fontSize: 14, color: textPrimary, height: 1.45),
+      bodySmall: TextStyle(fontSize: 12, color: textSecondary, height: 1.4),
+      labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
     ),
 
     // APP BAR
-
     appBarTheme: const AppBarTheme(
       backgroundColor: background,
       foregroundColor: textPrimary,
@@ -213,7 +195,6 @@ ThemeData _buildTechStepTheme() {
     ),
 
     // CARD
-
     cardTheme: CardThemeData(
       color: surface,
       elevation: 0,
@@ -221,127 +202,78 @@ ThemeData _buildTechStepTheme() {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(
-          color: border,
-        ),
+        side: const BorderSide(color: border),
       ),
     ),
 
     // INPUT
-
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 16,
-      ),
-      hintStyle: const TextStyle(
-        fontSize: 14,
-        color: textSecondary,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      hintStyle: const TextStyle(fontSize: 14, color: textSecondary),
       prefixIconColor: textSecondary,
       suffixIconColor: textSecondary,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: border,
-        ),
+        borderSide: const BorderSide(color: border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: border,
-        ),
+        borderSide: const BorderSide(color: border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: primary,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: danger,
-        ),
+        borderSide: const BorderSide(color: danger),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: danger,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: danger, width: 1.5),
       ),
     ),
 
     // ELEVATED BUTTON
-
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: const WidgetStatePropertyAll(
-          Size(0, 48),
-        ),
+        minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
         padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 12,
-          ),
+          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
-        backgroundColor: const WidgetStatePropertyAll(
-          primary,
-        ),
-        foregroundColor: const WidgetStatePropertyAll(
-          Colors.white,
-        ),
+        backgroundColor: const WidgetStatePropertyAll(primary),
+        foregroundColor: const WidgetStatePropertyAll(Colors.white),
         elevation: const WidgetStatePropertyAll(0),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
       ),
     ),
 
     // OUTLINED BUTTON
-
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: const WidgetStatePropertyAll(
-          Size(0, 48),
-        ),
-        foregroundColor: const WidgetStatePropertyAll(
-          primary,
-        ),
-        side: const WidgetStatePropertyAll(
-          BorderSide(color: border),
-        ),
+        minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
+        foregroundColor: const WidgetStatePropertyAll(primary),
+        side: const WidgetStatePropertyAll(BorderSide(color: border)),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
       ),
     ),
 
     // TEXT BUTTON
-
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primary,
-        textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
 
     // BOTTOM NAVIGATION
-
     navigationBarTheme: NavigationBarThemeData(
       height: 72,
       backgroundColor: surface,
@@ -350,56 +282,39 @@ ThemeData _buildTechStepTheme() {
       indicatorShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
       ),
-      labelBehavior:
-          NavigationDestinationLabelBehavior.alwaysShow,
-      labelTextStyle:
-          WidgetStateProperty.resolveWith<TextStyle?>(
-        (states) {
-          final selected =
-              states.contains(WidgetState.selected);
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
+        final selected = states.contains(WidgetState.selected);
 
-          return TextStyle(
-            fontSize: 12,
-            fontWeight: selected
-                ? FontWeight.w700
-                : FontWeight.w500,
-            color: selected ? primary : textSecondary,
-          );
-        },
-      ),
-      iconTheme:
-          WidgetStateProperty.resolveWith<IconThemeData?>(
-        (states) {
-          final selected =
-              states.contains(WidgetState.selected);
+        return TextStyle(
+          fontSize: 12,
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          color: selected ? primary : textSecondary,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith<IconThemeData?>((states) {
+        final selected = states.contains(WidgetState.selected);
 
-          return IconThemeData(
-            size: 22,
-            color: selected ? primary : textSecondary,
-          );
-        },
-      ),
+        return IconThemeData(
+          size: 22,
+          color: selected ? primary : textSecondary,
+        );
+      }),
     ),
 
     // PROGRESS INDICATORS
-
-    progressIndicatorTheme:
-        const ProgressIndicatorThemeData(
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: primary,
       linearTrackColor: border,
       circularTrackColor: border,
     ),
 
     // DIVIDER DAN ICON
-
     dividerColor: border,
 
-    iconTheme: const IconThemeData(
-      color: textSecondary,
-    ),
+    iconTheme: const IconThemeData(color: textSecondary),
 
     // INTERAKSI
-
     splashColor: primary.withValues(alpha: 0.08),
     highlightColor: primary.withValues(alpha: 0.04),
     hoverColor: primary.withValues(alpha: 0.04),
@@ -409,7 +324,6 @@ ThemeData _buildTechStepTheme() {
     primaryColor: primary,
 
     // STATUS COLORS
-
     extensions: const <ThemeExtension<dynamic>>[
       _TechStepStatusColors(
         success: success,
@@ -440,19 +354,20 @@ ThemeData _buildTechStepDarkTheme() {
   const success = Color(0xFF69D5AE);
   const danger = Color(0xFFFF7185);
 
-  final colorScheme = ColorScheme.fromSeed(
-    seedColor: primary,
-    brightness: Brightness.dark,
-  ).copyWith(
-    primary: primary,
-    onPrimary: const Color(0xFF171329),
-    secondary: primarySoft,
-    onSecondary: textPrimary,
-    surface: surface,
-    onSurface: textPrimary,
-    error: danger,
-    onError: Colors.white,
-  );
+  final colorScheme =
+      ColorScheme.fromSeed(
+        seedColor: primary,
+        brightness: Brightness.dark,
+      ).copyWith(
+        primary: primary,
+        onPrimary: const Color(0xFF171329),
+        secondary: primarySoft,
+        onSecondary: textPrimary,
+        surface: surface,
+        onSurface: textPrimary,
+        error: danger,
+        onError: Colors.white,
+      );
 
   final baseTheme = ThemeData.dark(useMaterial3: true);
 
@@ -467,7 +382,6 @@ ThemeData _buildTechStepDarkTheme() {
     ),
 
     // APP BAR
-
     appBarTheme: const AppBarTheme(
       backgroundColor: background,
       foregroundColor: textPrimary,
@@ -482,7 +396,6 @@ ThemeData _buildTechStepDarkTheme() {
     ),
 
     // CARD
-
     cardTheme: CardThemeData(
       color: surface,
       elevation: 0,
@@ -490,127 +403,78 @@ ThemeData _buildTechStepDarkTheme() {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(18),
-        side: const BorderSide(
-          color: border,
-        ),
+        side: const BorderSide(color: border),
       ),
     ),
 
     // INPUT
-
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 16,
-      ),
-      hintStyle: const TextStyle(
-        fontSize: 14,
-        color: textSecondary,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      hintStyle: const TextStyle(fontSize: 14, color: textSecondary),
       prefixIconColor: textSecondary,
       suffixIconColor: textSecondary,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: border,
-        ),
+        borderSide: const BorderSide(color: border),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: border,
-        ),
+        borderSide: const BorderSide(color: border),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: primary,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: danger,
-        ),
+        borderSide: const BorderSide(color: danger),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: danger,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: danger, width: 1.5),
       ),
     ),
 
     // ELEVATED BUTTON
-
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: const WidgetStatePropertyAll(
-          Size(0, 48),
-        ),
+        minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
         padding: const WidgetStatePropertyAll(
-          EdgeInsets.symmetric(
-            horizontal: 20,
-            vertical: 12,
-          ),
+          EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
-        backgroundColor: const WidgetStatePropertyAll(
-          primaryDark,
-        ),
-        foregroundColor: const WidgetStatePropertyAll(
-          Colors.white,
-        ),
+        backgroundColor: const WidgetStatePropertyAll(primaryDark),
+        foregroundColor: const WidgetStatePropertyAll(Colors.white),
         elevation: const WidgetStatePropertyAll(0),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
       ),
     ),
 
     // OUTLINED BUTTON
-
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: ButtonStyle(
-        minimumSize: const WidgetStatePropertyAll(
-          Size(0, 48),
-        ),
-        foregroundColor: const WidgetStatePropertyAll(
-          primary,
-        ),
-        side: const WidgetStatePropertyAll(
-          BorderSide(color: border),
-        ),
+        minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
+        foregroundColor: const WidgetStatePropertyAll(primary),
+        side: const WidgetStatePropertyAll(BorderSide(color: border)),
         shape: WidgetStatePropertyAll(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
       ),
     ),
 
     // TEXT BUTTON
-
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primary,
-        textStyle: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     ),
 
     // BOTTOM NAVIGATION
-
     navigationBarTheme: NavigationBarThemeData(
       height: 72,
       backgroundColor: surface,
@@ -619,41 +483,28 @@ ThemeData _buildTechStepDarkTheme() {
       indicatorShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(14),
       ),
-      labelBehavior:
-          NavigationDestinationLabelBehavior.alwaysShow,
-      labelTextStyle:
-          WidgetStateProperty.resolveWith<TextStyle?>(
-        (states) {
-          final selected =
-              states.contains(WidgetState.selected);
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
+        final selected = states.contains(WidgetState.selected);
 
-          return TextStyle(
-            fontSize: 12,
-            fontWeight: selected
-                ? FontWeight.w700
-                : FontWeight.w500,
-            color: selected ? primary : textSecondary,
-          );
-        },
-      ),
-      iconTheme:
-          WidgetStateProperty.resolveWith<IconThemeData?>(
-        (states) {
-          final selected =
-              states.contains(WidgetState.selected);
+        return TextStyle(
+          fontSize: 12,
+          fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+          color: selected ? primary : textSecondary,
+        );
+      }),
+      iconTheme: WidgetStateProperty.resolveWith<IconThemeData?>((states) {
+        final selected = states.contains(WidgetState.selected);
 
-          return IconThemeData(
-            size: 22,
-            color: selected ? primary : textSecondary,
-          );
-        },
-      ),
+        return IconThemeData(
+          size: 22,
+          color: selected ? primary : textSecondary,
+        );
+      }),
     ),
 
     // PROGRESS INDICATORS
-
-    progressIndicatorTheme:
-        const ProgressIndicatorThemeData(
+    progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: primary,
       linearTrackColor: border,
       circularTrackColor: border,
@@ -661,9 +512,7 @@ ThemeData _buildTechStepDarkTheme() {
 
     dividerColor: border,
 
-    iconTheme: const IconThemeData(
-      color: textSecondary,
-    ),
+    iconTheme: const IconThemeData(color: textSecondary),
 
     splashColor: primary.withValues(alpha: 0.08),
     highlightColor: primary.withValues(alpha: 0.04),
@@ -674,7 +523,6 @@ ThemeData _buildTechStepDarkTheme() {
     primaryColor: primary,
 
     // STATUS COLORS
-
     extensions: const <ThemeExtension<dynamic>>[
       _TechStepStatusColors(
         success: success,
@@ -691,8 +539,7 @@ ThemeData _buildTechStepDarkTheme() {
 // ============================================================
 
 @immutable
-class _TechStepStatusColors
-    extends ThemeExtension<_TechStepStatusColors> {
+class _TechStepStatusColors extends ThemeExtension<_TechStepStatusColors> {
   final Color success;
   final Color danger;
   final Color successSoft;
@@ -732,10 +579,8 @@ class _TechStepStatusColors
     return _TechStepStatusColors(
       success: Color.lerp(success, other.success, t)!,
       danger: Color.lerp(danger, other.danger, t)!,
-      successSoft:
-          Color.lerp(successSoft, other.successSoft, t)!,
-      dangerSoft:
-          Color.lerp(dangerSoft, other.dangerSoft, t)!,
+      successSoft: Color.lerp(successSoft, other.successSoft, t)!,
+      dangerSoft: Color.lerp(dangerSoft, other.dangerSoft, t)!,
     );
   }
 }
@@ -748,11 +593,7 @@ class TechStepHome extends StatefulWidget {
   final Map<String, dynamic> user;
   final VoidCallback onLogout;
 
-  const TechStepHome({
-    super.key,
-    required this.user,
-    required this.onLogout,
-  });
+  const TechStepHome({super.key, required this.user, required this.onLogout});
 
   @override
   State<TechStepHome> createState() => _TechStepHomeState();
@@ -788,10 +629,7 @@ class _TechStepHomeState extends State<TechStepHome> {
       const LearnScreen(),
       const QuizScreen(),
       const ChallengeScreen(),
-      ProfileScreen(
-        user: widget.user,
-        onLogout: widget.onLogout,
-      ),
+      ProfileScreen(user: widget.user, onLogout: widget.onLogout),
     ];
   }
 
@@ -799,10 +637,7 @@ class _TechStepHomeState extends State<TechStepHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: IndexedStack(
-          index: currentIndex,
-          children: pages,
-        ),
+        child: IndexedStack(index: currentIndex, children: pages),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
