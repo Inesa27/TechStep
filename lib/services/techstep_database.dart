@@ -1748,6 +1748,47 @@ class TechStepDatabase {
     });
   }
 
+  Future<Map<String, Object?>?> getLatestLearningReport() async {
+    if (kIsWeb) {
+      await _initializeWebStore();
+      final reports = _webReports
+          .where((report) => _asInt(report['student_id']) == studentId)
+          .toList()
+        ..sort((a, b) => _asInt(b['id']).compareTo(_asInt(a['id'])));
+      if (reports.isEmpty) {
+        return null;
+      }
+
+      return _decodeLearningReport(reports.first['report_json']);
+    }
+
+    final db = await database;
+    final rows = await db.query(
+      'learning_reports',
+      columns: ['report_json'],
+      where: 'student_id = ?',
+      whereArgs: [studentId],
+      orderBy: 'id DESC',
+      limit: 1,
+    );
+    if (rows.isEmpty) {
+      return null;
+    }
+
+    return _decodeLearningReport(rows.first['report_json']);
+  }
+
+  Map<String, Object?> _decodeLearningReport(Object? rawReport) {
+    final decoded = jsonDecode(rawReport.toString());
+    if (decoded is! Map) {
+      throw const FormatException('Learning report data is invalid.');
+    }
+
+    return decoded.map<String, Object?>(
+      (key, value) => MapEntry(key.toString(), value),
+    );
+  }
+
   Future<void> _initializeWebStore() async {
     if (_webSeed == null) {
       final seedRaw = await rootBundle.loadString(

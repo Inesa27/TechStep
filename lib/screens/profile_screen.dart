@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../services/learning_analytics_service.dart';
+import '../services/techstep_database.dart';
 import '../theme/techstep_theme_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -57,39 +59,40 @@ class ProfileScreen extends StatelessWidget {
 
   Future<Uint8List> _buildLearningAnalyticsPdf() async {
     final analytics = LearningAnalyticsService.instance;
+    await analytics.refresh();
+    final database = TechStepDatabase.instance;
+    final materials = await database.getMaterialsWithProgress();
+    final challengeLevels = await database.getChallengeLevels();
+    final activities = await database.getActivities(limit: 8);
     final document = pw.Document();
     final now = DateTime.now();
 
-    final String reportDate =
+    final reportDate =
         '${now.day.toString().padLeft(2, '0')}/'
         '${now.month.toString().padLeft(2, '0')}/'
-        '${now.year}';
-
-    final int overallProgress =
-        analytics.overallProgress.clamp(0, 100);
-
-    final int hardware = analytics.hardwareMastery;
-    final int software = analytics.softwareMastery;
-    final int sistemOperasi =
-        analytics.operatingSystemMastery;
-
-    final int completedMaterials =
-        analytics.completedMaterials;
-
-    final int completedQuiz =
-        analytics.completedQuizMaterialIds.length;
-
-    final int completedLevels =
-        analytics.completedChallengeLevels;
+        '${now.year} ${now.hour.toString().padLeft(2, '0')}:'
+        '${now.minute.toString().padLeft(2, '0')}';
+    final overallProgress = analytics.overallProgress.clamp(0, 100);
+    final quizScores = <String, int>{
+      'hardware': analytics.hardwareQuizScore,
+      'software': analytics.softwareQuizScore,
+      'sistem_operasi': analytics.operatingSystemQuizScore,
+    };
+    final completedQuizIds = analytics.completedQuizMaterialIds;
+    final completedLevelCount =
+        challengeLevels.where((level) => level.completed).length;
+    final studentName = user?['name']?.toString().trim();
+    final studentNis = user?['nis']?.toString().trim();
+    final studentClass = user?['class_name']?.toString().trim();
 
     document.addPage(
       pw.MultiPage(
         pageFormat: pdf.PdfPageFormat.a4,
-        margin: const pw.EdgeInsets.all(36),
+        margin: const pw.EdgeInsets.fromLTRB(42, 44, 42, 42),
 
         header: (context) {
           return pw.Container(
-            margin: const pw.EdgeInsets.only(bottom: 15),
+            margin: const pw.EdgeInsets.only(bottom: 18),
             child: pw.Row(
               mainAxisAlignment:
                   pw.MainAxisAlignment.spaceBetween,
@@ -97,14 +100,14 @@ class ProfileScreen extends StatelessWidget {
                 pw.Text(
                   'TechStep',
                   style: pw.TextStyle(
-                    fontSize: 16,
+                    fontSize: 15,
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
                 pw.Text(
-                  'Learning Analytics',
+                  'LAPORAN PEMBELAJARAN',
                   style: const pw.TextStyle(
-                    fontSize: 11,
+                    fontSize: 9,
                   ),
                 ),
               ],
@@ -114,13 +117,13 @@ class ProfileScreen extends StatelessWidget {
 
         footer: (context) {
           return pw.Container(
-            margin: const pw.EdgeInsets.only(top: 15),
+            margin: const pw.EdgeInsets.only(top: 14),
             child: pw.Row(
               mainAxisAlignment:
                   pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
-                  'TechStep - Profil Penguasaan Kompetensi',
+                  'TechStep - Learning Report',
                   style: const pw.TextStyle(
                     fontSize: 9,
                   ),
@@ -138,336 +141,291 @@ class ProfileScreen extends StatelessWidget {
         },
 
         build: (context) => [
-          pw.SizedBox(height: 10),
-
           pw.Center(
             child: pw.Text(
-              'PROFIL PENGUASAAN KOMPETENSI SISWA',
+              'Laporan Perkembangan Belajar',
               textAlign: pw.TextAlign.center,
               style: pw.TextStyle(
-                fontSize: 19,
+                fontSize: 21,
                 fontWeight: pw.FontWeight.bold,
               ),
             ),
           ),
 
-          pw.SizedBox(height: 6),
+          pw.SizedBox(height: 5),
 
           pw.Center(
             child: pw.Text(
-              'Hasil Learning Analytics TechStep',
-              style: const pw.TextStyle(
-                fontSize: 11,
-              ),
+              'Learning Analytics TechStep - Dibuat $reportDate',
+              style: const pw.TextStyle(fontSize: 10),
             ),
           ),
-
-          pw.SizedBox(height: 25),
-
-          pw.Text(
-            'A. Identitas Siswa',
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
-            ),
-          ),
-
-          pw.SizedBox(height: 10),
-
-          _pdfInfoRow('Nama', _studentName),
-          _pdfInfoRow('NIS / Username', _studentNis),
-          _pdfInfoRow('Kelas', _studentClass),
-          _pdfInfoRow('Tanggal Laporan', reportDate),
 
           pw.SizedBox(height: 20),
 
-          pw.Text(
-            'B. Progress Pembelajaran',
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
+          _pdfSectionTitle('1. Identitas Siswa'),
+          pw.SizedBox(height: 8),
+          pw.Container(
+            padding: const pw.EdgeInsets.all(12),
+            decoration: _pdfBoxDecoration(),
+            child: pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                _pdfInfoRow('Nama', _reportValue(studentName)),
+                _pdfInfoRow('NIS / Username', _reportValue(studentNis)),
+                _pdfInfoRow('Kelas', _reportValue(studentClass)),
+              ],
             ),
           ),
 
-          pw.SizedBox(height: 10),
+          pw.SizedBox(height: 18),
 
+          _pdfSectionTitle('2. Ringkasan Progres'),
+          pw.SizedBox(height: 8),
           pw.Container(
-            padding: const pw.EdgeInsets.all(15),
-            decoration: pw.BoxDecoration(
-              border: pw.Border.all(
-                color: pdf.PdfColors.grey400,
-              ),
-              borderRadius:
-                  const pw.BorderRadius.all(
-                pw.Radius.circular(8),
-              ),
-            ),
+            padding: const pw.EdgeInsets.all(14),
+            decoration: _pdfBoxDecoration(),
             child: pw.Column(
-              crossAxisAlignment:
-                  pw.CrossAxisAlignment.start,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
                 pw.Row(
-                  mainAxisAlignment:
-                      pw.MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
                     pw.Text(
-                      'Progress Keseluruhan',
+                      'Progres keseluruhan',
                       style: pw.TextStyle(
+                        fontSize: 12,
                         fontWeight: pw.FontWeight.bold,
                       ),
                     ),
                     pw.Text(
                       '$overallProgress%',
                       style: pw.TextStyle(
-                        fontSize: 15,
+                        fontSize: 16,
                         fontWeight: pw.FontWeight.bold,
+                        color: pdf.PdfColors.deepPurple,
                       ),
                     ),
                   ],
                 ),
-
                 pw.SizedBox(height: 8),
-
-                pw.Container(
-                  height: 8,
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(
-                      color: pdf.PdfColors.grey400,
-                    ),
-                    borderRadius:
-                        const pw.BorderRadius.all(
-                      pw.Radius.circular(5),
-                    ),
-                  ),
-                  child: pw.Row(
-                    children: [
-                      if (overallProgress > 0)
-                        pw.Expanded(
-                          flex: overallProgress,
-                          child: pw.Container(
-                            decoration:
-                                const pw.BoxDecoration(
-                              color: pdf.PdfColors.deepPurple,
-                              borderRadius:
-                                  pw.BorderRadius.all(
-                                pw.Radius.circular(5),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                      if (overallProgress < 100)
-                        pw.Expanded(
-                          flex: 100 - overallProgress,
-                          child: pw.Container(),
-                        ),
-                    ],
+                pw.ClipRRect(
+                  horizontalRadius: 4,
+                  verticalRadius: 4,
+                  child: pw.LinearProgressIndicator(
+                    value: overallProgress / 100,
+                    backgroundColor: pdf.PdfColors.grey300,
+                    valueColor: pdf.PdfColors.deepPurple,
+                    minHeight: 8,
                   ),
                 ),
-
-                pw.SizedBox(height: 8),
-
+                pw.SizedBox(height: 10),
                 pw.Text(
                   'Status: ${analytics.learningStatus}',
-                  style: const pw.TextStyle(
-                    fontSize: 10,
-                  ),
+                  style: const pw.TextStyle(fontSize: 10),
+                ),
+                pw.SizedBox(height: 4),
+                pw.Text(
+                  'Materi: ${analytics.completedMaterials}/'
+                  '${analytics.totalMaterials} submateri selesai'
+                  '    |    Quiz: ${completedQuizIds.length}/'
+                  '${LearningAnalyticsService.totalQuizMaterials} materi'
+                  '    |    Challenge: $completedLevelCount/'
+                  '${challengeLevels.length} level',
+                  style: const pw.TextStyle(fontSize: 9),
                 ),
               ],
             ),
           ),
 
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 18),
 
-          pw.Text(
-            'C. Penguasaan Kompetensi',
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
-            ),
-          ),
-
-          pw.SizedBox(height: 10),
-
+          _pdfSectionTitle('3. Penguasaan Materi'),
+          pw.SizedBox(height: 8),
           pw.Table(
-            border: pw.TableBorder.all(
-              color: pdf.PdfColors.grey400,
-            ),
+            border: pw.TableBorder.all(color: pdf.PdfColors.grey400),
             columnWidths: {
-              0: const pw.FlexColumnWidth(2.5),
-              1: const pw.FlexColumnWidth(1),
-              2: const pw.FlexColumnWidth(2),
+              0: const pw.FlexColumnWidth(2.2),
+              1: const pw.FlexColumnWidth(1.3),
+              2: const pw.FlexColumnWidth(1.1),
+              3: const pw.FlexColumnWidth(1.7),
             },
             children: [
-              pw.TableRow(
-                decoration: const pw.BoxDecoration(
-                  color: pdf.PdfColors.grey200,
-                ),
-                children: [
-                  _pdfTableCell('Materi', bold: true),
-                  _pdfTableCell(
-                    'Nilai',
-                    bold: true,
-                    center: true,
-                  ),
-                  _pdfTableCell(
-                    'Status',
-                    bold: true,
-                    center: true,
-                  ),
-                ],
-              ),
-              _pdfCompetencyRow('Hardware', hardware),
-              _pdfCompetencyRow('Software', software),
-              _pdfCompetencyRow(
-                'Sistem Operasi',
-                sistemOperasi,
-              ),
+              _pdfTableHeader(['Materi', 'Submateri', 'Nilai', 'Status']),
+              for (final material in materials)
+                _pdfTableRow([
+                  material.title,
+                  '${material.completedSubmaterials}/'
+                      '${material.totalSubmaterials}',
+                  '${material.masteryScore}%',
+                  material.masteryScore == 0
+                      ? 'Belum ada hasil evaluasi'
+                      : material.masteryStatus,
+                ]),
             ],
           ),
 
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 18),
 
-          pw.Text(
-            'D. Aktivitas Pembelajaran',
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
-            ),
-          ),
-
-          pw.SizedBox(height: 10),
-
+          _pdfSectionTitle('4. Hasil Quiz Terakhir'),
+          pw.SizedBox(height: 8),
           pw.Table(
-            border: pw.TableBorder.all(
-              color: pdf.PdfColors.grey400,
-            ),
+            border: pw.TableBorder.all(color: pdf.PdfColors.grey400),
             columnWidths: {
-              0: const pw.FlexColumnWidth(2.5),
+              0: const pw.FlexColumnWidth(2),
               1: const pw.FlexColumnWidth(1),
+              2: const pw.FlexColumnWidth(1.6),
             },
             children: [
-              pw.TableRow(
-                decoration: const pw.BoxDecoration(
-                  color: pdf.PdfColors.grey200,
-                ),
-                children: [
-                  _pdfTableCell(
-                    'Aktivitas',
-                    bold: true,
-                  ),
-                  _pdfTableCell(
-                    'Jumlah',
-                    bold: true,
-                    center: true,
-                  ),
-                ],
-              ),
-              _pdfActivityRow(
-                'Materi selesai',
-                completedMaterials,
-              ),
-              _pdfActivityRow(
-                'Quiz selesai',
-                completedQuiz,
-              ),
-              _pdfActivityRow(
-                'Level Challenge selesai',
-                completedLevels,
-              ),
+              _pdfTableHeader(['Materi', 'Nilai', 'Status']),
+              for (final material in materials)
+                _pdfTableRow([
+                  material.title,
+                  completedQuizIds.contains(material.id)
+                      ? '${quizScores[material.id] ?? 0}%'
+                      : '-',
+                  completedQuizIds.contains(material.id)
+                      ? 'Sudah dikerjakan'
+                      : 'Belum dikerjakan',
+                ]),
             ],
           ),
 
-          pw.SizedBox(height: 20),
+          pw.SizedBox(height: 18),
 
-          pw.Text(
-            'E. Tindak Lanjut Pembelajaran',
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
-            ),
+          _pdfSectionTitle('5. Computer Challenge'),
+          pw.SizedBox(height: 8),
+          pw.Table(
+            border: pw.TableBorder.all(color: pdf.PdfColors.grey400),
+            columnWidths: {
+              0: const pw.FlexColumnWidth(2),
+              1: const pw.FlexColumnWidth(1.2),
+              2: const pw.FlexColumnWidth(1.5),
+            },
+            children: [
+              _pdfTableHeader(['Level', 'Nilai terbaik', 'Status']),
+              for (var index = 0; index < challengeLevels.length; index++)
+                _pdfTableRow([
+                  challengeLevels[index].name,
+                  challengeLevels[index].completed
+                      ? '${challengeLevels[index].bestScore}%'
+                      : '-',
+                  challengeLevels[index].completed
+                      ? 'Selesai'
+                      : 'Belum selesai',
+                ]),
+            ],
           ),
 
-          pw.SizedBox(height: 10),
+          pw.SizedBox(height: 18),
 
+          _pdfSectionTitle('6. Aktivitas Terbaru'),
+          pw.SizedBox(height: 8),
+          if (activities.isEmpty)
+            pw.Container(
+              width: double.infinity,
+              padding: const pw.EdgeInsets.all(12),
+              decoration: _pdfBoxDecoration(),
+              child: pw.Text(
+                'Belum ada aktivitas belajar yang tercatat.',
+                style: const pw.TextStyle(fontSize: 10),
+              ),
+            )
+          else
+            pw.Table(
+              border: pw.TableBorder.all(color: pdf.PdfColors.grey400),
+              columnWidths: {
+                0: const pw.FlexColumnWidth(1.5),
+                1: const pw.FlexColumnWidth(3.2),
+                2: const pw.FlexColumnWidth(1.6),
+              },
+              children: [
+                _pdfTableHeader(['Aktivitas', 'Keterangan', 'Waktu']),
+                for (final activity in activities)
+                  _pdfTableRow([
+                    activity['title']?.toString() ?? '-',
+                    activity['description']?.toString() ?? '-',
+                    _formatReportDate(activity['created_at']),
+                  ]),
+              ],
+            ),
+
+          pw.SizedBox(height: 18),
+
+          _pdfSectionTitle('7. Rekomendasi Belajar'),
+          pw.SizedBox(height: 8),
           pw.Container(
             width: double.infinity,
-            padding: const pw.EdgeInsets.all(15),
-            decoration: pw.BoxDecoration(
-              border: pw.Border.all(
-                color: pdf.PdfColors.grey400,
-              ),
-              borderRadius:
-                  const pw.BorderRadius.all(
-                pw.Radius.circular(8),
-              ),
-            ),
+            padding: const pw.EdgeInsets.all(12),
+            decoration: _pdfBoxDecoration(),
             child: pw.Column(
-              crossAxisAlignment:
-                  pw.CrossAxisAlignment.start,
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                _pdfBullet(
-                  _getRecommendation('Hardware', hardware),
-                ),
-                _pdfBullet(
-                  _getRecommendation('Software', software),
-                ),
-                _pdfBullet(
-                  _getRecommendation(
-                    'Sistem Operasi',
-                    sistemOperasi,
-                  ),
-                ),
-                _pdfBullet(
-                  analytics.quizCompleted
-                      ? 'Hasil Quiz sudah tersedia dan dapat '
-                          'digunakan sebagai dasar pemetaan '
-                          'penguasaan kompetensi.'
-                      : 'Kerjakan Quiz untuk memperoleh data '
-                          'penguasaan kompetensi.',
-                ),
-                _pdfBullet(
-                  completedLevels > 0
-                      ? 'Computer Challenge sudah dimainkan. '
-                          'Lanjutkan level berikutnya untuk '
-                          'memperdalam penerapan konsep.'
-                      : 'Selesaikan Computer Challenge untuk '
-                          'menguji penerapan konsep sistem '
-                          'komputer.',
-                ),
+                if (analytics.recommendations.isEmpty)
+                  pw.Text(
+                    'Belum ada rekomendasi tambahan berdasarkan data '
+                    'kompetensi yang tersimpan.',
+                    style: const pw.TextStyle(fontSize: 10),
+                  )
+                else
+                  for (final recommendation in analytics.recommendations)
+                    _pdfBullet(recommendation),
               ],
             ),
           ),
 
-          pw.SizedBox(height: 20),
-
-          pw.Container(
-            padding: const pw.EdgeInsets.all(12),
-            decoration: pw.BoxDecoration(
-              border: pw.Border.all(
-                color: pdf.PdfColors.grey400,
-              ),
-              borderRadius:
-                  const pw.BorderRadius.all(
-                pw.Radius.circular(8),
-              ),
-            ),
-            child: pw.Text(
-              'Catatan: Laporan ini dihasilkan berdasarkan '
-              'data Learning Analytics TechStep. Nilai dan '
-              'status penguasaan diperbarui berdasarkan '
-              'aktivitas pembelajaran yang tersimpan pada '
-              'perangkat atau browser.',
-              style: const pw.TextStyle(
-                fontSize: 9,
-              ),
+          pw.SizedBox(height: 14),
+          pw.Text(
+            'Sumber: progres, nilai quiz, challenge, dan aktivitas yang '
+            'tersimpan pada akun TechStep ini. Nilai penguasaan mengikuti '
+            'hasil evaluasi dan progres materi yang tercatat.',
+            style: const pw.TextStyle(
+              fontSize: 8,
+              color: pdf.PdfColors.grey700,
             ),
           ),
         ],
       ),
     );
 
-    return document.save();
+    final bytes = await document.save();
+    await database.saveLearningReport({
+      'student_name': _reportValue(studentName),
+      'student_nis': _reportValue(studentNis),
+      'student_class': _reportValue(studentClass),
+      'created_at': now.toIso8601String(),
+      'overall_progress': overallProgress,
+      'completed_submaterials': analytics.completedMaterials,
+      'total_submaterials': analytics.totalMaterials,
+      'completed_quiz_material_ids': completedQuizIds.toList(),
+      'quiz_scores': quizScores,
+      'completed_challenge_levels': completedLevelCount,
+      'total_challenge_levels': challengeLevels.length,
+      'materials': [
+        for (final material in materials)
+          {
+            'id': material.id,
+            'title': material.title,
+            'completed_submaterials': material.completedSubmaterials,
+            'total_submaterials': material.totalSubmaterials,
+            'mastery_score': material.masteryScore,
+            'mastery_status': material.masteryStatus,
+          },
+      ],
+      'challenge_levels': [
+        for (final level in challengeLevels)
+          {
+            'id': level.id,
+            'name': level.name,
+            'completed': level.completed,
+            'best_score': level.bestScore,
+          },
+      ],
+      'recent_activities': activities,
+      'pdf_base64': base64Encode(bytes),
+    });
+
+    return bytes;
   }
 
   // ============================================================
@@ -480,7 +438,7 @@ class ProfileScreen extends StatelessWidget {
     try {
       final bytes = await _buildLearningAnalyticsPdf();
 
-      await FileSaver.instance.saveToDownloads(
+      final savedPath = await FileSaver.instance.saveToDownloads(
         name: 'hasil_learning_analytics_techstep',
         bytes: bytes,
         fileExtension: 'pdf',
@@ -491,9 +449,11 @@ class ProfileScreen extends StatelessWidget {
       if (!context.mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'PDF berhasil disimpan ke folder Downloads/TechStep.',
+            savedPath == null || savedPath.isEmpty
+                ? 'PDF berhasil dibuat dan dikirim ke lokasi unduhan.'
+                : 'PDF berhasil disimpan: $savedPath',
           ),
           behavior: SnackBarBehavior.floating,
         ),
@@ -522,28 +482,7 @@ class ProfileScreen extends StatelessWidget {
 
       if (!context.mounted) return;
 
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (previewContext) {
-            final colors =
-                Theme.of(previewContext).colorScheme;
-
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text('Learning Report'),
-              ),
-              body: PdfPreview(
-                canChangeOrientation: false,
-                canChangePageFormat: false,
-                allowPrinting: true,
-                allowSharing: true,
-                build: (_) async => bytes,
-              ),
-              backgroundColor: colors.surface,
-            );
-          },
-        ),
-      );
+      await _showLearningReport(context, bytes);
     } catch (e) {
       if (!context.mounted) return;
 
@@ -556,33 +495,123 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
-  // ============================================================
-  // REKOMENDASI PEMBELAJARAN
-  // ============================================================
+  Future<void> _openSavedLearningAnalytics(
+    BuildContext context,
+  ) async {
+    try {
+      final report =
+          await TechStepDatabase.instance.getLatestLearningReport();
+      final encodedPdf = report?['pdf_base64']?.toString();
+      if (encodedPdf == null || encodedPdf.isEmpty) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Belum ada Learning Report yang tersimpan.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+        return;
+      }
 
-  String _getRecommendation(String topic, int score) {
-    if (score >= 80) {
-      return '$topic sudah menunjukkan penguasaan yang baik. '
-          'Pertahankan pemahaman dan lanjutkan ke penerapan konsep.';
+      final bytes = Uint8List.fromList(base64Decode(encodedPdf));
+      if (bytes.length < 5 ||
+          bytes[0] != 0x25 ||
+          bytes[1] != 0x50 ||
+          bytes[2] != 0x44 ||
+          bytes[3] != 0x46 ||
+          bytes[4] != 0x2D) {
+        throw const FormatException('File PDF tersimpan tidak valid.');
+      }
+
+      if (!context.mounted) return;
+      await _showLearningReport(context, bytes);
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Gagal membuka Learning Report tersimpan: $e'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
+  }
 
-    if (score >= 60) {
-      return '$topic cukup dikuasai. Perbanyak latihan dan '
-          'pelajari kembali konsep yang masih belum konsisten.';
-    }
-
-    if (score > 0) {
-      return '$topic masih perlu diperkuat. Pelajari kembali '
-          'materi dan kerjakan evaluasi ulang.';
-    }
-
-    return 'Pelajari materi $topic terlebih dahulu sebelum '
-        'melakukan evaluasi lanjutan.';
+  Future<void> _showLearningReport(
+    BuildContext context,
+    Uint8List bytes,
+  ) async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (previewContext) {
+          final colors = Theme.of(previewContext).colorScheme;
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('Learning Report'),
+            ),
+            body: PdfPreview(
+              canChangeOrientation: false,
+              canChangePageFormat: false,
+              allowPrinting: true,
+              allowSharing: true,
+              build: (_) async => bytes,
+            ),
+            backgroundColor: colors.surface,
+          );
+        },
+      ),
+    );
   }
 
   // ============================================================
   // KOMPONEN PDF
   // ============================================================
+
+  String _reportValue(String? value) {
+    if (value == null || value.isEmpty) {
+      return '-';
+    }
+    return value;
+  }
+
+  String _formatReportDate(Object? value) {
+    final date = DateTime.tryParse(value?.toString() ?? '');
+    if (date == null) {
+      return '-';
+    }
+    return '${date.day.toString().padLeft(2, '0')}/'
+        '${date.month.toString().padLeft(2, '0')}/'
+        '${date.year} ${date.hour.toString().padLeft(2, '0')}:'
+        '${date.minute.toString().padLeft(2, '0')}';
+  }
+
+  pw.Widget _pdfSectionTitle(String title) {
+    return pw.Text(
+      title,
+      style: pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
+    );
+  }
+
+  pw.BoxDecoration _pdfBoxDecoration() {
+    return pw.BoxDecoration(
+      border: pw.Border.all(color: pdf.PdfColors.grey400, width: 0.7),
+      borderRadius: const pw.BorderRadius.all(pw.Radius.circular(6)),
+    );
+  }
+
+  pw.TableRow _pdfTableHeader(List<String> labels) {
+    return pw.TableRow(
+      decoration: const pw.BoxDecoration(color: pdf.PdfColors.grey200),
+      children: [
+        for (final label in labels) _pdfTableCell(label, bold: true),
+      ],
+    );
+  }
+
+  pw.TableRow _pdfTableRow(List<String> values) {
+    return pw.TableRow(
+      children: [for (final value in values) _pdfTableCell(value)],
+    );
+  }
 
   pw.Widget _pdfInfoRow(
     String label,
@@ -602,10 +631,12 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          pw.Text(
-            ': $value',
-            style: const pw.TextStyle(
-              fontSize: 10,
+          pw.Expanded(
+            child: pw.Text(
+              ': $value',
+              style: const pw.TextStyle(
+                fontSize: 10,
+              ),
             ),
           ),
         ],
@@ -636,39 +667,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  pw.TableRow _pdfCompetencyRow(
-    String title,
-    int score,
-  ) {
-    final status = score >= 80
-        ? 'Sangat Baik'
-        : score >= 60
-            ? 'Baik'
-            : score >= 40
-                ? 'Cukup'
-                : 'Perlu Penguatan';
-
-    return pw.TableRow(
-      children: [
-        _pdfTableCell(title),
-        _pdfTableCell('$score%', center: true),
-        _pdfTableCell(status, center: true),
-      ],
-    );
-  }
-
-  pw.TableRow _pdfActivityRow(
-    String title,
-    int value,
-  ) {
-    return pw.TableRow(
-      children: [
-        _pdfTableCell(title),
-        _pdfTableCell('$value', center: true),
-      ],
-    );
-  }
-
   pw.Widget _pdfBullet(String text) {
     return pw.Padding(
       padding: const pw.EdgeInsets.only(bottom: 7),
@@ -676,7 +674,7 @@ class ProfileScreen extends StatelessWidget {
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
           pw.Text(
-            '• ',
+            '- ',
             style: pw.TextStyle(
               fontSize: 10,
               fontWeight: pw.FontWeight.bold,
@@ -1715,6 +1713,35 @@ class ProfileScreen extends StatelessWidget {
               ),
               label: const Text(
                 'Unduh Hasil Learning Analytics',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.white,
+                side: BorderSide(
+                  color: Colors.white.withValues(alpha: 0.55),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: OutlinedButton.icon(
+              onPressed: () {
+                _openSavedLearningAnalytics(context);
+              },
+              icon: const Icon(
+                Icons.history_rounded,
+                size: 20,
+              ),
+              label: const Text(
+                'Buka PDF Tersimpan',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
