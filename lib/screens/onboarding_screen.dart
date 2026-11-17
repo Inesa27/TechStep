@@ -1,53 +1,38 @@
-
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatelessWidget {
   final VoidCallback onContinue;
 
-  const OnboardingScreen({
-    super.key,
-    required this.onContinue,
-  });
-
-  static const Color _primary = Color(0xFF5547E8);
-  static const Color _background = Color(0xFFF5F1FF);
-  static const Color _textPrimary = Color(0xFF242438);
-  static const Color _textSecondary = Color(0xFF77778B);
+  const OnboardingScreen({super.key, required this.onContinue});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final illustrationHeight =
-                (constraints.maxHeight * 0.46)
-                    .clamp(250.0, 340.0);
+            final illustrationHeight = (constraints.maxHeight * 0.46).clamp(
+              250.0,
+              340.0,
+            );
 
             return SingleChildScrollView(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: 480,
-                  ),
+                  constraints: const BoxConstraints(maxWidth: 480),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
-                      18,
-                      16,
-                      18,
-                      24,
-                    ),
+                    padding: const EdgeInsets.fromLTRB(18, 16, 18, 24),
                     child: Column(
                       children: [
-                        _buildBrand(),
+                        _buildBrand(context),
 
                         const SizedBox(height: 20),
 
                         SizedBox(
                           height: illustrationHeight,
                           width: double.infinity,
-                          child: _buildIllustration(),
+                          child: _buildIllustration(context),
                         ),
 
                         const SizedBox(height: 16),
@@ -65,14 +50,15 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBrand() {
+  Widget _buildBrand(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Container(
           width: 42,
           height: 42,
           decoration: BoxDecoration(
-            color: _primary,
+            color: scheme.primary,
             borderRadius: BorderRadius.circular(13),
           ),
           child: const Icon(
@@ -82,7 +68,7 @@ class OnboardingScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 11),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -90,16 +76,13 @@ class OnboardingScreen extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
-                color: _textPrimary,
+                color: scheme.onSurface,
               ),
             ),
             SizedBox(height: 2),
             Text(
               'Belajar Informatika dengan langkahmu',
-              style: TextStyle(
-                fontSize: 10,
-                color: _textSecondary,
-              ),
+              style: TextStyle(fontSize: 10, color: scheme.onSurfaceVariant),
             ),
           ],
         ),
@@ -107,15 +90,13 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildIllustration() {
+  Widget _buildIllustration(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFFE6DCF4),
-            Color(0xFFD5C8EE),
-          ],
+          colors: [Color(0xFFE6DCF4), Color(0xFFD5C8EE)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -126,33 +107,17 @@ class OnboardingScreen extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Positioned(
-              top: -35,
-              right: -30,
-              child: _circle(130, 0x33FFFFFF),
-            ),
-            Positioned(
-              bottom: -45,
-              left: -25,
-              child: _circle(115, 0x22FFFFFF),
-            ),
+            Positioned(top: -35, right: -30, child: _circle(130, 0x33FFFFFF)),
+            Positioned(bottom: -45, left: -25, child: _circle(115, 0x22FFFFFF)),
             const Positioned(
               top: 28,
               left: 35,
-              child: Icon(
-                Icons.auto_awesome,
-                color: Colors.white,
-                size: 23,
-              ),
+              child: Icon(Icons.auto_awesome, color: Colors.white, size: 23),
             ),
             const Positioned(
               top: 65,
               right: 55,
-              child: Icon(
-                Icons.star_rounded,
-                color: Colors.white,
-                size: 28,
-              ),
+              child: Icon(Icons.star_rounded, color: Colors.white, size: 28),
             ),
             const Positioned(
               top: 95,
@@ -167,10 +132,7 @@ class OnboardingScreen extends StatelessWidget {
               bottom: 35,
               left: 0,
               right: 0,
-              child: Container(
-                height: 23,
-                color: const Color(0xFFBBA5DE),
-              ),
+              child: Container(height: 23, color: const Color(0xFFBBA5DE)),
             ),
 
             // Ilustrasi tumpukan buku.
@@ -222,10 +184,10 @@ class OnboardingScreen extends StatelessWidget {
                   color: Colors.white.withValues(alpha: 0.75),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.menu_book_rounded,
                   size: 22,
-                  color: _primary,
+                  color: scheme.primary,
                 ),
               ),
             ),
@@ -239,10 +201,7 @@ class OnboardingScreen extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Color(color),
-      ),
+      decoration: BoxDecoration(shape: BoxShape.circle, color: Color(color)),
     );
   }
 
@@ -258,14 +217,10 @@ class OnboardingScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: const Color(0xFF448DC9),
-          width: 1.2,
-        ),
+        border: Border.all(color: const Color(0xFF448DC9), width: 1.2),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF44366C)
-                .withValues(alpha: 0.12),
+            color: const Color(0xFF44366C).withValues(alpha: 0.12),
             blurRadius: 5,
             offset: const Offset(0, 4),
           ),
@@ -281,18 +236,12 @@ class OnboardingScreen extends StatelessWidget {
                 topLeft: Radius.circular(7),
                 bottomLeft: Radius.circular(7),
               ),
-              border: const Border(
-                right: BorderSide(
-                  color: Color(0x33FFFFFF),
-                ),
-              ),
+              border: const Border(right: BorderSide(color: Color(0x33FFFFFF))),
             ),
           ),
           Expanded(
             child: Container(
-              margin: const EdgeInsets.symmetric(
-                vertical: 5,
-              ),
+              margin: const EdgeInsets.symmetric(vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(5),
@@ -316,23 +265,18 @@ class OnboardingScreen extends StatelessWidget {
   }
 
   Widget _buildIntroduction(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(
-        22,
-        25,
-        22,
-        22,
-      ),
+      padding: const EdgeInsets.fromLTRB(22, 25, 22, 22),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(
-          color: const Color(0xFFEAE4F6),
-        ),
+        border: Border.all(color: scheme.outlineVariant),
         boxShadow: [
           BoxShadow(
-            color: _primary.withValues(alpha: 0.06),
+            color: scheme.primary.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, 5),
           ),
@@ -341,38 +285,29 @@ class OnboardingScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Mulai Belajar Hari Ini',
-            style: TextStyle(
+            style: textTheme.headlineMedium?.copyWith(
               fontSize: 27,
-              height: 1.2,
               fontWeight: FontWeight.w800,
-              color: _textPrimary,
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'Jelajahi materi Hardware, Software, dan Sistem '
             'Operasi. Uji pemahamanmu melalui kuis dan '
             'tantangan seru di TechStep.',
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.6,
-              color: _textSecondary,
-            ),
+            style: textTheme.bodyMedium?.copyWith(height: 1.6),
           ),
           const SizedBox(height: 19),
 
           Row(
             children: [
-              _feature(Icons.menu_book_rounded, 'Materi'),
+              _feature(context, Icons.menu_book_rounded, 'Materi'),
               const SizedBox(width: 14),
-              _feature(Icons.quiz_rounded, 'Quiz'),
+              _feature(context, Icons.quiz_rounded, 'Quiz'),
               const SizedBox(width: 14),
-              _feature(
-                Icons.sports_esports_rounded,
-                'Challenge',
-              ),
+              _feature(context, Icons.sports_esports_rounded, 'Challenge'),
             ],
           ),
 
@@ -384,8 +319,8 @@ class OnboardingScreen extends StatelessWidget {
             child: ElevatedButton(
               onPressed: onContinue,
               style: ElevatedButton.styleFrom(
-                backgroundColor: _primary,
-                foregroundColor: Colors.white,
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -396,16 +331,10 @@ class OnboardingScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Mulai Belajar',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(width: 9),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 20,
-                  ),
+                  Icon(Icons.arrow_forward_rounded, size: 20),
                 ],
               ),
             ),
@@ -415,23 +344,20 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Widget _feature(IconData icon, String label) {
+  Widget _feature(BuildContext context, IconData icon, String label) {
+    final scheme = Theme.of(context).colorScheme;
     return Expanded(
       child: Column(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: _primary,
-          ),
+          Icon(icon, size: 20, color: scheme.primary),
           const SizedBox(height: 5),
           Text(
             label,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w600,
-              color: _textSecondary,
+              color: scheme.onSurfaceVariant,
             ),
           ),
         ],

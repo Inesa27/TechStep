@@ -16,28 +16,37 @@ class WelcomeScreen extends StatelessWidget {
           builder: (context, constraints) {
             final isWide = constraints.maxWidth >= 760;
             final content = _buildContent(context, isWide);
+            final verticalPadding = isWide ? 80.0 : 48.0;
 
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(
                 horizontal: isWide ? 48 : 24,
-                vertical: isWide ? 40 : 24,
+                vertical: verticalPadding / 2,
               ),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1080),
-                  child: isWide
-                      ? Row(
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 44),
-                                child: content,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: (constraints.maxHeight - verticalPadding).clamp(
+                    0.0,
+                    double.infinity,
+                  ),
+                ),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 1080),
+                    child: isWide
+                        ? Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 44),
+                                  child: content,
+                                ),
                               ),
-                            ),
-                            Expanded(child: _buildIllustration(context)),
-                          ],
-                        )
-                      : content,
+                              Expanded(child: _buildIllustration(context)),
+                            ],
+                          )
+                        : content,
+                  ),
                 ),
               ),
             );

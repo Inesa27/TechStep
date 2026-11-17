@@ -100,63 +100,52 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   InputDecoration _inputDecoration({
+    required BuildContext context,
     required String hintText,
     required IconData prefixIcon,
     Widget? suffixIcon,
   }) {
+    final scheme = Theme.of(context).colorScheme;
     return InputDecoration(
       hintText: hintText,
       prefixIcon: Icon(
         prefixIcon,
-        color: const Color(0xFF6B7280),
+        color: scheme.onSurfaceVariant,
         size: 21,
       ),
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: Colors.white,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 16,
-      ),
+      fillColor: scheme.surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFFE5E7EB),
-        ),
+        borderSide: BorderSide(color: scheme.outlineVariant),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFFE5E7EB),
-        ),
+        borderSide: BorderSide(color: scheme.outlineVariant),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFF4F46E5),
-          width: 1.5,
-        ),
+        borderSide: BorderSide(color: scheme.primary, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFFEF4444),
-        ),
+        borderSide: BorderSide(color: scheme.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFFEF4444),
-          width: 1.5,
-        ),
+        borderSide: BorderSide(color: scheme.error, width: 1.5),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F7FB),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -175,24 +164,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text(
                       'Selamat Datang di TechStep',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF111827),
-                      ),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
+                    Text(
                       'Masuk untuk melanjutkan pembelajaranmu.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        height: 1.5,
-                        color: Color(0xFF6B7280),
+                      style: textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 28),
-                    _buildLoginCard(),
+                    _buildLoginCard(context),
                   ],
                 ),
               ),
@@ -204,12 +187,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildLogo() {
+    final scheme = Theme.of(context).colorScheme;
     return Center(
       child: Container(
         width: 74,
         height: 74,
         decoration: BoxDecoration(
-          color: const Color(0xFF4F46E5),
+          color: scheme.primary,
           borderRadius: BorderRadius.circular(22),
           boxShadow: const [
             BoxShadow(
@@ -228,18 +212,20 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildLoginCard() {
+  Widget _buildLoginCard(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Container(
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(
-          color: const Color(0xFFE5E7EB),
+          color: scheme.outlineVariant,
         ),
-        boxShadow: const [
+        boxShadow: [
           BoxShadow(
-            color: Color(0x0F111827),
+            color: scheme.shadow.withValues(alpha: 0.08),
             blurRadius: 18,
             offset: Offset(0, 8),
           ),
@@ -248,30 +234,22 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Masuk',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF1F2937),
-            ),
+            style: textTheme.titleLarge,
           ),
           const SizedBox(height: 6),
-          const Text(
+          Text(
             'Gunakan Username atau NIS yang sudah terdaftar.',
-            style: TextStyle(
-              fontSize: 12,
-              height: 1.5,
-              color: Color(0xFF6B7280),
-            ),
+            style: textTheme.bodySmall,
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'Username / NIS',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF374151),
+              color: scheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 7),
@@ -280,6 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
             textInputAction: TextInputAction.next,
             autofillHints: const [AutofillHints.username],
             decoration: _inputDecoration(
+              context: context,
               hintText: 'Masukkan username atau NIS',
               prefixIcon: Icons.person_outline_rounded,
             ),
@@ -296,12 +275,12 @@ class _LoginScreenState extends State<LoginScreen> {
             },
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Password',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF374151),
+              color: scheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 7),
@@ -311,6 +290,7 @@ class _LoginScreenState extends State<LoginScreen> {
             textInputAction: TextInputAction.done,
             autofillHints: const [AutofillHints.password],
             decoration: _inputDecoration(
+              context: context,
               hintText: 'Masukkan password',
               prefixIcon: Icons.lock_outline_rounded,
               suffixIcon: IconButton(
@@ -323,7 +303,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   _obscurePassword
                       ? Icons.visibility_off_outlined
                       : Icons.visibility_outlined,
-                  color: const Color(0xFF6B7280),
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
             ),
@@ -349,28 +329,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 vertical: 12,
               ),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFF1F2),
+                color: scheme.errorContainer,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: const Color(0xFFFECACA),
+                  color: scheme.error.withValues(alpha: 0.35),
                 ),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.error_outline_rounded,
                     size: 19,
-                    color: Color(0xFFDC2626),
+                    color: scheme.error,
                   ),
                   const SizedBox(width: 9),
                   Expanded(
                     child: Text(
                       _errorMessage!,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         height: 1.4,
-                        color: Color(0xFFB91C1C),
+                        color: scheme.onErrorContainer,
                       ),
                     ),
                   ),
@@ -385,22 +365,22 @@ class _LoginScreenState extends State<LoginScreen> {
             child: ElevatedButton(
               onPressed: _isLoading ? null : _handleLogin,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF4F46E5),
-                foregroundColor: Colors.white,
-                disabledBackgroundColor: const Color(0xFF9CA3AF),
+                backgroundColor: scheme.primary,
+                foregroundColor: scheme.onPrimary,
+                disabledBackgroundColor: scheme.surfaceContainerHighest,
                 elevation: 0,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
               ),
               child: _isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 21,
                       height: 21,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.2,
                         valueColor:
-                            AlwaysStoppedAnimation<Color>(Colors.white),
+                            AlwaysStoppedAnimation<Color>(scheme.onPrimary),
                       ),
                     )
                   : const Text(
@@ -416,11 +396,11 @@ class _LoginScreenState extends State<LoginScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text(
+              Text(
                 'Belum punya akun?',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF6B7280),
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
               TextButton(
@@ -433,12 +413,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
-                child: const Text(
+                child: Text(
                   'Daftar',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF4F46E5),
+                    color: scheme.primary,
                   ),
                 ),
               ),

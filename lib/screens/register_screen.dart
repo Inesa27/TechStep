@@ -102,32 +102,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   InputDecoration _inputDecoration({
+    required BuildContext context,
     required String label,
     required IconData icon,
     Widget? suffixIcon,
   }) {
+    final scheme = Theme.of(context).colorScheme;
     return InputDecoration(
       labelText: label,
       prefixIcon: Icon(icon),
       suffixIcon: suffixIcon,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide(color: scheme.outlineVariant),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: Colors.grey.shade300,
-        ),
+        borderSide: BorderSide(color: scheme.outlineVariant),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: Color(0xFF6C4AB6),
-          width: 2,
-        ),
+        borderSide: BorderSide(color: scheme.primary, width: 1.5),
       ),
       filled: true,
-      fillColor: Colors.grey.shade50,
+      fillColor: scheme.surface,
     );
   }
 
@@ -140,8 +138,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -164,24 +164,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       height: 82,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: const Color(0xFF6C4AB6).withValues(alpha: 0.1),
+                        color: scheme.primaryContainer,
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.school_rounded,
                         size: 42,
-                        color: Color(0xFF6C4AB6),
+                        color: scheme.primary,
                       ),
                     ),
                     const SizedBox(height: 16),
 
-                    const Text(
+                    Text(
                       'TechStep',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 30,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF6C4AB6),
+                        color: scheme.primary,
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -189,9 +189,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     Text(
                       'Buat akun untuk mulai belajar',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey.shade600,
+                      style: textTheme.bodyLarge?.copyWith(
+                        color: scheme.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(height: 28),
@@ -200,6 +199,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _nameController,
                       textCapitalization: TextCapitalization.words,
                       decoration: _inputDecoration(
+                        context: context,
                         label: 'Nama Lengkap',
                         icon: Icons.person_outline_rounded,
                       ),
@@ -214,6 +214,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _nisController,
                       keyboardType: TextInputType.text,
                       decoration: _inputDecoration(
+                        context: context,
                         label: 'NIS / Username',
                         icon: Icons.badge_outlined,
                       ),
@@ -234,6 +235,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _classController,
                       textCapitalization: TextCapitalization.characters,
                       decoration: _inputDecoration(
+                        context: context,
                         label: 'Kelas',
                         icon: Icons.class_outlined,
                         // Contoh: X TJKT 1
@@ -249,6 +251,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _passwordController,
                       obscureText: !_isPasswordVisible,
                       decoration: _inputDecoration(
+                        context: context,
                         label: 'Password',
                         icon: Icons.lock_outline_rounded,
                         suffixIcon: IconButton(
@@ -281,6 +284,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: _confirmPasswordController,
                       obscureText: !_isConfirmPasswordVisible,
                       decoration: _inputDecoration(
+                        context: context,
                         label: 'Konfirmasi Password',
                         icon: Icons.lock_reset_outlined,
                         suffixIcon: IconButton(
@@ -317,10 +321,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: Colors.red.shade50,
+                          color: scheme.errorContainer,
                           borderRadius: BorderRadius.circular(12),
                           border: Border.all(
-                            color: Colors.red.shade200,
+                            color: scheme.error.withValues(alpha: 0.35),
                           ),
                         ),
                         child: Row(
@@ -328,14 +332,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           children: [
                             Icon(
                               Icons.error_outline_rounded,
-                              color: Colors.red.shade700,
+                              color: scheme.error,
                             ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 _errorMessage!,
                                 style: TextStyle(
-                                  color: Colors.red.shade700,
+                                  color: scheme.onErrorContainer,
                                 ),
                               ),
                             ),
@@ -350,22 +354,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _register,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6C4AB6),
-                          foregroundColor: Colors.white,
-                          disabledBackgroundColor:
-                              const Color(0xFF6C4AB6).withValues(alpha: 0.5),
+                          backgroundColor: scheme.primary,
+                          foregroundColor: scheme.onPrimary,
+                          disabledBackgroundColor: scheme.surfaceContainerHighest,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),
                           ),
                         ),
                         child: _isLoading
-                            ? const SizedBox(
+                            ? SizedBox(
                                 width: 22,
                                 height: 22,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2.5,
                                   valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.white,
+                                    scheme.onPrimary,
                                   ),
                                 ),
                               )
@@ -386,16 +389,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Text(
                           'Sudah punya akun? ',
                           style: TextStyle(
-                            color: Colors.grey.shade700,
+                            color: scheme.onSurfaceVariant,
                           ),
                         ),
                         TextButton(
                           onPressed: widget.onBackToLogin,
-                          child: const Text(
+                          child: Text(
                             'Masuk',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color: Color(0xFF6C4AB6),
+                              color: scheme.primary,
                             ),
                           ),
                         ),
