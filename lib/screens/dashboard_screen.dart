@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -24,170 +23,144 @@ class DashboardScreen extends StatelessWidget {
       animation: analytics,
       builder: (context, child) {
         return Scaffold(
-          backgroundColor:
-              Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
-                32,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(context, analytics),
-
-                  const SizedBox(height: 24),
-
-                  _buildWelcomeCard(context),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle(
-                    context,
-                    'Progress Belajar',
-                    subtitle:
-                        'Pantau perkembangan belajarmu.',
-                  ),
-
-                  const SizedBox(height: 14),
-
-                  _buildProgressCard(
-                    context,
-                    analytics,
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle(
-                    context,
-                    'Materi Pembelajaran',
-                    subtitle:
-                        'Tiga materi utama Sistem Komputer.',
-                  ),
-
-                  const SizedBox(height: 14),
-
-                  _buildMaterialCard(
-                    context,
-                    title: 'Hardware',
-                    subtitle:
-                        'Kenali komponen fisik komputer.',
-                    icon: Icons.memory_rounded,
-                    progress:
-                        analytics.hardwareMastery / 100,
-                    iconColor: const Color(0xFF5547E8),
-                    iconBackground:
-                        const Color(0xFFEEEDFF),
-                    onTap: onLearn,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  _buildMaterialCard(
-                    context,
-                    title: 'Software',
-                    subtitle:
-                        'Pelajari perangkat lunak komputer.',
-                    icon: Icons.apps_rounded,
-                    progress:
-                        analytics.softwareMastery / 100,
-                    iconColor: const Color(0xFF239B70),
-                    iconBackground:
-                        const Color(0xFFE8F7F0),
-                    onTap: onLearn,
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  _buildMaterialCard(
-                    context,
-                    title: 'Sistem Operasi',
-                    subtitle:
-                        'Pahami pengelolaan sumber daya komputer.',
-                    icon: Icons.desktop_windows_rounded,
-                    progress:
-                        analytics.operatingSystemMastery /
-                            100,
-                    iconColor: const Color(0xFFB56A20),
-                    iconBackground:
-                        const Color(0xFFFFF1E2),
-                    onTap: onLearn,
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle(
-                    context,
-                    'Mulai Belajar',
-                    subtitle:
-                        'Pilih aktivitas yang ingin kamu lakukan.',
-                  ),
-
-                  const SizedBox(height: 14),
-
-                  Row(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 920),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: _buildActionCard(
-                          context,
-                          title: 'Learn',
-                          subtitle: 'Pelajari materi',
-                          icon: Icons.menu_book_rounded,
-                          onTap: onLearn,
-                        ),
+                      _buildHeader(context, analytics),
+
+                      const SizedBox(height: 24),
+
+                      _buildWelcomeCard(context),
+
+                      const SizedBox(height: 28),
+
+                      _buildSectionTitle(
+                        context,
+                        'Progress Belajar',
+                        subtitle: 'Pantau perkembangan belajarmu.',
                       ),
 
-                      const SizedBox(width: 12),
+                      const SizedBox(height: 14),
 
-                      Expanded(
-                        child: _buildActionCard(
-                          context,
-                          title: 'Quiz',
-                          subtitle: 'Uji pemahaman',
-                          icon: Icons.quiz_rounded,
-                          onTap: onQuiz,
-                        ),
+                      _buildProgressCard(context, analytics),
+
+                      const SizedBox(height: 28),
+
+                      _buildSectionTitle(
+                        context,
+                        'Materi Pembelajaran',
+                        subtitle: 'Tiga materi utama Sistem Komputer.',
                       ),
+
+                      const SizedBox(height: 14),
+
+                      _buildMaterialCard(
+                        context,
+                        title: 'Hardware',
+                        subtitle: 'Kenali komponen fisik komputer.',
+                        icon: Icons.memory_rounded,
+                        progress: analytics.hardwareMastery / 100,
+                        iconColor: const Color(0xFF5547E8),
+                        iconBackground: const Color(0xFFEEEDFF),
+                        onTap: onLearn,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      _buildMaterialCard(
+                        context,
+                        title: 'Software',
+                        subtitle: 'Pelajari perangkat lunak komputer.',
+                        icon: Icons.apps_rounded,
+                        progress: analytics.softwareMastery / 100,
+                        iconColor: const Color(0xFF239B70),
+                        iconBackground: const Color(0xFFE8F7F0),
+                        onTap: onLearn,
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      _buildMaterialCard(
+                        context,
+                        title: 'Sistem Operasi',
+                        subtitle: 'Pahami pengelolaan sumber daya komputer.',
+                        icon: Icons.desktop_windows_rounded,
+                        progress: analytics.operatingSystemMastery / 100,
+                        iconColor: const Color(0xFFB56A20),
+                        iconBackground: const Color(0xFFFFF1E2),
+                        onTap: onLearn,
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      _buildSectionTitle(
+                        context,
+                        'Mulai Belajar',
+                        subtitle: 'Pilih aktivitas yang ingin kamu lakukan.',
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: _buildActionCard(
+                              context,
+                              title: 'Learn',
+                              subtitle: 'Pelajari materi',
+                              icon: Icons.menu_book_rounded,
+                              onTap: onLearn,
+                            ),
+                          ),
+
+                          const SizedBox(width: 12),
+
+                          Expanded(
+                            child: _buildActionCard(
+                              context,
+                              title: 'Quiz',
+                              subtitle: 'Uji pemahaman',
+                              icon: Icons.quiz_rounded,
+                              onTap: onQuiz,
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      _buildSectionTitle(
+                        context,
+                        'Computer Challenge',
+                        subtitle: 'Tantang pemahamanmu melalui permainan.',
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      _buildChallengeCard(context, analytics),
+
+                      const SizedBox(height: 28),
+
+                      _buildSectionTitle(
+                        context,
+                        'Riwayat Aktivitas',
+                        subtitle: 'Lihat aktivitas belajar terakhirmu.',
+                      ),
+
+                      const SizedBox(height: 14),
+
+                      _buildActivityHistory(context, analytics),
                     ],
                   ),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle(
-                    context,
-                    'Computer Challenge',
-                    subtitle:
-                        'Tantang pemahamanmu melalui permainan.',
-                  ),
-
-                  const SizedBox(height: 14),
-
-                  _buildChallengeCard(
-                    context,
-                    analytics,
-                  ),
-
-                  const SizedBox(height: 28),
-
-                  _buildSectionTitle(
-                    context,
-                    'Riwayat Aktivitas',
-                    subtitle:
-                        'Lihat aktivitas belajar terakhirmu.',
-                  ),
-
-                  const SizedBox(height: 14),
-
-                  _buildActivityHistory(
-                    context,
-                    analytics,
-                  ),
-                ],
+                ),
               ),
             ),
           ),
@@ -243,26 +216,19 @@ class DashboardScreen extends StatelessWidget {
               Text(
                 'Belajar Informatika dengan langkahmu',
                 style: textTheme.bodySmall?.copyWith(
-                  color: scheme.onSurface.withValues(
-                    alpha: 0.65,
-                  ),
+                  color: scheme.onSurface.withValues(alpha: 0.65),
                 ),
               ),
             ],
           ),
         ),
 
-        _NotificationBell(
-          analytics: analytics,
-        ),
+        _NotificationBell(analytics: analytics),
 
         const SizedBox(width: 8),
 
         Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 10,
-            vertical: 7,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
           decoration: BoxDecoration(
             color: scheme.secondary,
             borderRadius: BorderRadius.circular(12),
@@ -270,11 +236,7 @@ class DashboardScreen extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.auto_stories_rounded,
-                size: 16,
-                color: scheme.primary,
-              ),
+              Icon(Icons.auto_stories_rounded, size: 16, color: scheme.primary),
               const SizedBox(width: 5),
               Text(
                 'Kelas X',
@@ -297,30 +259,21 @@ class DashboardScreen extends StatelessWidget {
   Widget _buildWelcomeCard(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
-    final lightPrimary = Color.lerp(
-      scheme.primary,
-      Colors.white,
-      0.20,
-    )!;
+    final lightPrimary = Color.lerp(scheme.primary, Colors.white, 0.20)!;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            scheme.primary,
-            lightPrimary,
-          ],
+          colors: [scheme.primary, lightPrimary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: scheme.primary.withValues(
-              alpha: 0.14,
-            ),
+            color: scheme.primary.withValues(alpha: 0.14),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
@@ -336,9 +289,7 @@ class DashboardScreen extends StatelessWidget {
               height: 115,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(
-                  alpha: 0.08,
-                ),
+                color: Colors.white.withValues(alpha: 0.08),
               ),
             ),
           ),
@@ -351,9 +302,7 @@ class DashboardScreen extends StatelessWidget {
               height: 90,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(
-                  alpha: 0.06,
-                ),
+                color: Colors.white.withValues(alpha: 0.06),
               ),
             ),
           ),
@@ -367,9 +316,7 @@ class DashboardScreen extends StatelessWidget {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(
-                    alpha: 0.16,
-                  ),
+                  color: Colors.white.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Row(
@@ -422,10 +369,7 @@ class DashboardScreen extends StatelessWidget {
 
               ElevatedButton.icon(
                 onPressed: onLearn,
-                icon: const Icon(
-                  Icons.arrow_forward_rounded,
-                  size: 18,
-                ),
+                icon: const Icon(Icons.arrow_forward_rounded, size: 18),
                 label: const Text('Mulai Belajar'),
                 style: ElevatedButton.styleFrom(
                   minimumSize: const Size(0, 46),
@@ -473,12 +417,7 @@ class DashboardScreen extends StatelessWidget {
 
         if (subtitle != null) ...[
           const SizedBox(height: 5),
-          Text(
-            subtitle,
-            style: textTheme.bodySmall?.copyWith(
-              height: 1.5,
-            ),
-          ),
+          Text(subtitle, style: textTheme.bodySmall?.copyWith(height: 1.5)),
         ],
       ],
     );
@@ -495,8 +434,7 @@ class DashboardScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final progress =
-        analytics.overallProgress.clamp(0, 100).toInt();
+    final progress = analytics.overallProgress.clamp(0, 100).toInt();
 
     final progressValue = progress / 100.0;
 
@@ -518,15 +456,11 @@ class DashboardScreen extends StatelessWidget {
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Progres keseluruhan',
-                      style:
-                          textTheme.titleMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                      style: textTheme.titleMedium?.copyWith(fontSize: 15),
                     ),
 
                     const SizedBox(height: 4),
@@ -557,11 +491,8 @@ class DashboardScreen extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progressValue,
               minHeight: 9,
-              backgroundColor:
-                  Theme.of(context).dividerColor,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                scheme.primary,
-              ),
+              backgroundColor: Theme.of(context).dividerColor,
+              valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
             ),
           ),
 
@@ -596,10 +527,7 @@ class DashboardScreen extends StatelessWidget {
           Align(
             alignment: Alignment.centerLeft,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 11,
-                vertical: 7,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
               decoration: BoxDecoration(
                 color: scheme.secondary,
                 borderRadius: BorderRadius.circular(10),
@@ -634,12 +562,14 @@ class DashboardScreen extends StatelessWidget {
   }) {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final adaptiveIconBackground =
+        Theme.of(context).brightness == Brightness.dark
+        ? iconColor.withValues(alpha: 0.16)
+        : iconBackground;
 
-    final normalizedProgress =
-        progress.clamp(0.0, 1.0);
+    final normalizedProgress = progress.clamp(0.0, 1.0);
 
-    final percentage =
-        (normalizedProgress * 100).round();
+    final percentage = (normalizedProgress * 100).round();
 
     return _DashboardSurfaceCard(
       onTap: onTap,
@@ -649,7 +579,7 @@ class DashboardScreen extends StatelessWidget {
           _IconBadge(
             icon: icon,
             color: iconColor,
-            backgroundColor: iconBackground,
+            backgroundColor: adaptiveIconBackground,
             size: 52,
           ),
 
@@ -657,14 +587,11 @@ class DashboardScreen extends StatelessWidget {
 
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: textTheme.titleMedium?.copyWith(
-                    fontSize: 15,
-                  ),
+                  style: textTheme.titleMedium?.copyWith(fontSize: 15),
                 ),
 
                 const SizedBox(height: 4),
@@ -673,9 +600,7 @@ class DashboardScreen extends StatelessWidget {
                   subtitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: textTheme.bodySmall?.copyWith(
-                    height: 1.45,
-                  ),
+                  style: textTheme.bodySmall?.copyWith(height: 1.45),
                 ),
 
                 const SizedBox(height: 12),
@@ -685,12 +610,8 @@ class DashboardScreen extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: normalizedProgress,
                     minHeight: 6,
-                    backgroundColor:
-                        Theme.of(context).dividerColor,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(
-                      iconColor,
-                    ),
+                    backgroundColor: Theme.of(context).dividerColor,
+                    valueColor: AlwaysStoppedAnimation<Color>(iconColor),
                   ),
                 ),
               ],
@@ -716,9 +637,7 @@ class DashboardScreen extends StatelessWidget {
               Icon(
                 Icons.arrow_forward_ios_rounded,
                 size: 14,
-                color: scheme.onSurface.withValues(
-                  alpha: 0.45,
-                ),
+                color: scheme.onSurface.withValues(alpha: 0.45),
               ),
             ],
           ),
@@ -756,21 +675,11 @@ class DashboardScreen extends StatelessWidget {
 
           const SizedBox(height: 16),
 
-          Text(
-            title,
-            style: textTheme.titleMedium?.copyWith(
-              fontSize: 16,
-            ),
-          ),
+          Text(title, style: textTheme.titleMedium?.copyWith(fontSize: 16)),
 
           const SizedBox(height: 5),
 
-          Text(
-            subtitle,
-            style: textTheme.bodySmall?.copyWith(
-              height: 1.4,
-            ),
-          ),
+          Text(subtitle, style: textTheme.bodySmall?.copyWith(height: 1.4)),
 
           const SizedBox(height: 14),
 
@@ -809,16 +718,11 @@ class DashboardScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final total =
-        LearningAnalyticsService.totalChallengeLevels;
+    final total = LearningAnalyticsService.totalChallengeLevels;
 
-    final completed =
-        analytics.completedChallengeLevels
-            .clamp(0, total);
+    final completed = analytics.completedChallengeLevels.clamp(0, total);
 
-    final progress = total > 0
-        ? completed / total
-        : 0.0;
+    final progress = total > 0 ? completed / total : 0.0;
 
     return _DashboardSurfaceCard(
       onTap: onChallenge,
@@ -832,7 +736,7 @@ class DashboardScreen extends StatelessWidget {
               _IconBadge(
                 icon: Icons.sports_esports_rounded,
                 color: scheme.primary,
-                backgroundColor: Colors.white,
+                backgroundColor: scheme.surfaceContainerHigh,
                 size: 52,
               ),
 
@@ -840,15 +744,11 @@ class DashboardScreen extends StatelessWidget {
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Computer Challenge',
-                      style:
-                          textTheme.titleMedium?.copyWith(
-                        fontSize: 15,
-                      ),
+                      style: textTheme.titleMedium?.copyWith(fontSize: 15),
                     ),
 
                     const SizedBox(height: 5),
@@ -856,9 +756,7 @@ class DashboardScreen extends StatelessWidget {
                     Text(
                       'Uji kemampuanmu melalui 5 level '
                       'tantangan.',
-                      style: textTheme.bodySmall?.copyWith(
-                        height: 1.45,
-                      ),
+                      style: textTheme.bodySmall?.copyWith(height: 1.45),
                     ),
                   ],
                 ),
@@ -882,11 +780,8 @@ class DashboardScreen extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progress.toDouble(),
                     minHeight: 7,
-                    backgroundColor: Colors.white,
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(
-                      scheme.primary,
-                    ),
+                    backgroundColor: scheme.surfaceContainerHigh,
+                    valueColor: AlwaysStoppedAnimation<Color>(scheme.primary),
                   ),
                 ),
               ),
@@ -905,10 +800,7 @@ class DashboardScreen extends StatelessWidget {
 
           const SizedBox(height: 9),
 
-          Text(
-            'Level selesai',
-            style: textTheme.bodySmall,
-          ),
+          Text('Level selesai', style: textTheme.bodySmall),
         ],
       ),
     );
@@ -941,22 +833,16 @@ class DashboardScreen extends StatelessWidget {
 
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Belum ada aktivitas',
-                    style: textTheme.titleSmall,
-                  ),
+                  Text('Belum ada aktivitas', style: textTheme.titleSmall),
 
                   const SizedBox(height: 5),
 
                   Text(
                     'Mulai belajar atau kerjakan quiz '
                     'untuk melihat riwayat aktivitasmu.',
-                    style: textTheme.bodySmall?.copyWith(
-                      height: 1.5,
-                    ),
+                    style: textTheme.bodySmall?.copyWith(height: 1.5),
                   ),
                 ],
               ),
@@ -966,30 +852,23 @@ class DashboardScreen extends StatelessWidget {
       );
     }
 
-    final activities =
-        analytics.activities.take(5).toList();
+    final activities = analytics.activities.take(5).toList();
 
     return _DashboardSurfaceCard(
       padding: const EdgeInsets.all(16),
       child: Column(
-        children: List.generate(
-          activities.length,
-          (index) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: index == activities.length - 1
-                    ? 0
-                    : 17,
-              ),
-              child: _buildActivityItem(
-                context,
-                activities[index],
-                isLast:
-                    index == activities.length - 1,
-              ),
-            );
-          },
-        ),
+        children: List.generate(activities.length, (index) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: index == activities.length - 1 ? 0 : 17,
+            ),
+            child: _buildActivityItem(
+              context,
+              activities[index],
+              isLast: index == activities.length - 1,
+            ),
+          );
+        }),
       ),
     );
   }
@@ -1002,19 +881,17 @@ class DashboardScreen extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final activityTitle =
-        activity.title.toLowerCase();
+    final activityTitle = activity.title.toLowerCase();
 
     final isQuiz = activityTitle.contains('quiz');
 
-    final isChallenge =
-        activityTitle.contains('challenge');
+    final isChallenge = activityTitle.contains('challenge');
 
     final icon = isQuiz
         ? Icons.quiz_rounded
         : isChallenge
-            ? Icons.sports_esports_rounded
-            : Icons.menu_book_rounded;
+        ? Icons.sports_esports_rounded
+        : Icons.menu_book_rounded;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1034,18 +911,14 @@ class DashboardScreen extends StatelessWidget {
             children: [
               Text(
                 activity.title,
-                style: textTheme.titleSmall?.copyWith(
-                  fontSize: 13,
-                ),
+                style: textTheme.titleSmall?.copyWith(fontSize: 13),
               ),
 
               const SizedBox(height: 4),
 
               Text(
                 activity.description,
-                style: textTheme.bodySmall?.copyWith(
-                  height: 1.45,
-                ),
+                style: textTheme.bodySmall?.copyWith(height: 1.45),
               ),
 
               const SizedBox(height: 5),
@@ -1053,9 +926,7 @@ class DashboardScreen extends StatelessWidget {
               Text(
                 _formatActivityTime(activity.time),
                 style: textTheme.labelSmall?.copyWith(
-                  color: scheme.onSurface.withValues(
-                    alpha: 0.50,
-                  ),
+                  color: scheme.onSurface.withValues(alpha: 0.50),
                 ),
               ),
             ],
@@ -1070,19 +941,15 @@ class DashboardScreen extends StatelessWidget {
   // ============================================================
 
   String _formatActivityTime(DateTime time) {
-    final day =
-        time.day.toString().padLeft(2, '0');
+    final day = time.day.toString().padLeft(2, '0');
 
-    final month =
-        time.month.toString().padLeft(2, '0');
+    final month = time.month.toString().padLeft(2, '0');
 
     final year = time.year;
 
-    final hour =
-        time.hour.toString().padLeft(2, '0');
+    final hour = time.hour.toString().padLeft(2, '0');
 
-    final minute =
-        time.minute.toString().padLeft(2, '0');
+    final minute = time.minute.toString().padLeft(2, '0');
 
     return '$day/$month/$year • $hour:$minute';
   }
@@ -1120,9 +987,7 @@ class _DashboardSurfaceCard extends StatelessWidget {
           padding: padding,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: theme.dividerColor,
-            ),
+            border: Border.all(color: theme.dividerColor),
           ),
           child: child,
         ),
@@ -1157,11 +1022,7 @@ class _IconBadge extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Icon(
-        icon,
-        color: color,
-        size: size * 0.50,
-      ),
+      child: Icon(icon, color: color, size: size * 0.50),
     );
   }
 }
@@ -1195,21 +1056,16 @@ class _DashboardNotification {
 class _NotificationBell extends StatefulWidget {
   final LearningAnalyticsService analytics;
 
-  const _NotificationBell({
-    required this.analytics,
-  });
+  const _NotificationBell({required this.analytics});
 
   @override
-  State<_NotificationBell> createState() =>
-      _NotificationBellState();
+  State<_NotificationBell> createState() => _NotificationBellState();
 }
 
 class _NotificationBellState extends State<_NotificationBell> {
-  static const String _storageKey =
-      'techstep_dashboard_read_notifications_v1';
+  static const String _storageKey = 'techstep_dashboard_read_notifications_v1';
 
-  final SharedPreferencesAsync _preferences =
-      SharedPreferencesAsync();
+  final SharedPreferencesAsync _preferences = SharedPreferencesAsync();
 
   Set<String> _readIds = <String>{};
 
@@ -1221,8 +1077,7 @@ class _NotificationBellState extends State<_NotificationBell> {
 
   Future<void> _loadReadNotifications() async {
     try {
-      final savedIds =
-          await _preferences.getStringList(_storageKey);
+      final savedIds = await _preferences.getStringList(_storageKey);
 
       if (!mounted) return;
 
@@ -1248,24 +1103,22 @@ class _NotificationBellState extends State<_NotificationBell> {
     for (final activity in activities) {
       final titleLower = activity.title.toLowerCase();
 
-      final isQuiz = titleLower.contains('quiz') ||
-          titleLower.contains('kuis');
+      final isQuiz = titleLower.contains('quiz') || titleLower.contains('kuis');
 
       final isChallenge =
-          titleLower.contains('challenge') ||
-              titleLower.contains('tantangan');
+          titleLower.contains('challenge') || titleLower.contains('tantangan');
 
       final icon = isQuiz
           ? Icons.quiz_rounded
           : isChallenge
-              ? Icons.sports_esports_rounded
-              : Icons.menu_book_rounded;
+          ? Icons.sports_esports_rounded
+          : Icons.menu_book_rounded;
 
       final category = isQuiz
           ? 'Quiz'
           : isChallenge
-              ? 'Challenge'
-              : 'Aktivitas belajar';
+          ? 'Challenge'
+          : 'Aktivitas belajar';
 
       final safeTitle = activity.title.replaceAll(
         RegExp(r'[^a-zA-Z0-9]+'),
@@ -1274,7 +1127,8 @@ class _NotificationBellState extends State<_NotificationBell> {
 
       notifications.add(
         _DashboardNotification(
-          id: 'activity_'
+          id:
+              'activity_'
               '${activity.time.microsecondsSinceEpoch}_'
               '$safeTitle',
           title: activity.title,
@@ -1308,19 +1162,16 @@ class _NotificationBellState extends State<_NotificationBell> {
     }
 
     // Pemberitahuan progres Computer Challenge.
-    final totalLevels =
-        LearningAnalyticsService.totalChallengeLevels;
+    final totalLevels = LearningAnalyticsService.totalChallengeLevels;
 
-    final completedLevels =
-        analytics.completedChallengeLevels
-            .clamp(0, totalLevels)
-            .toInt();
+    final completedLevels = analytics.completedChallengeLevels
+        .clamp(0, totalLevels)
+        .toInt();
 
     final hasChallengeActivity = activities.any((activity) {
       final title = activity.title.toLowerCase();
 
-      return title.contains('challenge') ||
-          title.contains('tantangan');
+      return title.contains('challenge') || title.contains('tantangan');
     });
 
     if (completedLevels > 0 && !hasChallengeActivity) {
@@ -1339,11 +1190,8 @@ class _NotificationBellState extends State<_NotificationBell> {
 
     // Informasi progres jika belum ada aktivitas
     // yang tercatat pada riwayat belajar.
-    if (analytics.overallProgress > 0 &&
-        activities.isEmpty) {
-      final progress = analytics.overallProgress
-          .clamp(0, 100)
-          .toInt();
+    if (analytics.overallProgress > 0 && activities.isEmpty) {
+      final progress = analytics.overallProgress.clamp(0, 100).toInt();
 
       notifications.add(
         _DashboardNotification(
@@ -1390,42 +1238,28 @@ class _NotificationBellState extends State<_NotificationBell> {
   Future<void> _markAsRead(String id) async {
     if (_readIds.contains(id)) return;
 
-    final updatedIds = <String>{
-      ..._readIds,
-      id,
-    };
+    final updatedIds = <String>{..._readIds, id};
 
     setState(() {
       _readIds = updatedIds;
     });
 
     try {
-      await _preferences.setStringList(
-        _storageKey,
-        updatedIds.toList(),
-      );
+      await _preferences.setStringList(_storageKey, updatedIds.toList());
     } catch (_) {
       // Status tetap diperbarui selama sesi aplikasi.
     }
   }
 
-  Future<void> _markAllAsRead(
-    Iterable<String> ids,
-  ) async {
-    final updatedIds = <String>{
-      ..._readIds,
-      ...ids,
-    };
+  Future<void> _markAllAsRead(Iterable<String> ids) async {
+    final updatedIds = <String>{..._readIds, ...ids};
 
     setState(() {
       _readIds = updatedIds;
     });
 
     try {
-      await _preferences.setStringList(
-        _storageKey,
-        updatedIds.toList(),
-      );
+      await _preferences.setStringList(_storageKey, updatedIds.toList());
     } catch (_) {
       // Status tetap diperbarui selama sesi aplikasi.
     }
@@ -1449,25 +1283,16 @@ class _NotificationBellState extends State<_NotificationBell> {
         return StatefulBuilder(
           builder: (context, setSheetState) {
             final unreadCount = notifications
-                .where(
-                  (item) => !localReadIds.contains(item.id),
-                )
+                .where((item) => !localReadIds.contains(item.id))
                 .length;
 
             return SafeArea(
               top: false,
               child: Container(
                 constraints: BoxConstraints(
-                  maxHeight:
-                      MediaQuery.sizeOf(context).height *
-                          0.78,
+                  maxHeight: MediaQuery.sizeOf(context).height * 0.78,
                 ),
-                padding: const EdgeInsets.fromLTRB(
-                  20,
-                  12,
-                  20,
-                  20,
-                ),
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
                 decoration: BoxDecoration(
                   color: scheme.surface,
                   borderRadius: const BorderRadius.vertical(
@@ -1492,18 +1317,12 @@ class _NotificationBellState extends State<_NotificationBell> {
                       children: [
                         Expanded(
                           child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Notifikasi',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleLarge
-                                    ?.copyWith(
-                                      fontWeight:
-                                          FontWeight.w800,
-                                    ),
+                                style: Theme.of(context).textTheme.titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.w800),
                               ),
 
                               const SizedBox(height: 4),
@@ -1512,9 +1331,7 @@ class _NotificationBellState extends State<_NotificationBell> {
                                 unreadCount > 0
                                     ? '$unreadCount belum dibaca'
                                     : 'Semua notifikasi sudah dibaca',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall,
+                                style: Theme.of(context).textTheme.bodySmall,
                               ),
                             ],
                           ),
@@ -1544,30 +1361,22 @@ class _NotificationBellState extends State<_NotificationBell> {
                       child: ListView.separated(
                         shrinkWrap: true,
                         itemCount: notifications.length,
-                        separatorBuilder: (_, _) =>
-                        const SizedBox(height: 10),
+                        separatorBuilder: (_, _) => const SizedBox(height: 10),
                         itemBuilder: (context, index) {
-                          final notification =
-                              notifications[index];
+                          final notification = notifications[index];
 
-                          final isRead = localReadIds.contains(
-                            notification.id,
-                          );
+                          final isRead = localReadIds.contains(notification.id);
 
                           return _buildNotificationTile(
                             context,
                             notification,
                             isRead,
                             onMarkRead: () async {
-                              await _markAsRead(
-                                notification.id,
-                              );
+                              await _markAsRead(notification.id);
 
                               if (context.mounted) {
                                 setSheetState(() {
-                                  localReadIds.add(
-                                    notification.id,
-                                  );
+                                  localReadIds.add(notification.id);
                                 });
                               }
                             },
@@ -1602,9 +1411,7 @@ class _NotificationBellState extends State<_NotificationBell> {
       padding: const EdgeInsets.all(13),
       decoration: BoxDecoration(
         color: isRead
-            ? scheme.surfaceContainerHighest.withValues(
-                alpha: 0.35,
-              )
+            ? scheme.surfaceContainerHighest.withValues(alpha: 0.35)
             : scheme.primary.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
@@ -1623,11 +1430,7 @@ class _NotificationBellState extends State<_NotificationBell> {
               color: scheme.primaryContainer,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(
-              notification.icon,
-              color: scheme.primary,
-              size: 22,
-            ),
+            child: Icon(notification.icon, color: scheme.primary, size: 22),
           ),
 
           const SizedBox(width: 12),
@@ -1668,9 +1471,7 @@ class _NotificationBellState extends State<_NotificationBell> {
 
                 Text(
                   notification.message,
-                  style: textTheme.bodySmall?.copyWith(
-                    height: 1.45,
-                  ),
+                  style: textTheme.bodySmall?.copyWith(height: 1.45),
                 ),
 
                 const SizedBox(height: 8),
@@ -1751,9 +1552,7 @@ class _NotificationBellState extends State<_NotificationBell> {
       style: IconButton.styleFrom(
         backgroundColor: scheme.surface,
         side: BorderSide(color: scheme.outlineVariant),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(13),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
       ),
       icon: Stack(
         clipBehavior: Clip.none,
@@ -1769,27 +1568,16 @@ class _NotificationBellState extends State<_NotificationBell> {
               right: -7,
               top: -6,
               child: Container(
-                constraints: const BoxConstraints(
-                  minWidth: 17,
-                  minHeight: 17,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                  vertical: 2,
-                ),
+                constraints: const BoxConstraints(minWidth: 17, minHeight: 17),
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: scheme.error,
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: scheme.surface,
-                    width: 1.5,
-                  ),
+                  border: Border.all(color: scheme.surface, width: 1.5),
                 ),
                 child: Text(
-                  unreadCount > 99
-                      ? '99+'
-                      : '$unreadCount',
+                  unreadCount > 99 ? '99+' : '$unreadCount',
                   style: TextStyle(
                     color: scheme.onError,
                     fontSize: 9,

@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/learning_content.dart';
 import '../services/learning_analytics_service.dart';
 import '../services/techstep_database.dart';
+import '../widgets/techstep_components.dart';
 
 // ============================================================
 // QUIZ MATERIAL
@@ -37,14 +37,18 @@ class _QuizMaterial {
 class _QuizScreenState extends State<QuizScreen> {
   static const int questionsPerQuiz = 10;
 
-  static const Color _background = Color(0xFFF4F3FC);
-  static const Color _primary = Color(0xFF5547E8);
-  static const Color _primarySoft = Color(0xFFEEEDFF);
-  static const Color _textPrimary = Color(0xFF242438);
-  static const Color _textSecondary = Color(0xFF77778B);
-  static const Color _border = Color(0xFFE7E5F2);
-  static const Color _success = Color(0xFF239B70);
-  static const Color _danger = Color(0xFFD93649);
+  Color get _background => Theme.of(context).scaffoldBackgroundColor;
+  Color get _surface => Theme.of(context).colorScheme.surface;
+  Color get _surfaceMuted => Theme.of(context).colorScheme.surfaceContainerLow;
+  Color get _primary => Theme.of(context).colorScheme.primary;
+  Color get _primarySoft => Theme.of(context).colorScheme.primaryContainer;
+  Color get _textPrimary => Theme.of(context).colorScheme.onSurface;
+  Color get _textSecondary => Theme.of(context).colorScheme.onSurfaceVariant;
+  Color get _border => Theme.of(context).colorScheme.outlineVariant;
+  Color get _success => Theme.of(context).brightness == Brightness.dark
+      ? Color(0xFF69D5AE)
+      : Color(0xFF239B70);
+  Color get _danger => Theme.of(context).colorScheme.error;
 
   static const List<_QuizMaterial> _quizMaterials = [
     _QuizMaterial(
@@ -86,8 +90,7 @@ class _QuizScreenState extends State<QuizScreen> {
   void initState() {
     super.initState();
     _questionsFuture = TechStepDatabase.instance.getQuizQuestions();
-    _historyFuture =
-        TechStepDatabase.instance.getQuizHistory(limit: 30);
+    _historyFuture = TechStepDatabase.instance.getQuizHistory(limit: 30);
   }
 
   String get _selectedMaterialTitle {
@@ -103,10 +106,7 @@ class _QuizScreenState extends State<QuizScreen> {
   // LOGIKA KUIS
   // ==========================================================
 
-  void startQuiz(
-    List<LearningQuestion> allQuestions,
-    String materialId,
-  ) {
+  void startQuiz(List<LearningQuestion> allQuestions, String materialId) {
     final selectedQuestions = allQuestions
         .where((question) => question.materialId == materialId)
         .take(questionsPerQuiz)
@@ -114,7 +114,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
     if (selectedQuestions.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text('Soal untuk materi ini belum tersedia.'),
           behavior: SnackBarBehavior.floating,
         ),
@@ -125,8 +125,7 @@ class _QuizScreenState extends State<QuizScreen> {
     setState(() {
       questions = selectedQuestions;
       selectedMaterialId = materialId;
-      selectedAnswers =
-          List<String?>.filled(questions.length, null);
+      selectedAnswers = List<String?>.filled(questions.length, null);
       quizStarted = true;
       quizFinished = false;
       showProgressPage = false;
@@ -144,10 +143,8 @@ class _QuizScreenState extends State<QuizScreen> {
   Future<void> nextQuestion() async {
     if (selectedAnswers[currentQuestion] == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Pilih salah satu jawaban terlebih dahulu.',
-          ),
+        SnackBar(
+          content: Text('Pilih salah satu jawaban terlebih dahulu.'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -188,8 +185,7 @@ class _QuizScreenState extends State<QuizScreen> {
         score = totalScore;
         quizFinished = true;
         savingResult = false;
-        _historyFuture =
-            TechStepDatabase.instance.getQuizHistory(limit: 30);
+        _historyFuture = TechStepDatabase.instance.getQuizHistory(limit: 30);
       });
     } catch (error) {
       if (!mounted) return;
@@ -214,16 +210,16 @@ class _QuizScreenState extends State<QuizScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
-          title: const Text('Keluar dari kuis?'),
-          content: const Text(
+          backgroundColor: _surface,
+          title: Text('Keluar dari kuis?'),
+          content: Text(
             'Progress dan jawaban kuis yang sedang dikerjakan '
             'akan hilang.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('Batal'),
+              child: Text('Batal'),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
@@ -231,7 +227,7 @@ class _QuizScreenState extends State<QuizScreen> {
                 backgroundColor: _primary,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Keluar'),
+              child: Text('Keluar'),
             ),
           ],
         );
@@ -250,10 +246,8 @@ class _QuizScreenState extends State<QuizScreen> {
       selectedAnswers = [];
       selectedMaterialId = null;
       showProgressPage = false;
-      _questionsFuture =
-          TechStepDatabase.instance.getQuizQuestions();
-      _historyFuture =
-          TechStepDatabase.instance.getQuizHistory(limit: 30);
+      _questionsFuture = TechStepDatabase.instance.getQuizQuestions();
+      _historyFuture = TechStepDatabase.instance.getQuizHistory(limit: 30);
     });
   }
 
@@ -264,8 +258,7 @@ class _QuizScreenState extends State<QuizScreen> {
 
     setState(() {
       showProgressPage = true;
-      _historyFuture =
-          TechStepDatabase.instance.getQuizHistory(limit: 30);
+      _historyFuture = TechStepDatabase.instance.getQuizHistory(limit: 30);
     });
   }
 
@@ -280,13 +273,9 @@ class _QuizScreenState extends State<QuizScreen> {
         future: _questionsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState != ConnectionState.done) {
-            return const Scaffold(
+            return Scaffold(
               backgroundColor: _background,
-              body: Center(
-                child: CircularProgressIndicator(
-                  color: _primary,
-                ),
-              ),
+              body: Center(child: CircularProgressIndicator(color: _primary)),
             );
           }
 
@@ -294,8 +283,7 @@ class _QuizScreenState extends State<QuizScreen> {
             return _buildLoadError(snapshot.error.toString());
           }
 
-          final loadedQuestions =
-              snapshot.data ?? const <LearningQuestion>[];
+          final loadedQuestions = snapshot.data ?? <LearningQuestion>[];
 
           if (showProgressPage) {
             return _buildScoreProgressPage();
@@ -348,17 +336,17 @@ class _QuizScreenState extends State<QuizScreen> {
                 width: 76,
                 height: 76,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFDEBEC),
+                  color: _danger.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(24),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.error_outline_rounded,
                   size: 38,
                   color: _danger,
                 ),
               ),
-              const SizedBox(height: 18),
-              const Text(
+              SizedBox(height: 18),
+              Text(
                 'Soal kuis gagal dimuat',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -367,24 +355,24 @@ class _QuizScreenState extends State<QuizScreen> {
                   color: _textPrimary,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   height: 1.5,
                   color: _textSecondary,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      _questionsFuture =
-                          TechStepDatabase.instance.getQuizQuestions();
+                      _questionsFuture = TechStepDatabase.instance
+                          .getQuizQuestions();
                     });
                   },
                   style: ElevatedButton.styleFrom(
@@ -392,7 +380,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                   ),
-                  child: const Text('Coba Lagi'),
+                  child: Text('Coba Lagi'),
                 ),
               ),
             ],
@@ -421,7 +409,7 @@ class _QuizScreenState extends State<QuizScreen> {
         backgroundColor: _background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: const Text(
+        title: Text(
           'Quiz',
           style: TextStyle(
             fontSize: 23,
@@ -434,86 +422,81 @@ class _QuizScreenState extends State<QuizScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildQuizIntro(loadedQuestions.length),
-              const SizedBox(height: 28),
+          child: TechStepPageFrame(
+            maxWidth: 860,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildQuizIntro(loadedQuestions.length),
+                SizedBox(height: 28),
 
-              Row(
-                children: [
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Pilih Kuis',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: _textPrimary,
-                            letterSpacing: -0.4,
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          'Uji pemahamanmu berdasarkan materi.',
-                          style: TextStyle(
-                            fontSize: 12,
-                            height: 1.5,
-                            color: _textSecondary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 18),
-
-              ..._quizMaterials.map((material) {
-                final count = loadedQuestions
-                    .where(
-                      (question) =>
-                          question.materialId == material.id,
-                    )
-                    .length;
-
-                final questionCount = count < questionsPerQuiz
-                    ? count
-                    : questionsPerQuiz;
-
-                final completed = analytics
-                    .completedQuizMaterialIds
-                    .contains(material.id);
-
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: _buildMaterialQuizCard(
-                    material: material,
-                    questionCount: questionCount,
-                    isCompleted: completed,
-                    latestScore: completed
-                        ? scoreByMaterial[material.id]
-                        : null,
-                    onTap: count == 0
-                        ? null
-                        : () => startQuiz(
-                              loadedQuestions,
-                              material.id,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Pilih Kuis',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: _textPrimary,
+                              letterSpacing: -0.4,
                             ),
-                  ),
-                );
-              }),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            'Uji pemahamanmu berdasarkan materi.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              height: 1.5,
+                              color: _textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
 
-              const SizedBox(height: 4),
-              _buildProgressEntryCard(
-                onTap: _openProgressPage,
-              ),
-              const SizedBox(height: 16),
-              _buildMappingInfo(),
-            ],
+                SizedBox(height: 18),
+
+                ..._quizMaterials.map((material) {
+                  final count = loadedQuestions
+                      .where((question) => question.materialId == material.id)
+                      .length;
+
+                  final questionCount = count < questionsPerQuiz
+                      ? count
+                      : questionsPerQuiz;
+
+                  final completed = analytics.completedQuizMaterialIds.contains(
+                    material.id,
+                  );
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 15),
+                    child: _buildMaterialQuizCard(
+                      material: material,
+                      questionCount: questionCount,
+                      isCompleted: completed,
+                      latestScore: completed
+                          ? scoreByMaterial[material.id]
+                          : null,
+                      onTap: count == 0
+                          ? null
+                          : () => startQuiz(loadedQuestions, material.id),
+                    ),
+                  );
+                }),
+
+                SizedBox(height: 4),
+                _buildProgressEntryCard(onTap: _openProgressPage),
+                SizedBox(height: 16),
+                _buildMappingInfo(),
+              ],
+            ),
           ),
         ),
       ),
@@ -561,7 +544,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       color: Colors.white.withValues(alpha: 0.13),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    child: const Text(
+                    child: Text(
                       'UJI KOMPETENSI',
                       style: TextStyle(
                         color: Colors.white,
@@ -578,7 +561,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       color: Colors.white.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.quiz_rounded,
                       color: Colors.white,
                       size: 28,
@@ -586,8 +569,8 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 19),
-              const Text(
+              SizedBox(height: 19),
+              Text(
                 'Saatnya Uji\nPemahamanmu!',
                 style: TextStyle(
                   color: Colors.white,
@@ -597,8 +580,8 @@ class _QuizScreenState extends State<QuizScreen> {
                   letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 'Kerjakan latihan soal untuk mengetahui '
                 'seberapa jauh kamu memahami materi komputer.',
                 style: TextStyle(
@@ -607,7 +590,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   height: 1.6,
                 ),
               ),
-              const SizedBox(height: 21),
+              SizedBox(height: 21),
               Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
@@ -616,27 +599,27 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.library_books_rounded,
                       color: Colors.white,
                       size: 24,
                     ),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             'Bank soal tersedia',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.white70,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4),
                           Text(
                             '$totalQuestions soal',
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 18,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -654,7 +637,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         color: Colors.white.withValues(alpha: 0.13),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Text(
+                      child: Text(
                         '3 Materi',
                         style: TextStyle(
                           color: Colors.white,
@@ -686,19 +669,19 @@ class _QuizScreenState extends State<QuizScreen> {
   }) {
     final accent = isCompleted ? _success : _primary;
     final softColor = isCompleted
-        ? const Color(0xFFE7F7EF)
+        ? _success.withValues(alpha: 0.12)
         : _primarySoft;
 
     return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(23),
+      color: _surface,
+      borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(23),
+        borderRadius: BorderRadius.circular(18),
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(23),
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(color: _border),
           ),
           child: Column(
@@ -714,13 +697,9 @@ class _QuizScreenState extends State<QuizScreen> {
                       color: softColor,
                       borderRadius: BorderRadius.circular(18),
                     ),
-                    child: Icon(
-                      material.icon,
-                      color: accent,
-                      size: 29,
-                    ),
+                    child: Icon(material.icon, color: accent, size: 29),
                   ),
-                  const SizedBox(width: 14),
+                  SizedBox(width: 14),
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.only(top: 2),
@@ -729,16 +708,16 @@ class _QuizScreenState extends State<QuizScreen> {
                         children: [
                           Text(
                             material.title,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 17,
                               fontWeight: FontWeight.bold,
                               color: _textPrimary,
                             ),
                           ),
-                          const SizedBox(height: 5),
+                          SizedBox(height: 5),
                           Text(
                             material.subtitle,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 12,
                               height: 1.5,
                               color: _textSecondary,
@@ -757,7 +736,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 17),
+              SizedBox(height: 17),
               Row(
                 children: [
                   _QuizPill(
@@ -766,7 +745,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         ? 'Belum ada soal'
                         : '$questionCount soal',
                   ),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   if (isCompleted)
                     const _QuizPill(
                       icon: Icons.check_circle_outline_rounded,
@@ -781,22 +760,19 @@ class _QuizScreenState extends State<QuizScreen> {
                 ],
               ),
               if (isCompleted && latestScore != null) ...[
-                const SizedBox(height: 17),
+                SizedBox(height: 17),
                 Container(
                   padding: const EdgeInsets.all(13),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF7F6FC),
+                    color: _surfaceMuted,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Nilai terakhir',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: _textSecondary,
-                          ),
+                          style: TextStyle(fontSize: 12, color: _textSecondary),
                         ),
                       ),
                       Text(
@@ -812,13 +788,10 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
               ],
               if (questionCount == 0) ...[
-                const SizedBox(height: 12),
-                const Text(
+                SizedBox(height: 12),
+                Text(
                   'Soal untuk materi ini belum tersedia.',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: _textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 11, color: _textSecondary),
                 ),
               ],
             ],
@@ -832,15 +805,13 @@ class _QuizScreenState extends State<QuizScreen> {
   // NILAI DAN PERKEMBANGAN
   // ==========================================================
 
-  Widget _buildProgressEntryCard({
-    required VoidCallback onTap,
-  }) {
+  Widget _buildProgressEntryCard({required VoidCallback onTap}) {
     return Material(
-      color: const Color(0xFF353054),
-      borderRadius: BorderRadius.circular(23),
+      color: _surfaceMuted,
+      borderRadius: BorderRadius.circular(18),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(23),
+        borderRadius: BorderRadius.circular(18),
         child: Padding(
           padding: const EdgeInsets.all(18),
           child: Row(
@@ -849,24 +820,24 @@ class _QuizScreenState extends State<QuizScreen> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.12),
+                  color: _primary.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(16),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.query_stats_rounded,
-                  color: Colors.white,
+                  color: _primary,
                   size: 27,
                 ),
               ),
-              const SizedBox(width: 14),
-              const Expanded(
+              SizedBox(width: 14),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Nilai & Perkembangan',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: _textPrimary,
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
@@ -875,7 +846,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     Text(
                       'Lihat nilai terbaru, rata-rata, dan riwayat kuis.',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: _textSecondary,
                         fontSize: 11,
                         height: 1.5,
                       ),
@@ -883,10 +854,10 @@ class _QuizScreenState extends State<QuizScreen> {
                   ],
                 ),
               ),
-              const SizedBox(width: 8),
-              const Icon(
+              SizedBox(width: 8),
+              Icon(
                 Icons.arrow_forward_rounded,
-                color: Colors.white,
+                color: _textSecondary,
                 size: 22,
               ),
             ],
@@ -903,18 +874,12 @@ class _QuizScreenState extends State<QuizScreen> {
       decoration: BoxDecoration(
         color: _primarySoft,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0xFFDDDBFF),
-        ),
+        border: Border.all(color: _border),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.info_outline_rounded,
-            color: _primary,
-            size: 23,
-          ),
+          Icon(Icons.info_outline_rounded, color: _primary, size: 23),
           SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -963,10 +928,7 @@ class _QuizScreenState extends State<QuizScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           tooltip: 'Keluar dari kuis',
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: _textPrimary,
-          ),
+          icon: Icon(Icons.arrow_back_rounded, color: _textPrimary),
           onPressed: () async {
             final shouldExit = await _confirmExitQuiz();
             if (shouldExit && mounted) _backToQuizHome();
@@ -974,7 +936,7 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
         title: Text(
           'Quiz $_selectedMaterialTitle',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
             color: _textPrimary,
@@ -984,95 +946,92 @@ class _QuizScreenState extends State<QuizScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildQuestionHeader(question, progress),
-              const SizedBox(height: 18),
-              _buildQuestionCard(question),
-              const SizedBox(height: 18),
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton(
-                  onPressed: savingResult ? null : nextQuestion,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _primary,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: const Color(0xFFBEB8F7),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(17),
+          child: TechStepPageFrame(
+            maxWidth: 860,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildQuestionHeader(question, progress),
+                SizedBox(height: 18),
+                _buildQuestionCard(question),
+                SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: ElevatedButton(
+                    onPressed: savingResult ? null : nextQuestion,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: Color(0xFFBEB8F7),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(17),
+                      ),
                     ),
-                  ),
-                  child: savingResult
-                      ? const Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 19,
-                              height: 19,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
+                    child: savingResult
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 19,
+                                height: 19,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 10),
-                            Text('Menyimpan hasil...'),
-                          ],
-                        )
-                      : Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              currentQuestion == questions.length - 1
-                                  ? 'Selesaikan Kuis'
-                                  : 'Soal Berikutnya',
-                              style: const TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
+                              SizedBox(width: 10),
+                              Text('Menyimpan hasil...'),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                currentQuestion == questions.length - 1
+                                    ? 'Selesaikan Kuis'
+                                    : 'Soal Berikutnya',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            Icon(
-                              currentQuestion == questions.length - 1
-                                  ? Icons.check_circle_outline_rounded
-                                  : Icons.arrow_forward_rounded,
-                              size: 19,
-                            ),
-                          ],
-                        ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              Center(
-                child: Text(
-                  selectedAnswers[currentQuestion] == null
-                      ? 'Pilih jawaban yang menurutmu paling tepat.'
-                      : 'Jawaban sudah dipilih. Kamu bisa melanjutkan.',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: _textSecondary,
+                              SizedBox(width: 8),
+                              Icon(
+                                currentQuestion == questions.length - 1
+                                    ? Icons.check_circle_outline_rounded
+                                    : Icons.arrow_forward_rounded,
+                                size: 19,
+                              ),
+                            ],
+                          ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    selectedAnswers[currentQuestion] == null
+                        ? 'Pilih jawaban yang menurutmu paling tepat.'
+                        : 'Jawaban sudah dipilih. Kamu bisa melanjutkan.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 11, color: _textSecondary),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildQuestionHeader(
-    LearningQuestion question,
-    double progress,
-  ) {
+  Widget _buildQuestionHeader(LearningQuestion question, double progress) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surface,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: _border),
       ),
@@ -1092,17 +1051,17 @@ class _QuizScreenState extends State<QuizScreen> {
                 ),
                 child: Text(
                   question.materialTitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
                     color: _primary,
                   ),
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Text(
                 'Soal ${currentQuestion + 1}/${questions.length}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: _textSecondary,
@@ -1110,7 +1069,7 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           Row(
             children: [
               Expanded(
@@ -1119,16 +1078,15 @@ class _QuizScreenState extends State<QuizScreen> {
                   child: LinearProgressIndicator(
                     value: progress,
                     minHeight: 8,
-                    backgroundColor: const Color(0xFFF0EFF7),
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(_primary),
+                    backgroundColor: _surfaceMuted,
+                    valueColor: AlwaysStoppedAnimation<Color>(_primary),
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Text(
                 '${(progress * 100).round()}%',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: _primary,
@@ -1136,20 +1094,20 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 15),
+          SizedBox(height: 15),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
+              Icon(
                 Icons.track_changes_rounded,
                 color: _primary,
                 size: 17,
               ),
-              const SizedBox(width: 7),
+              SizedBox(width: 7),
               Expanded(
                 child: Text(
                   'Kompetensi: ${question.competencyTitle}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     height: 1.5,
                     color: _textSecondary,
@@ -1168,7 +1126,7 @@ class _QuizScreenState extends State<QuizScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(19),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surface,
         borderRadius: BorderRadius.circular(23),
         border: Border.all(color: _border),
       ),
@@ -1182,14 +1140,14 @@ class _QuizScreenState extends State<QuizScreen> {
               color: _primarySoft,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.help_outline_rounded,
               color: _primary,
               size: 23,
             ),
           ),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: 16),
+          Text(
             'Pertanyaan',
             style: TextStyle(
               fontSize: 12,
@@ -1197,17 +1155,17 @@ class _QuizScreenState extends State<QuizScreen> {
               color: _textSecondary,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             question.question,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 19,
               height: 1.5,
               fontWeight: FontWeight.bold,
               color: _textPrimary,
             ),
           ),
-          const SizedBox(height: 23),
+          SizedBox(height: 23),
           ...question.options.map(
             (option) => Padding(
               padding: const EdgeInsets.only(bottom: 11),
@@ -1223,17 +1181,17 @@ class _QuizScreenState extends State<QuizScreen> {
     final selected = selectedAnswers[currentQuestion] == option.key;
 
     return Material(
-      color: selected ? _primarySoft : Colors.white,
-      borderRadius: BorderRadius.circular(17),
+      color: selected ? _primarySoft : _surface,
+      borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: () => selectAnswer(option.key),
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(16),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
+          duration: Duration(milliseconds: 180),
           width: double.infinity,
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(17),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: selected ? _primary : _border,
               width: selected ? 1.7 : 1,
@@ -1242,45 +1200,44 @@ class _QuizScreenState extends State<QuizScreen> {
           child: Row(
             children: [
               AnimatedContainer(
-                duration: const Duration(milliseconds: 180),
+                duration: Duration(milliseconds: 180),
                 width: 35,
                 height: 35,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: selected ? _primary : const Color(0xFFF4F3FA),
+                  color: selected ? _primary : _surfaceMuted,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: selected
-                    ? const Icon(
+                    ? Icon(
                         Icons.check_rounded,
                         color: Colors.white,
                         size: 20,
                       )
                     : Text(
                         option.key,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: _textSecondary,
                         ),
                       ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Text(
                   option.text,
                   style: TextStyle(
                     fontSize: 14,
                     height: 1.5,
-                    fontWeight:
-                        selected ? FontWeight.w600 : FontWeight.w500,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                     color: _textPrimary,
                   ),
                 ),
               ),
               if (selected) ...[
-                const SizedBox(width: 8),
-                const Icon(
+                SizedBox(width: 8),
+                Icon(
                   Icons.check_circle_rounded,
                   color: _primary,
                   size: 20,
@@ -1310,10 +1267,10 @@ class _QuizScreenState extends State<QuizScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           tooltip: 'Kembali ke menu Quiz',
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(Icons.arrow_back_rounded),
           onPressed: _backToQuizHome,
         ),
-        title: const Text(
+        title: Text(
           'Hasil Kuis',
           style: TextStyle(
             fontSize: 21,
@@ -1325,73 +1282,75 @@ class _QuizScreenState extends State<QuizScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: Column(
-            children: [
-              _buildScoreHeader(finalScore),
-              const SizedBox(height: 17),
-              Text(
-                'Kamu menjawab $score dari ${questions.length} '
-                'soal dengan benar pada materi $_selectedMaterialTitle.',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13,
-                  height: 1.65,
-                  color: _textSecondary,
+          child: TechStepPageFrame(
+            maxWidth: 760,
+            child: Column(
+              children: [
+                _buildScoreHeader(finalScore),
+                SizedBox(height: 17),
+                Text(
+                  'Kamu menjawab $score dari ${questions.length} '
+                  'soal dengan benar pada materi $_selectedMaterialTitle.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    height: 1.65,
+                    color: _textSecondary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              _buildScoreSummary(finalScore),
-              const SizedBox(height: 25),
-              SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    final allQuestions = questions;
-                    final materialId =
-                        selectedMaterialId ?? 'hardware';
+                SizedBox(height: 20),
+                _buildScoreSummary(finalScore),
+                SizedBox(height: 25),
+                SizedBox(
+                  width: double.infinity,
+                  height: 54,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      final allQuestions = questions;
+                      final materialId = selectedMaterialId ?? 'hardware';
 
-                    startQuiz(allQuestions, materialId);
-                  },
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: const Text(
-                    'Ulangi Kuis Ini',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
+                      startQuiz(allQuestions, materialId);
+                    },
+                    icon: Icon(Icons.refresh_rounded),
+                    label: Text(
+                      'Ulangi Kuis Ini',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _primary,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(17),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 11),
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: OutlinedButton.icon(
-                  onPressed: _backToQuizHome,
-                  icon: const Icon(Icons.grid_view_rounded),
-                  label: const Text(
-                    'Kembali ke Menu Quiz',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: _primary,
-                    side: const BorderSide(color: _primary),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(17),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(17),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(height: 11),
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: OutlinedButton.icon(
+                    onPressed: _backToQuizHome,
+                    icon: Icon(Icons.grid_view_rounded),
+                    label: Text(
+                      'Kembali ke Menu Quiz',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: _primary,
+                      side: BorderSide(color: _primary),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(17),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -1404,8 +1363,8 @@ class _QuizScreenState extends State<QuizScreen> {
     final message = finalScore >= 80
         ? 'Hebat! Kamu sudah menguasai materi.'
         : finalScore >= 60
-            ? 'Bagus! Terus tingkatkan pemahamanmu.'
-            : 'Ayo pelajari kembali materi dan coba lagi.';
+        ? 'Bagus! Terus tingkatkan pemahamanmu.'
+        : 'Ayo pelajari kembali materi dan coba lagi.';
 
     return Container(
       width: double.infinity,
@@ -1427,14 +1386,14 @@ class _QuizScreenState extends State<QuizScreen> {
               finalScore >= 80
                   ? Icons.emoji_events_rounded
                   : finalScore >= 60
-                      ? Icons.workspace_premium_rounded
-                      : Icons.menu_book_rounded,
+                  ? Icons.workspace_premium_rounded
+                  : Icons.menu_book_rounded,
               color: Colors.white,
               size: 42,
             ),
           ),
-          const SizedBox(height: 18),
-          const Text(
+          SizedBox(height: 18),
+          Text(
             'Kuis Selesai!',
             style: TextStyle(
               color: Colors.white,
@@ -1442,18 +1401,15 @@ class _QuizScreenState extends State<QuizScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 7),
+          SizedBox(height: 7),
           Text(
             _selectedMaterialTitle,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 13),
           ),
-          const SizedBox(height: 22),
+          SizedBox(height: 22),
           Text(
             '$finalScore%',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
               fontSize: 54,
               height: 1.05,
@@ -1461,12 +1417,9 @@ class _QuizScreenState extends State<QuizScreen> {
               letterSpacing: -1,
             ),
           ),
-          const SizedBox(height: 17),
+          SizedBox(height: 17),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 15,
-              vertical: 9,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 9),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
@@ -1480,11 +1433,11 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ),
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white70,
               fontSize: 12,
               height: 1.5,
@@ -1502,7 +1455,7 @@ class _QuizScreenState extends State<QuizScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surface,
         borderRadius: BorderRadius.circular(22),
         border: Border.all(color: _border),
       ),
@@ -1523,8 +1476,8 @@ class _QuizScreenState extends State<QuizScreen> {
                   size: 26,
                 ),
               ),
-              const SizedBox(width: 12),
-              const Expanded(
+              SizedBox(width: 12),
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -1539,17 +1492,14 @@ class _QuizScreenState extends State<QuizScreen> {
                     SizedBox(height: 4),
                     Text(
                       'Ringkasan hasil pengerjaanmu',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: _textSecondary,
-                      ),
+                      style: TextStyle(fontSize: 11, color: _textSecondary),
                     ),
                   ],
                 ),
               ),
               Text(
                 '$score/${questions.length}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: _primary,
@@ -1557,9 +1507,9 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 18),
-          const Divider(color: _border, height: 1),
-          const SizedBox(height: 17),
+          SizedBox(height: 18),
+          Divider(color: _border, height: 1),
+          SizedBox(height: 17),
           Row(
             children: [
               Expanded(
@@ -1570,7 +1520,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   color: _success,
                 ),
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: 10),
               Expanded(
                 child: _buildScoreStat(
                   icon: Icons.cancel_rounded,
@@ -1581,16 +1531,13 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Status kompetensi',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: _textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 12, color: _textSecondary),
                 ),
               ),
               Text(
@@ -1603,13 +1550,13 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10),
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: finalScore / 100,
               minHeight: 8,
-              backgroundColor: const Color(0xFFF0EFF7),
+              backgroundColor: _surfaceMuted,
               valueColor: AlwaysStoppedAnimation<Color>(statusColor),
             ),
           ),
@@ -1633,7 +1580,7 @@ class _QuizScreenState extends State<QuizScreen> {
       child: Row(
         children: [
           Icon(icon, color: color, size: 22),
-          const SizedBox(width: 9),
+          SizedBox(width: 9),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1646,13 +1593,10 @@ class _QuizScreenState extends State<QuizScreen> {
                     color: color,
                   ),
                 ),
-                const SizedBox(height: 3),
+                SizedBox(height: 3),
                 Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: _textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 10, color: _textSecondary),
                 ),
               ],
             ),
@@ -1671,8 +1615,7 @@ class _QuizScreenState extends State<QuizScreen> {
       future: _historyFuture,
       builder: (context, snapshot) {
         final analytics = LearningAnalyticsService.instance;
-        final history =
-            snapshot.data ?? const <Map<String, Object?>>[];
+        final history = snapshot.data ?? <Map<String, Object?>>[];
         final attempted = analytics.completedQuizMaterialIds;
 
         final scoresByMaterial = <String, int>{
@@ -1683,16 +1626,13 @@ class _QuizScreenState extends State<QuizScreen> {
 
         final availableScores = _quizMaterials
             .where((material) => attempted.contains(material.id))
-            .map(
-              (material) => scoresByMaterial[material.id] ?? 0,
-            )
+            .map((material) => scoresByMaterial[material.id] ?? 0)
             .toList();
 
         final average = availableScores.isEmpty
             ? null
-            : (availableScores.reduce((a, b) => a + b) /
-                    availableScores.length)
-                .round();
+            : (availableScores.reduce((a, b) => a + b) / availableScores.length)
+                  .round();
 
         return Scaffold(
           backgroundColor: _background,
@@ -1702,12 +1642,12 @@ class _QuizScreenState extends State<QuizScreen> {
             scrolledUnderElevation: 0,
             leading: IconButton(
               tooltip: 'Kembali ke menu Quiz',
-              icon: const Icon(Icons.arrow_back_rounded),
+              icon: Icon(Icons.arrow_back_rounded),
               onPressed: () {
                 setState(() => showProgressPage = false);
               },
             ),
-            title: const Text(
+            title: Text(
               'Nilai & Perkembangan',
               style: TextStyle(
                 fontSize: 19,
@@ -1718,124 +1658,110 @@ class _QuizScreenState extends State<QuizScreen> {
           ),
           body: SafeArea(
             child: snapshot.connectionState != ConnectionState.done
-                ? const Center(
-                    child: CircularProgressIndicator(
-                      color: _primary,
-                    ),
+                ? Center(
+                    child: CircularProgressIndicator(color: _primary),
                   )
                 : snapshot.hasError
-                    ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24),
-                          child: Text(
-                            'Riwayat nilai gagal dimuat: '
-                            '${snapshot.error}',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(
-                          20,
-                          8,
-                          20,
-                          30,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildProgressSummary(
-                              average,
-                              attempted.length,
-                            ),
-                            const SizedBox(height: 27),
-                            const Text(
-                              'Nilai Terbaru per Materi',
-                              style: TextStyle(
-                                fontSize: 21,
-                                fontWeight: FontWeight.bold,
-                                color: _textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 7),
-                            const Text(
-                              'Pantau pencapaian untuk setiap materi.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: _textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            ..._quizMaterials.map((material) {
-                              final isCompleted =
-                                  attempted.contains(material.id);
-
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                  bottom: 13,
-                                ),
-                                child: _buildLatestScoreCard(
-                                  material: material,
-                                  score: isCompleted
-                                      ? scoresByMaterial[material.id]
-                                      : null,
-                                  attemptCount: history
-                                      .where(
-                                        (row) =>
-                                            row['material_id']
-                                                ?.toString() ==
-                                            material.id,
-                                      )
-                                      .length,
-                                ),
-                              );
-                            }),
-                            const SizedBox(height: 17),
-                            const Text(
-                              'Riwayat Kuis',
-                              style: TextStyle(
-                                fontSize: 21,
-                                fontWeight: FontWeight.bold,
-                                color: _textPrimary,
-                              ),
-                            ),
-                            const SizedBox(height: 7),
-                            const Text(
-                              'Daftar hasil pengerjaan yang tersimpan.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: _textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: 15),
-                            if (history.isEmpty)
-                              _buildEmptyHistory()
-                            else
-                              ...history.map(_buildHistoryItem),
-                            const SizedBox(height: 14),
-                            const Text(
-                              'Nilai terbaru tiap materi digunakan untuk '
-                              'menghitung rata-rata. Semua percobaan yang '
-                              'tersimpan ditampilkan pada riwayat.',
-                              style: TextStyle(
-                                fontSize: 11,
-                                height: 1.6,
-                                color: _textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Text(
+                        'Riwayat nilai gagal dimuat: '
+                        '${snapshot.error}',
+                        textAlign: TextAlign.center,
                       ),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
+                    child: TechStepPageFrame(
+                      maxWidth: 860,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildProgressSummary(average, attempted.length),
+                          SizedBox(height: 27),
+                          Text(
+                            'Nilai Terbaru per Materi',
+                            style: TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold,
+                              color: _textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 7),
+                          Text(
+                            'Pantau pencapaian untuk setiap materi.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _textSecondary,
+                            ),
+                          ),
+                          SizedBox(height: 16),
+                          ..._quizMaterials.map((material) {
+                            final isCompleted = attempted.contains(material.id);
+
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 13),
+                              child: _buildLatestScoreCard(
+                                material: material,
+                                score: isCompleted
+                                    ? scoresByMaterial[material.id]
+                                    : null,
+                                attemptCount: history
+                                    .where(
+                                      (row) =>
+                                          row['material_id']?.toString() ==
+                                          material.id,
+                                    )
+                                    .length,
+                              ),
+                            );
+                          }),
+                          SizedBox(height: 17),
+                          Text(
+                            'Riwayat Kuis',
+                            style: TextStyle(
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold,
+                              color: _textPrimary,
+                            ),
+                          ),
+                          SizedBox(height: 7),
+                          Text(
+                            'Daftar hasil pengerjaan yang tersimpan.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: _textSecondary,
+                            ),
+                          ),
+                          SizedBox(height: 15),
+                          if (history.isEmpty)
+                            _buildEmptyHistory()
+                          else
+                            ...history.map(_buildHistoryItem),
+                          SizedBox(height: 14),
+                          Text(
+                            'Nilai terbaru tiap materi digunakan untuk '
+                            'menghitung rata-rata. Semua percobaan yang '
+                            'tersimpan ditampilkan pada riwayat.',
+                            style: TextStyle(
+                              fontSize: 11,
+                              height: 1.6,
+                              color: _textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
           ),
         );
       },
     );
   }
 
-  Widget _buildProgressSummary(
-    int? average,
-    int completedCount,
-  ) {
+  Widget _buildProgressSummary(int? average, int completedCount) {
     final progress = completedCount / _quizMaterials.length;
 
     return Container(
@@ -1854,17 +1780,14 @@ class _QuizScreenState extends State<QuizScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Ringkasan Nilai',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.white70, fontSize: 13),
                     ),
-                    const SizedBox(height: 7),
+                    SizedBox(height: 7),
                     Text(
                       average == null ? '—' : '$average%',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: 39,
                         fontWeight: FontWeight.bold,
@@ -1881,7 +1804,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   color: Colors.white.withValues(alpha: 0.13),
                   borderRadius: BorderRadius.circular(18),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.insights_rounded,
                   color: Colors.white,
                   size: 31,
@@ -1889,32 +1812,25 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 6),
+          SizedBox(height: 6),
           Text(
             '$completedCount dari ${_quizMaterials.length} kuis selesai',
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 12),
           ),
-          const SizedBox(height: 19),
+          SizedBox(height: 19),
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: progress.clamp(0.0, 1.0).toDouble(),
               minHeight: 8,
               backgroundColor: Colors.white.withValues(alpha: 0.2),
-              valueColor:
-                  const AlwaysStoppedAnimation<Color>(Colors.white),
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
             ),
           ),
-          const SizedBox(height: 9),
+          SizedBox(height: 9),
           Text(
             'Progres penyelesaian ${(progress * 100).round()}%',
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 11,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 11),
           ),
         ],
       ),
@@ -1932,7 +1848,7 @@ class _QuizScreenState extends State<QuizScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surface,
         borderRadius: BorderRadius.circular(21),
         border: Border.all(color: _border),
       ),
@@ -1947,31 +1863,27 @@ class _QuizScreenState extends State<QuizScreen> {
                   color: _primarySoft,
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Icon(
-                  material.icon,
-                  color: _primary,
-                  size: 25,
-                ),
+                child: Icon(material.icon, color: _primary, size: 25),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       material.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: _textPrimary,
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       score == null
                           ? 'Belum dikerjakan'
                           : '$attemptCount percobaan tersimpan',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
                         color: _textSecondary,
                       ),
@@ -1990,17 +1902,17 @@ class _QuizScreenState extends State<QuizScreen> {
             ],
           ),
           if (score != null) ...[
-            const SizedBox(height: 15),
+            SizedBox(height: 15),
             ClipRRect(
               borderRadius: BorderRadius.circular(20),
               child: LinearProgressIndicator(
                 value: (score / 100).clamp(0.0, 1.0).toDouble(),
                 minHeight: 7,
-                backgroundColor: const Color(0xFFF0EFF7),
+                backgroundColor: _surfaceMuted,
                 valueColor: AlwaysStoppedAnimation<Color>(color),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
@@ -2013,7 +1925,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.check_circle_outline_rounded,
                   size: 17,
                   color: _success,
@@ -2030,11 +1942,8 @@ class _QuizScreenState extends State<QuizScreen> {
     final score = _asInt(row['score_percent']);
     final correct = _asInt(row['total_correct']);
     final total = _asInt(row['total_questions']);
-    final materialTitle =
-        row['material_title']?.toString() ?? 'Kuis';
-    final dateText = _formatDate(
-      row['created_at']?.toString(),
-    );
+    final materialTitle = row['material_title']?.toString() ?? 'Kuis';
+    final dateText = _formatDate(row['created_at']?.toString());
 
     final color = _scoreColor(score);
 
@@ -2043,7 +1952,7 @@ class _QuizScreenState extends State<QuizScreen> {
       margin: const EdgeInsets.only(bottom: 11),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surface,
         borderRadius: BorderRadius.circular(19),
         border: Border.all(color: _border),
       ),
@@ -2056,50 +1965,37 @@ class _QuizScreenState extends State<QuizScreen> {
               color: _primarySoft,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
-              Icons.quiz_rounded,
-              color: _primary,
-              size: 23,
-            ),
+            child: Icon(Icons.quiz_rounded, color: _primary, size: 23),
           ),
-          const SizedBox(width: 12),
+          SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   materialTitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: _textPrimary,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   '$correct dari $total benar',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: _textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 11, color: _textSecondary),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   dateText,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: _textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 10, color: _textSecondary),
                 ),
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
               color: color.withValues(alpha: 0.09),
               borderRadius: BorderRadius.circular(12),
@@ -2123,17 +2019,13 @@ class _QuizScreenState extends State<QuizScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(25),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: _surface,
         borderRadius: BorderRadius.circular(21),
         border: Border.all(color: _border),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(
-            Icons.history_rounded,
-            size: 42,
-            color: _primary,
-          ),
+          Icon(Icons.history_rounded, size: 42, color: _primary),
           SizedBox(height: 12),
           Text(
             'Belum Ada Riwayat Kuis',
@@ -2148,11 +2040,7 @@ class _QuizScreenState extends State<QuizScreen> {
             'Kerjakan salah satu kuis untuk mulai mencatat '
             'perkembangan nilai.',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 12,
-              height: 1.6,
-              color: _textSecondary,
-            ),
+            style: TextStyle(fontSize: 12, height: 1.6, color: _textSecondary),
           ),
         ],
       ),
@@ -2200,20 +2088,20 @@ class _QuizPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final color = isSuccess
-        ? const Color(0xFF239B70)
-        : const Color(0xFF5547E8);
+        ? Theme.of(context).brightness == Brightness.dark
+              ? Color(0xFF69D5AE)
+              : Color(0xFF239B70)
+        : scheme.primary;
 
     final background = isSuccess
-        ? const Color(0xFFE7F7EF)
-        : const Color(0xFFEEEDFF);
+        ? color.withValues(alpha: 0.12)
+        : scheme.primaryContainer;
 
     return Flexible(
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 8,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: background,
           borderRadius: BorderRadius.circular(12),
@@ -2222,7 +2110,7 @@ class _QuizPill extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(icon, size: 14, color: color),
-            const SizedBox(width: 6),
+            SizedBox(width: 6),
             Flexible(
               child: Text(
                 label,
@@ -2242,7 +2130,7 @@ class _QuizPill extends StatelessWidget {
 }
 
 Color _scoreColor(int score) {
-  if (score >= 80) return const Color(0xFF239B70);
-  if (score >= 60) return const Color(0xFFB7791F);
-  return const Color(0xFFD93649);
+  if (score >= 80) return Color(0xFF239B70);
+  if (score >= 60) return Color(0xFFB7791F);
+  return Color(0xFFD93649);
 }

@@ -723,9 +723,12 @@ class ProfileScreen extends StatelessWidget {
                 20,
                 32,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 920),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                   _buildProfileHeader(context),
 
                   const SizedBox(height: 28),
@@ -812,7 +815,9 @@ class ProfileScreen extends StatelessWidget {
                   // LOGOUT
 
                   _buildLogoutButton(context),
-                ],
+                    ],
+                  ),
+                ),
               ),
             ),
           ),

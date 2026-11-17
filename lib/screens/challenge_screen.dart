@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/learning_content.dart';
 import '../services/learning_analytics_service.dart';
 import '../services/techstep_database.dart';
+import '../widgets/techstep_components.dart';
 
 class ChallengeScreen extends StatefulWidget {
   const ChallengeScreen({super.key});
@@ -13,14 +13,18 @@ class ChallengeScreen extends StatefulWidget {
 }
 
 class _ChallengeScreenState extends State<ChallengeScreen> {
-  static const Color _background = Color(0xFFF4F3FC);
-  static const Color _primary = Color(0xFF5547E8);
-  static const Color _primarySoft = Color(0xFFEEEDFF);
-  static const Color _textPrimary = Color(0xFF242438);
-  static const Color _textSecondary = Color(0xFF77778B);
-  static const Color _border = Color(0xFFE7E5F2);
-  static const Color _success = Color(0xFF239B70);
-  static const Color _danger = Color(0xFFD93649);
+  Color get _background => Theme.of(context).scaffoldBackgroundColor;
+  Color get _surface => Theme.of(context).colorScheme.surface;
+  Color get _surfaceMuted => Theme.of(context).colorScheme.surfaceContainerLow;
+  Color get _primary => Theme.of(context).colorScheme.primary;
+  Color get _primarySoft => Theme.of(context).colorScheme.primaryContainer;
+  Color get _textPrimary => Theme.of(context).colorScheme.onSurface;
+  Color get _textSecondary => Theme.of(context).colorScheme.onSurfaceVariant;
+  Color get _border => Theme.of(context).colorScheme.outlineVariant;
+  Color get _success => Theme.of(context).brightness == Brightness.dark
+      ? Color(0xFF69D5AE)
+      : Color(0xFF239B70);
+  Color get _danger => Theme.of(context).colorScheme.error;
 
   late Future<List<ChallengeLevel>> _levelsFuture;
 
@@ -37,7 +41,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   bool loadingLevel = false;
   bool savingLevel = false;
 
-  final List<Color> levelColors = const [
+  final List<Color> levelColors = [
     Color(0xFF5547E8),
     Color(0xFF6358E8),
     Color(0xFF786BEA),
@@ -81,8 +85,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     });
 
     try {
-      final questions =
-          await TechStepDatabase.instance.getChallengeQuestions(
+      final questions = await TechStepDatabase.instance.getChallengeQuestions(
         levels[level].id,
       );
 
@@ -94,7 +97,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         });
 
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content: Text('Soal untuk level ini belum tersedia.'),
             behavior: SnackBarBehavior.floating,
           ),
@@ -147,10 +150,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 
     final question = levelQuestions[currentBox];
 
-    firstSelectedAnswers.putIfAbsent(
-      question.id,
-      () => selectedAnswerKey,
-    );
+    firstSelectedAnswers.putIfAbsent(question.id, () => selectedAnswerKey);
 
     if (selectedAnswerKey == question.correctOptionKey) {
       setState(() {
@@ -178,7 +178,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: _surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -190,17 +190,17 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 width: 76,
                 height: 76,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE7F7EF),
+                  color: _success.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(24),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check_circle_rounded,
                   color: _success,
                   size: 46,
                 ),
               ),
-              const SizedBox(height: 18),
-              const Text(
+              SizedBox(height: 18),
+              Text(
                 'Jawaban Benar!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -209,8 +209,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   color: _textPrimary,
                 ),
               ),
-              const SizedBox(height: 9),
-              const Text(
+              SizedBox(height: 9),
+              Text(
                 'Hebat! Kotak ini berhasil kamu selesaikan. '
                 'Lanjutkan perjalanan ke tantangan berikutnya.',
                 textAlign: TextAlign.center,
@@ -231,8 +231,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   Navigator.pop(dialogContext);
                   _moveToNextBox();
                 },
-                icon: const Icon(Icons.arrow_forward_rounded),
-                label: const Text('Lanjutkan'),
+                icon: Icon(Icons.arrow_forward_rounded),
+                label: Text('Lanjutkan'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _primary,
                   foregroundColor: Colors.white,
@@ -256,7 +256,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       barrierDismissible: false,
       builder: (dialogContext) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: _surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -268,17 +268,13 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 width: 76,
                 height: 76,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFDEBEC),
+                  color: _danger.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(24),
                 ),
-                child: const Icon(
-                  Icons.close_rounded,
-                  color: _danger,
-                  size: 46,
-                ),
+                child: Icon(Icons.close_rounded, color: _danger, size: 46),
               ),
-              const SizedBox(height: 18),
-              const Text(
+              SizedBox(height: 18),
+              Text(
                 'Belum Tepat!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -287,8 +283,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   color: _textPrimary,
                 ),
               ),
-              const SizedBox(height: 9),
-              const Text(
+              SizedBox(height: 9),
+              Text(
                 'Jawaban kamu belum tepat. Kotak tetap merah. '
                 'Coba pahami kembali pertanyaannya dan pilih '
                 'jawaban yang paling sesuai.',
@@ -309,8 +305,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 onPressed: () {
                   Navigator.pop(dialogContext);
                 },
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Coba Lagi'),
+                icon: Icon(Icons.refresh_rounded),
+                label: Text('Coba Lagi'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _danger,
                   foregroundColor: Colors.white,
@@ -385,7 +381,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         final lastLevel = selectedLevel == levels.length - 1;
 
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: _surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
@@ -400,32 +396,32 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   color: _primarySoft,
                   borderRadius: BorderRadius.circular(26),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.emoji_events_rounded,
                   color: _primary,
                   size: 48,
                 ),
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: 18),
               Text(
                 lastLevel ? 'Semua Level Selesai!' : 'Level Selesai!',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 21,
                   fontWeight: FontWeight.bold,
                   color: _textPrimary,
                 ),
               ),
-              const SizedBox(height: 9),
+              SizedBox(height: 9),
               Text(
                 lastLevel
                     ? 'Selamat! Kamu telah menyelesaikan semua '
-                        'level Computer Challenge.'
+                          'level Computer Challenge.'
                     : 'Kamu telah menyelesaikan '
-                        '${levels[selectedLevel].name}. '
-                        'Level berikutnya sekarang sudah terbuka.',
+                          '${levels[selectedLevel].name}. '
+                          'Level berikutnya sekarang sudah terbuka.',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 13,
                   height: 1.6,
                   color: _textSecondary,
@@ -451,7 +447,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                     borderRadius: BorderRadius.circular(15),
                   ),
                 ),
-                child: const Text('Kembali ke Level'),
+                child: Text('Kembali ke Level'),
               ),
             ),
           ],
@@ -467,17 +463,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   @override
   Widget build(BuildContext context) {
     if (loadingLevel) {
-      return const Scaffold(
+      return Scaffold(
         backgroundColor: _background,
-        body: Center(
-          child: CircularProgressIndicator(color: _primary),
-        ),
+        body: Center(child: CircularProgressIndicator(color: _primary)),
       );
     }
 
     if (selectedLevel != -1) {
-      if (levelQuestions.isEmpty ||
-          currentBox >= levelQuestions.length) {
+      if (levelQuestions.isEmpty || currentBox >= levelQuestions.length) {
         return _buildEmptyLevelPage();
       }
 
@@ -488,11 +481,9 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       future: _levelsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Scaffold(
+          return Scaffold(
             backgroundColor: _background,
-            body: Center(
-              child: CircularProgressIndicator(color: _primary),
-            ),
+            body: Center(child: CircularProgressIndicator(color: _primary)),
           );
         }
 
@@ -520,17 +511,17 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 width: 76,
                 height: 76,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFFDEBEC),
+                  color: _danger.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(23),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.error_outline_rounded,
                   size: 40,
                   color: _danger,
                 ),
               ),
-              const SizedBox(height: 18),
-              const Text(
+              SizedBox(height: 18),
+              Text(
                 'Level gagal dimuat',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -539,17 +530,17 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   color: _textPrimary,
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: 8),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   height: 1.5,
                   color: _textSecondary,
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
                   setState(_reloadLevels);
@@ -558,7 +549,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   backgroundColor: _primary,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Coba Lagi'),
+                child: Text('Coba Lagi'),
               ),
             ],
           ),
@@ -573,7 +564,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       appBar: AppBar(
         backgroundColor: _background,
         elevation: 0,
-        title: const Text(
+        title: Text(
           'Computer Challenge',
           style: TextStyle(
             color: _textPrimary,
@@ -588,13 +579,9 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.quiz_outlined,
-                size: 48,
-                color: _primary,
-              ),
-              const SizedBox(height: 15),
-              const Text(
+              Icon(Icons.quiz_outlined, size: 48, color: _primary),
+              SizedBox(height: 15),
+              Text(
                 'Soal level tidak tersedia',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
@@ -602,8 +589,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   color: _textPrimary,
                 ),
               ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: 8),
+              Text(
                 'Kembali ke halaman level untuk memilih tantangan lain.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -612,14 +599,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   color: _textSecondary,
                 ),
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: 18),
               ElevatedButton(
                 onPressed: exitLevel,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _primary,
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Kembali'),
+                child: Text('Kembali'),
               ),
             ],
           ),
@@ -639,7 +626,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         backgroundColor: _background,
         elevation: 0,
         scrolledUnderElevation: 0,
-        title: const Text(
+        title: Text(
           'Computer Challenge',
           style: TextStyle(
             fontSize: 22,
@@ -652,41 +639,44 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildChallengeHeader(),
-              const SizedBox(height: 28),
-              const Text(
-                'Level Tantangan',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: _textPrimary,
-                  letterSpacing: -0.4,
+          child: TechStepPageFrame(
+            maxWidth: 860,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildChallengeHeader(),
+                SizedBox(height: 28),
+                Text(
+                  'Level Tantangan',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: _textPrimary,
+                    letterSpacing: -0.4,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Selesaikan tantangan secara berurutan untuk membuka '
-                'level berikutnya.',
-                style: TextStyle(
-                  fontSize: 12,
-                  height: 1.6,
-                  color: _textSecondary,
+                SizedBox(height: 6),
+                Text(
+                  'Selesaikan tantangan secara berurutan untuk membuka '
+                  'level berikutnya.',
+                  style: TextStyle(
+                    fontSize: 12,
+                    height: 1.6,
+                    color: _textSecondary,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 18),
-              if (levels.isEmpty)
-                _buildNoLevelsCard()
-              else
-                ...List.generate(
-                  levels.length,
-                  (index) => _buildLevelCard(index),
-                ),
-              const SizedBox(height: 6),
-              _buildRubricCard(),
-            ],
+                SizedBox(height: 18),
+                if (levels.isEmpty)
+                  _buildNoLevelsCard()
+                else
+                  ...List.generate(
+                    levels.length,
+                    (index) => _buildLevelCard(index),
+                  ),
+                SizedBox(height: 6),
+                _buildRubricCard(),
+              ],
+            ),
           ),
         ),
       ),
@@ -694,12 +684,9 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   }
 
   Widget _buildChallengeHeader() {
-    final completedCount =
-        levels.where((item) => item.completed).length;
+    final completedCount = levels.where((item) => item.completed).length;
 
-    final progress = levels.isEmpty
-        ? 0.0
-        : completedCount / levels.length;
+    final progress = levels.isEmpty ? 0.0 : completedCount / levels.length;
 
     return Container(
       width: double.infinity,
@@ -737,7 +724,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       color: Colors.white.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    child: const Text(
+                    child: Text(
                       'MODE TANTANGAN',
                       style: TextStyle(
                         color: Colors.white,
@@ -754,7 +741,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       color: Colors.white.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(17),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.sports_esports_rounded,
                       color: Colors.white,
                       size: 28,
@@ -762,8 +749,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 19),
-              const Text(
+              SizedBox(height: 19),
+              Text(
                 'Lompat, Jawab,\nSelesaikan Tantangan!',
                 style: TextStyle(
                   color: Colors.white,
@@ -773,8 +760,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
+              SizedBox(height: 10),
+              Text(
                 'Lewati setiap kotak engklek dan uji pemahamanmu '
                 'tentang sistem komputer melalui tantangan interaktif.',
                 style: TextStyle(
@@ -783,7 +770,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   height: 1.6,
                 ),
               ),
-              const SizedBox(height: 23),
+              SizedBox(height: 23),
               Container(
                 padding: const EdgeInsets.all(15),
                 decoration: BoxDecoration(
@@ -794,27 +781,23 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(
-                          Icons.flag_rounded,
-                          size: 22,
-                          color: Colors.white,
-                        ),
-                        const SizedBox(width: 10),
+                        Icon(Icons.flag_rounded, size: 22, color: Colors.white),
+                        SizedBox(width: 10),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Progres Tantangan',
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: 11,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              SizedBox(height: 4),
                               Text(
                                 '$completedCount dari ${levels.length} level selesai',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,
@@ -825,7 +808,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                         ),
                         Text(
                           '${(progress * 100).round()}%',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -833,18 +816,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 13),
+                    SizedBox(height: 13),
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: 8,
-                        backgroundColor:
-                            Colors.white.withValues(alpha: 0.2),
-                        valueColor:
-                            const AlwaysStoppedAnimation<Color>(
-                          Colors.white,
-                        ),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     ),
                   ],
@@ -862,17 +841,13 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(23),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
+        color: _surface,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: _border),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(
-            Icons.sports_esports_rounded,
-            color: _primary,
-            size: 42,
-          ),
+          Icon(Icons.sports_esports_rounded, color: _primary, size: 42),
           SizedBox(height: 12),
           Text(
             'Level belum tersedia',
@@ -900,40 +875,40 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     final stateText = completed
         ? 'Level selesai'
         : unlocked
-            ? 'Siap dimainkan'
-            : 'Selesaikan level sebelumnya';
+        ? 'Siap dimainkan'
+        : 'Selesaikan level sebelumnya';
 
     final stateColor = completed
         ? _success
         : unlocked
-            ? _primary
-            : _textSecondary;
+        ? _primary
+        : _textSecondary;
 
     final stateBackground = completed
-        ? const Color(0xFFE7F7EF)
+        ? _success.withValues(alpha: 0.12)
         : unlocked
-            ? _primarySoft
-            : const Color(0xFFF0EFF5);
+        ? _primarySoft
+        : _surfaceMuted;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Material(
-        color: unlocked ? Colors.white : const Color(0xFFF0EFF5),
-        borderRadius: BorderRadius.circular(23),
+        color: unlocked ? _surface : _surfaceMuted,
+        borderRadius: BorderRadius.circular(18),
         child: InkWell(
           onTap: unlocked ? () => openLevel(index) : null,
-          borderRadius: BorderRadius.circular(23),
+          borderRadius: BorderRadius.circular(18),
           child: Container(
             width: double.infinity,
             padding: const EdgeInsets.all(17),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(23),
+              borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: completed
                     ? _success.withValues(alpha: 0.45)
                     : unlocked
-                        ? _border
-                        : const Color(0xFFE8E6EF),
+                    ? _border
+                    : _border,
               ),
             ),
             child: Column(
@@ -948,20 +923,20 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       decoration: BoxDecoration(
                         color: unlocked
                             ? color.withValues(alpha: 0.12)
-                            : const Color(0xFFE6E4ED),
+                            : _surfaceMuted,
                         borderRadius: BorderRadius.circular(18),
                       ),
                       child: Icon(
                         completed
                             ? Icons.check_circle_rounded
                             : unlocked
-                                ? Icons.sports_esports_rounded
-                                : Icons.lock_rounded,
-                        color: unlocked ? color : const Color(0xFFAAA7B9),
+                            ? Icons.sports_esports_rounded
+                            : Icons.lock_rounded,
+                        color: unlocked ? color : _textSecondary,
                         size: 28,
                       ),
                     ),
-                    const SizedBox(width: 13),
+                    SizedBox(width: 13),
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(top: 2),
@@ -977,7 +952,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                 letterSpacing: 1,
                               ),
                             ),
-                            const SizedBox(height: 5),
+                            SizedBox(height: 5),
                             Text(
                               level.name,
                               style: TextStyle(
@@ -985,10 +960,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                 fontWeight: FontWeight.bold,
                                 color: unlocked
                                     ? _textPrimary
-                                    : const Color(0xFFAAA7B9),
+                                    : _textSecondary,
                               ),
                             ),
-                            const SizedBox(height: 5),
+                            SizedBox(height: 5),
                             Text(
                               level.description,
                               style: TextStyle(
@@ -996,30 +971,30 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                                 height: 1.5,
                                 color: unlocked
                                     ? _textSecondary
-                                    : const Color(0xFFAAA7B9),
+                                    : _textSecondary,
                               ),
                             ),
                           ],
                         ),
                       ),
                     ),
-                    const SizedBox(width: 6),
+                    SizedBox(width: 6),
                     Icon(
                       completed
                           ? Icons.check_circle_rounded
                           : unlocked
-                              ? Icons.arrow_forward_rounded
-                              : Icons.lock_outline_rounded,
+                          ? Icons.arrow_forward_rounded
+                          : Icons.lock_outline_rounded,
                       color: completed
                           ? _success
                           : unlocked
-                              ? _primary
-                              : const Color(0xFFAAA7B9),
+                          ? _primary
+                          : _textSecondary,
                       size: 22,
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                SizedBox(height: 16),
                 Row(
                   children: [
                     Flexible(
@@ -1039,12 +1014,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               completed
                                   ? Icons.check_circle_outline_rounded
                                   : unlocked
-                                      ? Icons.play_circle_outline_rounded
-                                      : Icons.lock_outline_rounded,
+                                  ? Icons.play_circle_outline_rounded
+                                  : Icons.lock_outline_rounded,
                               size: 13,
                               color: stateColor,
                             ),
-                            const SizedBox(width: 5),
+                            SizedBox(width: 5),
                             Flexible(
                               child: Text(
                                 stateText,
@@ -1060,23 +1035,20 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                         ),
                       ),
                     ),
-                    const Spacer(),
+                    Spacer(),
                     if (completed)
                       Text(
                         'Nilai ${level.bestScore}%',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: _success,
                         ),
                       )
                     else
-                      const Text(
+                      Text(
                         '5 kotak tantangan',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: _textSecondary,
-                        ),
+                        style: TextStyle(fontSize: 10, color: _textSecondary),
                       ),
                   ],
                 ),
@@ -1095,16 +1067,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       decoration: BoxDecoration(
         color: _primarySoft,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: const Color(0xFFDDDBFF)),
+        border: Border.all(color: _border),
       ),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.lightbulb_outline_rounded,
-            color: _primary,
-            size: 24,
-          ),
+          Icon(Icons.lightbulb_outline_rounded, color: _primary, size: 24),
           SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -1153,15 +1121,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         scrolledUnderElevation: 0,
         leading: IconButton(
           tooltip: 'Keluar dari level',
-          icon: const Icon(
-            Icons.arrow_back_rounded,
-            color: _textPrimary,
-          ),
+          icon: Icon(Icons.arrow_back_rounded, color: _textPrimary),
           onPressed: savingLevel ? null : exitLevel,
         ),
         title: Text(
           'Level ${levels[selectedLevel].id}',
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: _textPrimary,
@@ -1171,15 +1136,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildLevelTitle(),
-              const SizedBox(height: 21),
-              _buildHopscotchMap(),
-              const SizedBox(height: 24),
-              _buildCurrentQuestion(question),
-            ],
+          child: TechStepPageFrame(
+            maxWidth: 860,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildLevelTitle(),
+                SizedBox(height: 21),
+                _buildHopscotchMap(),
+                SizedBox(height: 24),
+                _buildCurrentQuestion(question),
+              ],
+            ),
           ),
         ),
       ),
@@ -1189,8 +1157,9 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   Widget _buildLevelTitle() {
     final color = levelColors[selectedLevel % levelColors.length];
 
-    final completedCount =
-        completedBoxes.where((completed) => completed).length;
+    final completedCount = completedBoxes
+        .where((completed) => completed)
+        .length;
 
     final progress = levelQuestions.isEmpty
         ? 0.0
@@ -1200,8 +1169,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(19),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(23),
+        color: _surface,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: _border),
       ),
       child: Column(
@@ -1222,7 +1191,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   size: 29,
                 ),
               ),
-              const SizedBox(width: 13),
+              SizedBox(width: 13),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1236,10 +1205,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                         letterSpacing: 1,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     Text(
                       levels[selectedLevel].name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: _textPrimary,
@@ -1250,25 +1219,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 13),
+          SizedBox(height: 13),
           Text(
             levels[selectedLevel].description,
-            style: const TextStyle(
-              fontSize: 12,
-              height: 1.6,
-              color: _textSecondary,
-            ),
+            style: TextStyle(fontSize: 12, height: 1.6, color: _textSecondary),
           ),
-          const SizedBox(height: 18),
+          SizedBox(height: 18),
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Kotak terselesaikan',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: _textSecondary,
-                  ),
+                  style: TextStyle(fontSize: 11, color: _textSecondary),
                 ),
               ),
               Text(
@@ -1281,13 +1243,13 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 9),
+          SizedBox(height: 9),
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 7,
-              backgroundColor: const Color(0xFFF0EFF7),
+              backgroundColor: _surfaceMuted,
               valueColor: AlwaysStoppedAnimation<Color>(color),
             ),
           ),
@@ -1305,8 +1267,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(15, 19, 15, 21),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(23),
+        color: _surface,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: _border),
       ),
       child: Column(
@@ -1321,14 +1283,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   color: _primarySoft,
                   borderRadius: BorderRadius.circular(11),
                 ),
-                child: const Icon(
-                  Icons.grid_4x4_rounded,
-                  color: _primary,
-                  size: 19,
-                ),
+                child: Icon(Icons.grid_4x4_rounded, color: _primary, size: 19),
               ),
-              const SizedBox(width: 10),
-              const Column(
+              SizedBox(width: 10),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -1342,65 +1300,52 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   SizedBox(height: 3),
                   Text(
                     'Selesaikan kotak secara berurutan',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: _textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 10, color: _textSecondary),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           LayoutBuilder(
             builder: (context, constraints) {
               final singleWidth = constraints.maxWidth < 175
                   ? constraints.maxWidth
                   : 155.0;
 
-              final pairWidth =
-                  ((constraints.maxWidth - 8) / 2)
-                      .clamp(90.0, 155.0)
-                      .toDouble();
+              final pairWidth = ((constraints.maxWidth - 8) / 2)
+                  .clamp(90.0, 155.0)
+                  .toDouble();
 
               return Column(
                 children: [
                   _buildHopscotchBox(4, width: singleWidth),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       _buildHopscotchBox(2, width: pairWidth),
-                      const SizedBox(width: 8),
+                      SizedBox(width: 8),
                       _buildHopscotchBox(3, width: pairWidth),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   _buildHopscotchBox(1, width: singleWidth),
-                  const SizedBox(height: 8),
+                  SizedBox(height: 8),
                   _buildHopscotchBox(0, width: singleWidth),
                 ],
               );
             },
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 20),
           Wrap(
             alignment: WrapAlignment.center,
             spacing: 13,
             runSpacing: 8,
             children: [
-              _buildMapLegend(
-                color: _success,
-                label: 'Selesai',
-              ),
-              _buildMapLegend(
-                color: _primary,
-                label: 'Aktif',
-              ),
-              _buildMapLegend(
-                color: _danger,
-                label: 'Belum tepat',
-              ),
+              _buildMapLegend(color: _success, label: 'Selesai'),
+              _buildMapLegend(color: _primary, label: 'Aktif'),
+              _buildMapLegend(color: _danger, label: 'Belum tepat'),
             ],
           ),
         ],
@@ -1408,42 +1353,24 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     );
   }
 
-  Widget _buildMapLegend({
-    required Color color,
-    required String label,
-  }) {
+  Widget _buildMapLegend({required Color color, required String label}) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           width: 9,
           height: 9,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
-        const SizedBox(width: 5),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 10,
-            color: _textSecondary,
-          ),
-        ),
+        SizedBox(width: 5),
+        Text(label, style: TextStyle(fontSize: 10, color: _textSecondary)),
       ],
     );
   }
 
-  Widget _buildHopscotchBox(
-    int boxIndex, {
-    required double width,
-  }) {
+  Widget _buildHopscotchBox(int boxIndex, {required double width}) {
     if (boxIndex >= levelQuestions.length) {
-      return SizedBox(
-        width: width,
-        height: 62,
-      );
+      return SizedBox(width: width, height: 62);
     }
 
     final active = boxIndex == currentBox;
@@ -1457,12 +1384,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     late IconData icon;
 
     if (completed) {
-      backgroundColor = const Color(0xFFE7F7EF);
+      backgroundColor = _success.withValues(alpha: 0.12);
       borderColor = _success;
       textColor = _success;
       icon = Icons.check_circle_rounded;
     } else if (wrong) {
-      backgroundColor = const Color(0xFFFDEBEC);
+      backgroundColor = _danger.withValues(alpha: 0.12);
       borderColor = _danger;
       textColor = _danger;
       icon = Icons.close_rounded;
@@ -1472,14 +1399,14 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       textColor = Colors.white;
       icon = Icons.location_on_rounded;
     } else {
-      backgroundColor = const Color(0xFFF4F3FA);
+      backgroundColor = _surfaceMuted;
       borderColor = _border;
       textColor = _textSecondary;
       icon = Icons.circle_outlined;
     }
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
+      duration: Duration(milliseconds: 200),
       width: width,
       height: 62,
       alignment: Alignment.center,
@@ -1495,7 +1422,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 BoxShadow(
                   color: levelColor.withValues(alpha: 0.15),
                   blurRadius: 12,
-                  offset: const Offset(0, 4),
+                  offset: Offset(0, 4),
                 ),
               ]
             : null,
@@ -1504,7 +1431,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(icon, color: textColor, size: 20),
-          const SizedBox(width: 7),
+          SizedBox(width: 7),
           Flexible(
             child: Text(
               'Kotak ${boxIndex + 1}',
@@ -1532,8 +1459,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       width: double.infinity,
       padding: const EdgeInsets.all(19),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(23),
+        color: _surface,
+        borderRadius: BorderRadius.circular(18),
         border: Border.all(color: _border),
       ),
       child: Column(
@@ -1552,17 +1479,17 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 ),
                 child: Text(
                   question.materialTitle,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: _primary,
                   ),
                 ),
               ),
-              const Spacer(),
+              Spacer(),
               Text(
                 'Kotak ${currentBox + 1}/${levelQuestions.length}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.bold,
                   color: _textSecondary,
@@ -1570,20 +1497,16 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 14),
+          SizedBox(height: 14),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.track_changes_rounded,
-                size: 17,
-                color: _primary,
-              ),
-              const SizedBox(width: 7),
+              Icon(Icons.track_changes_rounded, size: 17, color: _primary),
+              SizedBox(width: 7),
               Expanded(
                 child: Text(
                   'Kompetensi: ${question.competencyTitle}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 11,
                     height: 1.5,
                     color: _textSecondary,
@@ -1592,7 +1515,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 19),
+          SizedBox(height: 19),
           Container(
             width: 40,
             height: 40,
@@ -1600,14 +1523,10 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               color: color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(
-              Icons.help_outline_rounded,
-              color: color,
-              size: 23,
-            ),
+            child: Icon(Icons.help_outline_rounded, color: color, size: 23),
           ),
-          const SizedBox(height: 15),
-          const Text(
+          SizedBox(height: 15),
+          Text(
             'TANTANGAN SAAT INI',
             style: TextStyle(
               fontSize: 10,
@@ -1616,18 +1535,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               color: _textSecondary,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             question.question,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               height: 1.5,
               fontWeight: FontWeight.bold,
               color: _textPrimary,
             ),
           ),
-          const SizedBox(height: 22),
-          const Text(
+          SizedBox(height: 22),
+          Text(
             'Pilih jawabanmu',
             style: TextStyle(
               fontSize: 12,
@@ -1635,7 +1554,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               color: _textSecondary,
             ),
           ),
-          const SizedBox(height: 12),
+          SizedBox(height: 12),
           ...question.options.map(
             (option) => Padding(
               padding: const EdgeInsets.only(bottom: 10),
@@ -1643,20 +1562,15 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
             ),
           ),
           if (savingLevel) ...[
-            const SizedBox(height: 12),
-            const Center(
+            SizedBox(height: 12),
+            Center(
               child: Column(
                 children: [
-                  CircularProgressIndicator(
-                    color: _primary,
-                  ),
+                  CircularProgressIndicator(color: _primary),
                   SizedBox(height: 10),
                   Text(
                     'Menyimpan hasil tantangan...',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: _textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 11, color: _textSecondary),
                   ),
                 ],
               ),
@@ -1669,7 +1583,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 
   Widget _buildAnswerButton(AnswerOption option) {
     return Material(
-      color: const Color(0xFFFAF9FE),
+      color: _surface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: savingLevel
@@ -1697,18 +1611,18 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                 ),
                 child: Text(
                   option.key,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: _primary,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12),
               Expanded(
                 child: Text(
                   option.text,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 13,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
@@ -1716,8 +1630,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   ),
                 ),
               ),
-              const SizedBox(width: 8),
-              const Icon(
+              SizedBox(width: 8),
+              Icon(
                 Icons.chevron_right_rounded,
                 color: Color(0xFF9292A7),
                 size: 21,
