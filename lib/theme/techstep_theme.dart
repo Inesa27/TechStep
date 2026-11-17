@@ -32,11 +32,12 @@ abstract final class TechStepSpacing {
   static const double xl = 20;
   static const double xxl = 24;
 
-  static const EdgeInsets pagePadding =
-      EdgeInsets.symmetric(horizontal: 20, vertical: 16);
+  static const EdgeInsets pagePadding = EdgeInsets.symmetric(
+    horizontal: 20,
+    vertical: 16,
+  );
 
-  static const EdgeInsets cardPadding =
-      EdgeInsets.all(16);
+  static const EdgeInsets cardPadding = EdgeInsets.all(16);
 }
 
 /// Standar radius komponen.
@@ -51,19 +52,20 @@ abstract final class TechStepRadius {
 /// Tema utama aplikasi TechStep.
 abstract final class TechStepTheme {
   static ThemeData light() {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: TechStepColors.primary,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: TechStepColors.primary,
-      onPrimary: Colors.white,
-      secondary: TechStepColors.primarySoft,
-      onSecondary: TechStepColors.textPrimary,
-      surface: TechStepColors.surface,
-      onSurface: TechStepColors.textPrimary,
-      error: TechStepColors.danger,
-      onError: Colors.white,
-    );
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: TechStepColors.primary,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: TechStepColors.primary,
+          onPrimary: Colors.white,
+          secondary: TechStepColors.primarySoft,
+          onSecondary: TechStepColors.textPrimary,
+          surface: TechStepColors.surface,
+          onSurface: TechStepColors.textPrimary,
+          error: TechStepColors.danger,
+          onError: Colors.white,
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -117,10 +119,7 @@ abstract final class TechStepTheme {
           color: TechStepColors.textSecondary,
           height: 1.4,
         ),
-        labelLarge: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
       ),
 
       // AppBar.
@@ -144,12 +143,8 @@ abstract final class TechStepTheme {
         margin: EdgeInsets.zero,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.lg,
-          ),
-          side: const BorderSide(
-            color: TechStepColors.border,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.lg),
+          side: const BorderSide(color: TechStepColors.border),
         ),
       ),
 
@@ -168,42 +163,26 @@ abstract final class TechStepTheme {
         prefixIconColor: TechStepColors.textSecondary,
         suffixIconColor: TechStepColors.textSecondary,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.md,
-          ),
-          borderSide: const BorderSide(
-            color: TechStepColors.border,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.md),
+          borderSide: const BorderSide(color: TechStepColors.border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.md,
-          ),
-          borderSide: const BorderSide(
-            color: TechStepColors.border,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.md),
+          borderSide: const BorderSide(color: TechStepColors.border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.md,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.md),
           borderSide: const BorderSide(
             color: TechStepColors.primary,
             width: 1.5,
           ),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.md,
-          ),
-          borderSide: const BorderSide(
-            color: TechStepColors.danger,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.md),
+          borderSide: const BorderSide(color: TechStepColors.danger),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.md,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.md),
           borderSide: const BorderSide(
             color: TechStepColors.danger,
             width: 1.5,
@@ -214,27 +193,16 @@ abstract final class TechStepTheme {
       // Tombol utama.
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
-          minimumSize: const WidgetStatePropertyAll(
-            Size(0, 48),
-          ),
+          minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
           padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 12,
-            ),
+            EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           ),
-          backgroundColor: const WidgetStatePropertyAll(
-            TechStepColors.primary,
-          ),
-          foregroundColor: const WidgetStatePropertyAll(
-            Colors.white,
-          ),
+          backgroundColor: const WidgetStatePropertyAll(TechStepColors.primary),
+          foregroundColor: const WidgetStatePropertyAll(Colors.white),
           elevation: const WidgetStatePropertyAll(0),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                TechStepRadius.md,
-              ),
+              borderRadius: BorderRadius.circular(TechStepRadius.md),
             ),
           ),
         ),
@@ -243,20 +211,14 @@ abstract final class TechStepTheme {
       // Tombol sekunder.
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: ButtonStyle(
-          minimumSize: const WidgetStatePropertyAll(
-            Size(0, 48),
-          ),
-          foregroundColor: const WidgetStatePropertyAll(
-            TechStepColors.primary,
-          ),
+          minimumSize: const WidgetStatePropertyAll(Size(0, 48)),
+          foregroundColor: const WidgetStatePropertyAll(TechStepColors.primary),
           side: const WidgetStatePropertyAll(
             BorderSide(color: TechStepColors.border),
           ),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                TechStepRadius.md,
-              ),
+              borderRadius: BorderRadius.circular(TechStepRadius.md),
             ),
           ),
         ),
@@ -269,55 +231,40 @@ abstract final class TechStepTheme {
         elevation: 0,
         indicatorColor: TechStepColors.primarySoft,
         indicatorShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.md,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.md),
         ),
-        labelTextStyle:
-            WidgetStateProperty.resolveWith<TextStyle?>(
-          (states) {
-            final selected =
-                states.contains(WidgetState.selected);
+        labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
+          final selected = states.contains(WidgetState.selected);
 
-            return TextStyle(
-              fontSize: 12,
-              fontWeight: selected
-                  ? FontWeight.w700
-                  : FontWeight.w500,
-              color: selected
-                  ? TechStepColors.primary
-                  : TechStepColors.textSecondary,
-            );
-          },
-        ),
-        iconTheme:
-            WidgetStateProperty.resolveWith<IconThemeData?>(
-          (states) {
-            final selected =
-                states.contains(WidgetState.selected);
+          return TextStyle(
+            fontSize: 12,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            color: selected
+                ? TechStepColors.primary
+                : TechStepColors.textSecondary,
+          );
+        }),
+        iconTheme: WidgetStateProperty.resolveWith<IconThemeData?>((states) {
+          final selected = states.contains(WidgetState.selected);
 
-            return IconThemeData(
-              size: 22,
-              color: selected
-                  ? TechStepColors.primary
-                  : TechStepColors.textSecondary,
-            );
-          },
-        ),
+          return IconThemeData(
+            size: 22,
+            color: selected
+                ? TechStepColors.primary
+                : TechStepColors.textSecondary,
+          );
+        }),
       ),
 
       // Indikator progres.
-      progressIndicatorTheme:
-          const ProgressIndicatorThemeData(
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: TechStepColors.primary,
         linearTrackColor: TechStepColors.border,
         circularTrackColor: TechStepColors.border,
       ),
 
       dividerColor: TechStepColors.border,
-      iconTheme: const IconThemeData(
-        color: TechStepColors.textSecondary,
-      ),
+      iconTheme: const IconThemeData(color: TechStepColors.textSecondary),
     );
   }
 }

@@ -134,8 +134,17 @@ ThemeData _buildTechStepTheme() {
         onPrimary: Colors.white,
         secondary: primarySoft,
         onSecondary: textPrimary,
+        primaryContainer: primarySoft,
+        onPrimaryContainer: textPrimary,
         surface: surface,
         onSurface: textPrimary,
+        onSurfaceVariant: textSecondary,
+        outline: border,
+        outlineVariant: border,
+        surfaceContainerLowest: surface,
+        surfaceContainerLow: const Color(0xFFFAF9FE),
+        surfaceContainer: const Color(0xFFF6F5FB),
+        surfaceContainerHigh: const Color(0xFFEFEFF5),
         error: danger,
         onError: Colors.white,
       );
@@ -204,6 +213,24 @@ ThemeData _buildTechStepTheme() {
         borderRadius: BorderRadius.circular(18),
         side: const BorderSide(color: border),
       ),
+    ),
+
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: surface,
+      modalBackgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      showDragHandle: true,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: colorScheme.inverseSurface,
+      contentTextStyle: TextStyle(color: colorScheme.onInverseSurface),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
 
     // INPUT
@@ -340,16 +367,16 @@ ThemeData _buildTechStepTheme() {
 // ============================================================
 
 ThemeData _buildTechStepDarkTheme() {
-  const primary = Color(0xFF9D91FF);
-  const primaryDark = Color(0xFF7668EE);
-  const primarySoft = Color(0xFF332D55);
+  const primary = Color(0xFFB5A7FF);
+  const primaryDark = Color(0xFF8A7AF2);
+  const primarySoft = Color(0xFF332B4D);
 
-  const background = Color(0xFF12111C);
-  const surface = Color(0xFF1E1C2B);
+  const background = Color(0xFF0D0D10);
+  const surface = Color(0xFF17171C);
 
-  const textPrimary = Color(0xFFF4F1FF);
-  const textSecondary = Color(0xFFB7B1CA);
-  const border = Color(0xFF39354E);
+  const textPrimary = Color(0xFFF4F4F7);
+  const textSecondary = Color(0xFFB4B4BE);
+  const border = Color(0xFF303038);
 
   const success = Color(0xFF69D5AE);
   const danger = Color(0xFFFF7185);
@@ -363,8 +390,18 @@ ThemeData _buildTechStepDarkTheme() {
         onPrimary: const Color(0xFF171329),
         secondary: primarySoft,
         onSecondary: textPrimary,
+        primaryContainer: primarySoft,
+        onPrimaryContainer: textPrimary,
         surface: surface,
         onSurface: textPrimary,
+        onSurfaceVariant: textSecondary,
+        outline: const Color(0xFF46464F),
+        outlineVariant: border,
+        surfaceContainerLowest: const Color(0xFF111114),
+        surfaceContainerLow: surface,
+        surfaceContainer: const Color(0xFF1D1D23),
+        surfaceContainerHigh: const Color(0xFF25252C),
+        surfaceContainerHighest: const Color(0xFF2C2C34),
         error: danger,
         onError: Colors.white,
       );
@@ -405,6 +442,24 @@ ThemeData _buildTechStepDarkTheme() {
         borderRadius: BorderRadius.circular(18),
         side: const BorderSide(color: border),
       ),
+    ),
+
+    dialogTheme: DialogThemeData(
+      backgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: surface,
+      modalBackgroundColor: surface,
+      surfaceTintColor: Colors.transparent,
+      showDragHandle: true,
+    ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: colorScheme.inverseSurface,
+      contentTextStyle: TextStyle(color: colorScheme.onInverseSurface),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
     ),
 
     // INPUT
@@ -639,40 +694,52 @@ class _TechStepHomeState extends State<TechStepHome> {
       body: SafeArea(
         child: IndexedStack(index: currentIndex, children: pages),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: currentIndex,
-        onDestinationSelected: (index) {
-          setState(() {
-            currentIndex = index;
-          });
-        },
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_rounded),
-            label: 'Home',
+      bottomNavigationBar: SafeArea(
+        top: false,
+        child: Align(
+          heightFactor: 1,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 760),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+              child: NavigationBar(
+                selectedIndex: currentIndex,
+                onDestinationSelected: (index) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                },
+                destinations: const [
+                  NavigationDestination(
+                    icon: Icon(Icons.home_outlined),
+                    selectedIcon: Icon(Icons.home_rounded),
+                    label: 'Home',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.menu_book_outlined),
+                    selectedIcon: Icon(Icons.menu_book_rounded),
+                    label: 'Learn',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.quiz_outlined),
+                    selectedIcon: Icon(Icons.quiz_rounded),
+                    label: 'Quiz',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.sports_esports_outlined),
+                    selectedIcon: Icon(Icons.sports_esports_rounded),
+                    label: 'Challenge',
+                  ),
+                  NavigationDestination(
+                    icon: Icon(Icons.person_outline_rounded),
+                    selectedIcon: Icon(Icons.person_rounded),
+                    label: 'Profil',
+                  ),
+                ],
+              ),
+            ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.menu_book_outlined),
-            selectedIcon: Icon(Icons.menu_book_rounded),
-            label: 'Learn',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.quiz_outlined),
-            selectedIcon: Icon(Icons.quiz_rounded),
-            label: 'Quiz',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.sports_esports_outlined),
-            selectedIcon: Icon(Icons.sports_esports_rounded),
-            label: 'Challenge',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.person_outline_rounded),
-            selectedIcon: Icon(Icons.person_rounded),
-            label: 'Profil',
-          ),
-        ],
+        ),
       ),
     );
   }

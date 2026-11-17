@@ -2,6 +2,28 @@ import 'package:flutter/material.dart';
 
 import '../theme/techstep_theme.dart';
 
+/// Keeps long-form screen content readable on tablet and desktop layouts.
+class TechStepPageFrame extends StatelessWidget {
+  final Widget child;
+  final double maxWidth;
+
+  const TechStepPageFrame({
+    super.key,
+    required this.child,
+    this.maxWidth = 860,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: maxWidth),
+        child: child,
+      ),
+    );
+  }
+}
+
 /// Kartu standar TechStep.
 class TechStepCard extends StatelessWidget {
   final Widget child;
@@ -21,24 +43,20 @@ class TechStepCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final borderRadius = BorderRadius.circular(radius);
 
     return Material(
-      color: backgroundColor ?? TechStepColors.surface,
+      color: backgroundColor ?? scheme.surface,
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,
-        side: const BorderSide(
-          color: TechStepColors.border,
-        ),
+        side: BorderSide(color: scheme.outlineVariant),
       ),
       child: InkWell(
         onTap: onTap,
         borderRadius: borderRadius,
-        child: Padding(
-          padding: padding,
-          child: child,
-        ),
+        child: Padding(padding: padding, child: child),
       ),
     );
   }
@@ -66,20 +84,10 @@ class TechStepSectionTitle extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium,
-              ),
+              Text(title, style: Theme.of(context).textTheme.titleMedium),
               if (subtitle != null) ...[
                 const SizedBox(height: 4),
-                Text(
-                  subtitle!,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall,
-                ),
+                Text(subtitle!, style: Theme.of(context).textTheme.bodySmall),
               ],
             ],
           ),
@@ -96,36 +104,36 @@ class TechStepSectionTitle extends StatelessWidget {
 /// Latar ikon yang seragam.
 class TechStepIconBadge extends StatelessWidget {
   final IconData icon;
-  final Color backgroundColor;
-  final Color iconColor;
+  final Color? backgroundColor;
+  final Color? iconColor;
   final double size;
   final double? iconSize;
 
   const TechStepIconBadge({
     super.key,
     required this.icon,
-    this.backgroundColor = TechStepColors.primarySoft,
-    this.iconColor = TechStepColors.primary,
+    this.backgroundColor,
+    this.iconColor,
     this.size = 48,
     this.iconSize,
   });
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return Container(
       width: size,
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(
-          TechStepRadius.md,
-        ),
+        color: backgroundColor ?? scheme.primaryContainer,
+        borderRadius: BorderRadius.circular(TechStepRadius.md),
       ),
       child: Icon(
         icon,
         size: iconSize ?? size * 0.48,
-        color: iconColor,
+        color: iconColor ?? scheme.primary,
       ),
     );
   }
@@ -175,7 +183,7 @@ class TechStepProgressBar extends StatelessWidget {
   final String? label;
   final bool showPercentage;
   final double height;
-  final Color color;
+  final Color? color;
 
   const TechStepProgressBar({
     super.key,
@@ -183,13 +191,14 @@ class TechStepProgressBar extends StatelessWidget {
     this.label,
     this.showPercentage = true,
     this.height = 7,
-    this.color = TechStepColors.primary,
+    this.color,
   });
 
   @override
   Widget build(BuildContext context) {
-    final progress =
-        (value / 100).clamp(0.0, 1.0).toDouble();
+    final scheme = Theme.of(context).colorScheme;
+    final progressColor = color ?? scheme.primary;
+    final progress = (value / 100).clamp(0.0, 1.0).toDouble();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -201,32 +210,26 @@ class TechStepProgressBar extends StatelessWidget {
                 Expanded(
                   child: Text(
                     label!,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall,
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ),
               if (showPercentage)
                 Text(
                   '${value.round()}%',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelLarge
-                      ?.copyWith(color: color),
+                  style: Theme.of(context).textTheme.labelLarge
+                      ?.copyWith(color: progressColor),
                 ),
             ],
           ),
           const SizedBox(height: 8),
         ],
         ClipRRect(
-          borderRadius: BorderRadius.circular(
-            TechStepRadius.pill,
-          ),
+          borderRadius: BorderRadius.circular(TechStepRadius.pill),
           child: LinearProgressIndicator(
             value: progress,
             minHeight: height,
-            color: color,
-            backgroundColor: TechStepColors.border,
+            color: progressColor,
+            backgroundColor: scheme.surfaceContainerHighest,
           ),
         ),
       ],
