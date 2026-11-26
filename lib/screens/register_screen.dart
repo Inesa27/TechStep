@@ -72,7 +72,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (!success) {
         setState(() {
-          _errorMessage = 'NIS/Username sudah terdaftar.';
+          _errorMessage = 'NIS sudah terdaftar.';
           _isLoading = false;
         });
         return;
@@ -234,15 +234,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           keyboardType: TextInputType.text,
                           decoration: _inputDecoration(
                             context: context,
-                            label: 'NIS / Username',
+                            label: 'NIS',
                             icon: Icons.badge_outlined,
                           ),
                           validator: (value) {
-                            final error = _required(value, 'NIS/Username');
+                            final error = _required(value, 'NIS');
                             if (error != null) return error;
 
                             if (value!.trim().length < 3) {
-                              return 'NIS/Username minimal 3 karakter';
+                              return 'NIS minimal 3 karakter';
                             }
 
                             return null;

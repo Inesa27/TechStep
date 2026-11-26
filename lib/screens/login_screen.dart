@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
   /// Dipanggil ketika tombol "Masuk" ditekan.
-  /// Return true jika username/NIS dan password benar.
+  /// Return true jika NIS dan password benar.
   /// Return false jika data login salah.
-  final Future<bool> Function(String username, String password)? onLogin;
+  final Future<bool> Function(String nis, String password)? onLogin;
 
   /// Dipanggil ketika pengguna menekan "Daftar".
   final VoidCallback? onRegister;
@@ -17,7 +17,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
+  final _nisController = TextEditingController();
   final _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
@@ -26,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _nisController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final success = await widget.onLogin!(
-        _usernameController.text.trim(),
+        _nisController.text.trim(),
         _passwordController.text,
       );
 
@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!success) {
         setState(() {
-          _errorMessage = 'Username/NIS atau password salah.';
+          _errorMessage = 'NIS atau password salah.';
         });
         return;
       }
@@ -257,13 +257,10 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           Text('Masuk', style: textTheme.titleLarge),
           const SizedBox(height: 6),
-          Text(
-            'Gunakan Username atau NIS yang sudah terdaftar.',
-            style: textTheme.bodySmall,
-          ),
+          Text('Gunakan NIS yang sudah terdaftar.', style: textTheme.bodySmall),
           const SizedBox(height: 20),
           Text(
-            'Username / NIS',
+            'NIS',
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -272,17 +269,16 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 7),
           TextFormField(
-            controller: _usernameController,
+            controller: _nisController,
             textInputAction: TextInputAction.next,
-            autofillHints: const [AutofillHints.username],
             decoration: _inputDecoration(
               context: context,
-              hintText: 'Masukkan username atau NIS',
+              hintText: 'Masukkan NIS',
               prefixIcon: Icons.person_outline_rounded,
             ),
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return 'Username/NIS wajib diisi.';
+                return 'NIS wajib diisi.';
               }
               return null;
             },

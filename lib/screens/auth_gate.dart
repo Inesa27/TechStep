@@ -85,17 +85,14 @@ class _AuthGateState extends State<AuthGate> {
     }
   }
 
-  Future<bool> _handleLogin(String username, String password) async {
-    final success = await _authDatabase.loginUser(
-      nis: username,
-      password: password,
-    );
+  Future<bool> _handleLogin(String nis, String password) async {
+    final success = await _authDatabase.loginUser(nis: nis, password: password);
 
     if (!success) {
       return false;
     }
 
-    final user = await _authDatabase.getUserByNis(username);
+    final user = await _authDatabase.getUserByNis(nis);
     if (user == null) {
       return false;
     }
@@ -110,7 +107,7 @@ class _AuthGateState extends State<AuthGate> {
       name: user['name']?.toString() ?? 'Siswa TechStep',
       className: user['class_name']?.toString() ?? 'X TJKT',
     );
-    await _authDatabase.saveActiveSessionNis(username);
+    await _authDatabase.saveActiveSessionNis(nis);
 
     _currentUser = user;
     return true;
@@ -238,8 +235,8 @@ class _AuthGateState extends State<AuthGate> {
     }
 
     return LoginScreen(
-      onLogin: (username, password) async {
-        final success = await _handleLogin(username, password);
+      onLogin: (nis, password) async {
+        final success = await _handleLogin(nis, password);
 
         if (success) {
           _loginSuccess();
