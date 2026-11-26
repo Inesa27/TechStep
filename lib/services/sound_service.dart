@@ -14,6 +14,13 @@ class SoundService {
 
   Future<void> playIncorrect() => _play('audio/incorrect.wav', 0.42);
 
+  Future<void> playChallengeCorrect() =>
+      _play('audio/challenge_correct.wav', 0.48);
+
+  Future<void> playChallengeWrong() => _play('audio/wrong.wav', 0.42);
+
+  Future<void> playJump() => _play('audio/jump.wav', 0.46);
+
   Future<void> playComplete() => _play('audio/complete.wav', 0.52);
 
   Future<void> _play(String assetPath, double volume) async {
