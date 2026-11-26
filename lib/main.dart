@@ -665,6 +665,7 @@ class _TechStepHomeState extends State<TechStepHome> {
 
     pages = [
       DashboardScreen(
+        userName: widget.user['name']?.toString() ?? 'Pelajar',
         onLearn: () {
           setState(() {
             currentIndex = 1;

@@ -628,67 +628,118 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   Widget _buildChallengeHome() {
     return Scaffold(
       backgroundColor: _background,
-      appBar: AppBar(
-        backgroundColor: _background,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          'Computer Challenge',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: _textPrimary,
-            letterSpacing: -0.4,
-          ),
-        ),
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: TechStepPageFrame(
-            maxWidth: 860,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildChallengeHeader(),
-                SizedBox(height: 28),
-                Text(
-                  'Level Tantangan',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: _textPrimary,
-                    letterSpacing: -0.4,
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Column(
+            children: [
+              TechStepGradientHeader(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Icon(
+                        Icons.sports_esports_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Computer Challenge',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 12,
+                            ),
+                          ),
+                          SizedBox(height: 3),
+                          Text(
+                            'Naikkan levelmu',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      children: [
+                        Text(
+                          '${levels.where((item) => item.completed).length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const Text(
+                          'level selesai',
+                          style: TextStyle(color: Colors.white70, fontSize: 10),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              TechStepPageFrame(
+                maxWidth: 860,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 2),
+                      Text(
+                        'Level Tantangan',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: _textPrimary,
+                          letterSpacing: -0.4,
+                        ),
+                      ),
+                      SizedBox(height: 6),
+                      Text(
+                        'Selesaikan level secara berurutan.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          height: 1.6,
+                          color: _textSecondary,
+                        ),
+                      ),
+                      SizedBox(height: 18),
+                      if (levels.isEmpty)
+                        _buildNoLevelsCard()
+                      else
+                        ...List.generate(
+                          levels.length,
+                          (index) => _buildLevelCard(index),
+                        ),
+                      SizedBox(height: 6),
+                      _buildRubricCard(),
+                    ],
                   ),
                 ),
-                SizedBox(height: 6),
-                Text(
-                  'Selesaikan tantangan secara berurutan untuk membuka '
-                  'level berikutnya.',
-                  style: TextStyle(
-                    fontSize: 12,
-                    height: 1.6,
-                    color: _textSecondary,
-                  ),
-                ),
-                SizedBox(height: 18),
-                if (levels.isEmpty)
-                  _buildNoLevelsCard()
-                else
-                  ...List.generate(
-                    levels.length,
-                    (index) => _buildLevelCard(index),
-                  ),
-                SizedBox(height: 6),
-                _buildRubricCard(),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
+  // Legacy banner retained for compatibility; the active home layout no longer uses it.
+  // ignore: unused_element
   Widget _buildChallengeHeader() {
     final completedCount = levels.where((item) => item.completed).length;
 
@@ -731,7 +782,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Text(
-                      'MODE TANTANGAN',
+                      'CHALLENGE',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -757,7 +808,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
               SizedBox(height: 19),
               Text(
-                'Lompat, Jawab,\nSelesaikan Tantangan!',
+                'Jawab dan\nnaikkan level.',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -768,8 +819,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                'Lewati setiap kotak engklek dan uji pemahamanmu '
-                'tentang sistem komputer melalui tantangan interaktif.',
+                'Tantangan interaktif sistem komputer.',
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
@@ -794,7 +844,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Progres Tantangan',
+                                'Progres',
                                 style: TextStyle(
                                   color: Colors.white70,
                                   fontSize: 11,
@@ -802,7 +852,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               ),
                               SizedBox(height: 4),
                               Text(
-                                '$completedCount dari ${levels.length} level selesai',
+                                '$completedCount/${levels.length} level selesai',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 14,

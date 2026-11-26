@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -16,11 +15,7 @@ class ProfileScreen extends StatelessWidget {
   final Map<String, dynamic>? user;
   final VoidCallback onLogout;
 
-  const ProfileScreen({
-    super.key,
-    this.user,
-    required this.onLogout,
-  });
+  const ProfileScreen({super.key, this.user, required this.onLogout});
 
   // ============================================================
   // DATA SISWA
@@ -28,9 +23,7 @@ class ProfileScreen extends StatelessWidget {
 
   String get _studentName {
     final value = user?['name']?.toString().trim();
-    return value == null || value.isEmpty
-        ? 'Siswa TechStep'
-        : value;
+    return value == null || value.isEmpty ? 'Siswa TechStep' : value;
   }
 
   String get _studentNis {
@@ -40,9 +33,7 @@ class ProfileScreen extends StatelessWidget {
 
   String get _studentClass {
     final value = user?['class_name']?.toString().trim();
-    return value == null || value.isEmpty
-        ? 'X TJKT'
-        : value;
+    return value == null || value.isEmpty ? 'X TJKT' : value;
   }
 
   // ============================================================
@@ -79,8 +70,9 @@ class ProfileScreen extends StatelessWidget {
       'sistem_operasi': analytics.operatingSystemQuizScore,
     };
     final completedQuizIds = analytics.completedQuizMaterialIds;
-    final completedLevelCount =
-        challengeLevels.where((level) => level.completed).length;
+    final completedLevelCount = challengeLevels
+        .where((level) => level.completed)
+        .length;
     final studentName = user?['name']?.toString().trim();
     final studentNis = user?['nis']?.toString().trim();
     final studentClass = user?['class_name']?.toString().trim();
@@ -94,8 +86,7 @@ class ProfileScreen extends StatelessWidget {
           return pw.Container(
             margin: const pw.EdgeInsets.only(bottom: 18),
             child: pw.Row(
-              mainAxisAlignment:
-                  pw.MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
                   'TechStep',
@@ -106,9 +97,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 pw.Text(
                   'LAPORAN PEMBELAJARAN',
-                  style: const pw.TextStyle(
-                    fontSize: 9,
-                  ),
+                  style: const pw.TextStyle(fontSize: 9),
                 ),
               ],
             ),
@@ -119,21 +108,16 @@ class ProfileScreen extends StatelessWidget {
           return pw.Container(
             margin: const pw.EdgeInsets.only(top: 14),
             child: pw.Row(
-              mainAxisAlignment:
-                  pw.MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text(
                   'TechStep - Learning Report',
-                  style: const pw.TextStyle(
-                    fontSize: 9,
-                  ),
+                  style: const pw.TextStyle(fontSize: 9),
                 ),
                 pw.Text(
                   'Halaman ${context.pageNumber} '
                   'dari ${context.pagesCount}',
-                  style: const pw.TextStyle(
-                    fontSize: 9,
-                  ),
+                  style: const pw.TextStyle(fontSize: 9),
                 ),
               ],
             ),
@@ -145,10 +129,7 @@ class ProfileScreen extends StatelessWidget {
             child: pw.Text(
               'Laporan Perkembangan Belajar',
               textAlign: pw.TextAlign.center,
-              style: pw.TextStyle(
-                fontSize: 21,
-                fontWeight: pw.FontWeight.bold,
-              ),
+              style: pw.TextStyle(fontSize: 21, fontWeight: pw.FontWeight.bold),
             ),
           ),
 
@@ -432,9 +413,7 @@ class ProfileScreen extends StatelessWidget {
   // UNDUH LAPORAN PDF
   // ============================================================
 
-  Future<void> _downloadLearningAnalytics(
-    BuildContext context,
-  ) async {
+  Future<void> _downloadLearningAnalytics(BuildContext context) async {
     try {
       final bytes = await _buildLearningAnalyticsPdf();
 
@@ -474,9 +453,7 @@ class ProfileScreen extends StatelessWidget {
   // PRATINJAU LAPORAN PDF
   // ============================================================
 
-  Future<void> _previewLearningAnalytics(
-    BuildContext context,
-  ) async {
+  Future<void> _previewLearningAnalytics(BuildContext context) async {
     try {
       final bytes = await _buildLearningAnalyticsPdf();
 
@@ -495,12 +472,9 @@ class ProfileScreen extends StatelessWidget {
     }
   }
 
-  Future<void> _openSavedLearningAnalytics(
-    BuildContext context,
-  ) async {
+  Future<void> _openSavedLearningAnalytics(BuildContext context) async {
     try {
-      final report =
-          await TechStepDatabase.instance.getLatestLearningReport();
+      final report = await TechStepDatabase.instance.getLatestLearningReport();
       final encodedPdf = report?['pdf_base64']?.toString();
       if (encodedPdf == null || encodedPdf.isEmpty) {
         if (!context.mounted) return;
@@ -545,9 +519,7 @@ class ProfileScreen extends StatelessWidget {
         builder: (previewContext) {
           final colors = Theme.of(previewContext).colorScheme;
           return Scaffold(
-            appBar: AppBar(
-              title: const Text('Learning Report'),
-            ),
+            appBar: AppBar(title: const Text('Learning Report')),
             body: PdfPreview(
               canChangeOrientation: false,
               canChangePageFormat: false,
@@ -601,9 +573,7 @@ class ProfileScreen extends StatelessWidget {
   pw.TableRow _pdfTableHeader(List<String> labels) {
     return pw.TableRow(
       decoration: const pw.BoxDecoration(color: pdf.PdfColors.grey200),
-      children: [
-        for (final label in labels) _pdfTableCell(label, bold: true),
-      ],
+      children: [for (final label in labels) _pdfTableCell(label, bold: true)],
     );
   }
 
@@ -613,10 +583,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  pw.Widget _pdfInfoRow(
-    String label,
-    String value,
-  ) {
+  pw.Widget _pdfInfoRow(String label, String value) {
     return pw.Padding(
       padding: const pw.EdgeInsets.only(bottom: 6),
       child: pw.Row(
@@ -625,19 +592,11 @@ class ProfileScreen extends StatelessWidget {
             width: 110,
             child: pw.Text(
               label,
-              style: pw.TextStyle(
-                fontWeight: pw.FontWeight.bold,
-                fontSize: 10,
-              ),
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 10),
             ),
           ),
           pw.Expanded(
-            child: pw.Text(
-              ': $value',
-              style: const pw.TextStyle(
-                fontSize: 10,
-              ),
-            ),
+            child: pw.Text(': $value', style: const pw.TextStyle(fontSize: 10)),
           ),
         ],
       ),
@@ -651,17 +610,13 @@ class ProfileScreen extends StatelessWidget {
   }) {
     return pw.Container(
       padding: const pw.EdgeInsets.all(8),
-      alignment: center
-          ? pw.Alignment.center
-          : pw.Alignment.centerLeft,
+      alignment: center ? pw.Alignment.center : pw.Alignment.centerLeft,
       child: pw.Text(
         text,
-        textAlign:
-            center ? pw.TextAlign.center : pw.TextAlign.left,
+        textAlign: center ? pw.TextAlign.center : pw.TextAlign.left,
         style: pw.TextStyle(
           fontSize: 9,
-          fontWeight:
-              bold ? pw.FontWeight.bold : pw.FontWeight.normal,
+          fontWeight: bold ? pw.FontWeight.bold : pw.FontWeight.normal,
         ),
       ),
     );
@@ -675,18 +630,10 @@ class ProfileScreen extends StatelessWidget {
         children: [
           pw.Text(
             '- ',
-            style: pw.TextStyle(
-              fontSize: 10,
-              fontWeight: pw.FontWeight.bold,
-            ),
+            style: pw.TextStyle(fontSize: 10, fontWeight: pw.FontWeight.bold),
           ),
           pw.Expanded(
-            child: pw.Text(
-              text,
-              style: const pw.TextStyle(
-                fontSize: 10,
-              ),
-            ),
+            child: pw.Text(text, style: const pw.TextStyle(fontSize: 10)),
           ),
         ],
       ),
@@ -709,112 +656,101 @@ class ProfileScreen extends StatelessWidget {
           appBar: AppBar(
             title: const Text(
               'Profil',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.w800,
-              ),
+              style: TextStyle(fontSize: 23, fontWeight: FontWeight.w800),
             ),
           ),
           body: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(
-                20,
-                10,
-                20,
-                32,
-              ),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 32),
               child: Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 920),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                  _buildProfileHeader(context),
+                      _buildProfileHeader(context),
 
-                  const SizedBox(height: 28),
+                      const SizedBox(height: 28),
 
-                  _buildSectionTitle(
-                    context,
-                    'Ringkasan Pembelajaran',
-                    'Aktivitas belajarmu sejauh ini.',
-                  ),
+                      _buildSectionTitle(
+                        context,
+                        'Ringkasan Belajar',
+                        'Ringkasan progres.',
+                      ),
 
-                  const SizedBox(height: 14),
+                      const SizedBox(height: 14),
 
-                  _buildSummaryCard(context, analytics),
+                      _buildSummaryCard(context, analytics),
 
-                  const SizedBox(height: 28),
+                      const SizedBox(height: 28),
 
-                  _buildSectionTitle(
-                    context,
-                    'Penguasaan Kompetensi',
-                    'Hasil evaluasi untuk setiap materi.',
-                  ),
+                      _buildSectionTitle(
+                        context,
+                        'Penguasaan Kompetensi',
+                        'Nilai tiap materi.',
+                      ),
 
-                  const SizedBox(height: 15),
+                      const SizedBox(height: 15),
 
-                  _buildCompetencyCard(
-                    context: context,
-                    title: 'Hardware',
-                    percentage: analytics.hardwareMastery,
-                    icon: Icons.memory_rounded,
-                  ),
+                      _buildCompetencyCard(
+                        context: context,
+                        title: 'Hardware',
+                        percentage: analytics.hardwareMastery,
+                        icon: Icons.memory_rounded,
+                      ),
 
-                  const SizedBox(height: 13),
+                      const SizedBox(height: 13),
 
-                  _buildCompetencyCard(
-                    context: context,
-                    title: 'Software',
-                    percentage: analytics.softwareMastery,
-                    icon: Icons.apps_rounded,
-                  ),
+                      _buildCompetencyCard(
+                        context: context,
+                        title: 'Software',
+                        percentage: analytics.softwareMastery,
+                        icon: Icons.apps_rounded,
+                      ),
 
-                  const SizedBox(height: 13),
+                      const SizedBox(height: 13),
 
-                  _buildCompetencyCard(
-                    context: context,
-                    title: 'Sistem Operasi',
-                    percentage: analytics.operatingSystemMastery,
-                    icon: Icons.desktop_windows_rounded,
-                  ),
+                      _buildCompetencyCard(
+                        context: context,
+                        title: 'Sistem Operasi',
+                        percentage: analytics.operatingSystemMastery,
+                        icon: Icons.desktop_windows_rounded,
+                      ),
 
-                  const SizedBox(height: 28),
+                      const SizedBox(height: 28),
 
-                  _buildSectionTitle(
-                    context,
-                    'Status Pembelajaran',
-                    'Pantau perkembangan belajarmu.',
-                  ),
+                      _buildSectionTitle(
+                        context,
+                        'Status Pembelajaran',
+                        'Progres saat ini.',
+                      ),
 
-                  const SizedBox(height: 14),
+                      const SizedBox(height: 14),
 
-                  _buildLearningStatus(context, analytics),
+                      _buildLearningStatus(context, analytics),
 
-                  const SizedBox(height: 28),
+                      const SizedBox(height: 28),
 
-                  // PENGATURAN LIGHT MODE / DARK MODE
+                      // PENGATURAN LIGHT MODE / DARK MODE
+                      _buildSectionTitle(
+                        context,
+                        'Pengaturan Tampilan',
+                        'Pilih mode tampilan.',
+                      ),
 
-                  _buildSectionTitle(
-                    context,
-                    'Pengaturan Tampilan',
-                    'Sesuaikan tampilan TechStep dengan preferensimu.',
-                  ),
+                      const SizedBox(height: 14),
 
-                  const SizedBox(height: 14),
+                      _buildAppearanceCard(context),
 
-                  _buildAppearanceCard(context),
+                      const SizedBox(height: 28),
 
-                  const SizedBox(height: 28),
+                      // LAPORAN PDF
+                      _buildReportCard(context),
 
-                  // LAPORAN PDF
+                      const SizedBox(height: 20),
 
-                  _buildReportCard(context),
-
-                  const SizedBox(height: 20),
-
-                  // LOGOUT
-
-                  _buildLogoutButton(context),
+                      // LOGOUT
+                      _buildLogoutButton(context),
                     ],
                   ),
                 ),
@@ -873,9 +809,7 @@ class ProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: colors.outlineVariant,
-        ),
+        border: Border.all(color: colors.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: _primary.withValues(alpha: 0.07),
@@ -893,10 +827,7 @@ class ProfileScreen extends StatelessWidget {
               height: 5,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF5547E8),
-                    Color(0xFF9A8CFF),
-                  ],
+                  colors: [Color(0xFF5547E8), Color(0xFF9A8CFF)],
                 ),
               ),
             ),
@@ -923,11 +854,10 @@ class ProfileScreen extends StatelessWidget {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Profil Siswa',
+                              'Profil',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
@@ -936,7 +866,7 @@ class ProfileScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 3),
                             Text(
-                              'Informasi akun siswa',
+                              'Data akun',
                               style: TextStyle(
                                 fontSize: 11,
                                 color: colors.onSurfaceVariant,
@@ -967,10 +897,7 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  Container(
-                    height: 1,
-                    color: colors.outlineVariant,
-                  ),
+                  Container(height: 1, color: colors.outlineVariant),
                   const SizedBox(height: 15),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -1016,25 +943,16 @@ class ProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: colors.outlineVariant,
-        ),
+        border: Border.all(color: colors.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            icon,
-            size: 18,
-            color: colors.primary,
-          ),
+          Icon(icon, size: 18, color: colors.primary),
           const SizedBox(height: 10),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 10,
-              color: colors.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 10, color: colors.onSurfaceVariant),
           ),
           const SizedBox(height: 5),
           Text(
@@ -1077,7 +995,8 @@ class ProfileScreen extends StatelessWidget {
           child: _buildSummaryItem(
             context: context,
             icon: Icons.quiz_rounded,
-            value: '${analytics.completedQuizMaterialIds.length}/'
+            value:
+                '${analytics.completedQuizMaterialIds.length}/'
                 '${LearningAnalyticsService.totalQuizMaterials}',
             label: 'Quiz selesai',
             accent: _success,
@@ -1108,16 +1027,11 @@ class ProfileScreen extends StatelessWidget {
 
     return Container(
       constraints: const BoxConstraints(minHeight: 142),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 16,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: accent.withValues(alpha: 0.20),
-        ),
+        border: Border.all(color: accent.withValues(alpha: 0.20)),
         boxShadow: [
           BoxShadow(
             color: accent.withValues(alpha: 0.06),
@@ -1136,11 +1050,7 @@ class ProfileScreen extends StatelessWidget {
               color: accent.withValues(alpha: 0.13),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              icon,
-              color: accent,
-              size: 22,
-            ),
+            child: Icon(icon, color: accent, size: 22),
           ),
           const SizedBox(height: 12),
           Text(
@@ -1183,13 +1093,12 @@ class ProfileScreen extends StatelessWidget {
     final Color accent = score >= 80
         ? _success
         : score >= 60
-            ? _primary
-            : _warning;
+        ? _primary
+        : _warning;
 
     final String status = percentage == 0
         ? 'Belum ada hasil evaluasi'
-        : LearningAnalyticsService.instance
-            .competencyStatus(percentage);
+        : LearningAnalyticsService.instance.competencyStatus(percentage);
 
     return Container(
       width: double.infinity,
@@ -1197,9 +1106,7 @@ class ProfileScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(21),
-        border: Border.all(
-          color: colors.outlineVariant,
-        ),
+        border: Border.all(color: colors.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: _primary.withValues(alpha: 0.05),
@@ -1220,11 +1127,7 @@ class ProfileScreen extends StatelessWidget {
                   color: accent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Icon(
-                  icon,
-                  color: accent,
-                  size: 24,
-                ),
+                child: Icon(icon, color: accent, size: 24),
               ),
               const SizedBox(width: 13),
               Expanded(
@@ -1312,25 +1215,20 @@ class ProfileScreen extends StatelessWidget {
     final Color accent = progress >= 80
         ? _success
         : progress >= 40
-            ? _primary
-            : _warning;
+        ? _primary
+        : _warning;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(19),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            accent.withValues(alpha: 0.12),
-            colors.surface,
-          ],
+          colors: [accent.withValues(alpha: 0.12), colors.surface],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: accent.withValues(alpha: 0.20),
-        ),
+        border: Border.all(color: accent.withValues(alpha: 0.20)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1344,11 +1242,7 @@ class ProfileScreen extends StatelessWidget {
                   color: accent.withValues(alpha: 0.13),
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Icon(
-                  Icons.flag_rounded,
-                  color: accent,
-                  size: 24,
-                ),
+                child: Icon(Icons.flag_rounded, color: accent, size: 24),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -1430,9 +1324,7 @@ class ProfileScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: colors.surface,
             borderRadius: BorderRadius.circular(21),
-            border: Border.all(
-              color: colors.outlineVariant,
-            ),
+            border: Border.all(color: colors.outlineVariant),
             boxShadow: [
               BoxShadow(
                 color: _primary.withValues(alpha: 0.04),
@@ -1453,16 +1345,12 @@ class ProfileScreen extends StatelessWidget {
                       color: colors.primaryContainer,
                       borderRadius: BorderRadius.circular(14),
                     ),
-                    child: Icon(
-                      Icons.palette_outlined,
-                      color: colors.primary,
-                    ),
+                    child: Icon(Icons.palette_outlined, color: colors.primary),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Tampilan Aplikasi',
@@ -1537,19 +1425,12 @@ class ProfileScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 14),
         decoration: BoxDecoration(
-          color: selected
-              ? colors.primaryContainer
-              : colors.surface,
+          color: selected ? colors.primaryContainer : colors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: selected
-                ? colors.primary
-                : colors.outlineVariant,
+            color: selected ? colors.primary : colors.outlineVariant,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -1558,9 +1439,7 @@ class ProfileScreen extends StatelessWidget {
             Icon(
               icon,
               size: 25,
-              color: selected
-                  ? colors.primary
-                  : colors.onSurfaceVariant,
+              color: selected ? colors.primary : colors.onSurfaceVariant,
             ),
             const SizedBox(height: 9),
             Text(
@@ -1576,18 +1455,11 @@ class ProfileScreen extends StatelessWidget {
             Text(
               subtitle,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 10,
-                color: colors.onSurfaceVariant,
-              ),
+              style: TextStyle(fontSize: 10, color: colors.onSurfaceVariant),
             ),
             if (selected) ...[
               const SizedBox(height: 7),
-              Icon(
-                Icons.check_circle_rounded,
-                size: 16,
-                color: colors.primary,
-              ),
+              Icon(Icons.check_circle_rounded, size: 16, color: colors.primary),
             ],
           ],
         ),
@@ -1605,11 +1477,7 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(21),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [
-            Color(0xFF29205E),
-            Color(0xFF5547C9),
-            Color(0xFF7567EB),
-          ],
+          colors: [Color(0xFF29205E), Color(0xFF5547C9), Color(0xFF7567EB)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -1656,10 +1524,7 @@ class ProfileScreen extends StatelessWidget {
                     SizedBox(height: 5),
                     Text(
                       'Learning Analytics TechStep',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Color(0xFFE0DCFF),
-                      ),
+                      style: TextStyle(fontSize: 11, color: Color(0xFFE0DCFF)),
                     ),
                   ],
                 ),
@@ -1668,8 +1533,7 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(height: 17),
           const Text(
-            'Lihat perkembangan belajar, penguasaan kompetensi, '
-            'dan rekomendasi pembelajaran dalam laporan PDF.',
+            'Progres dan rekomendasi belajar.',
             style: TextStyle(
               fontSize: 12,
               height: 1.6,
@@ -1684,15 +1548,10 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 _previewLearningAnalytics(context);
               },
-              icon: const Icon(
-                Icons.picture_as_pdf_rounded,
-                size: 20,
-              ),
+              icon: const Icon(Icons.picture_as_pdf_rounded, size: 20),
               label: const Text(
                 'Lihat Laporan PDF',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
@@ -1712,21 +1571,14 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 _downloadLearningAnalytics(context);
               },
-              icon: const Icon(
-                Icons.download_rounded,
-                size: 20,
-              ),
+              icon: const Icon(Icons.download_rounded, size: 20),
               label: const Text(
                 'Unduh Hasil Learning Analytics',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
-                side: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.55),
-                ),
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.55)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -1741,21 +1593,14 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () {
                 _openSavedLearningAnalytics(context);
               },
-              icon: const Icon(
-                Icons.history_rounded,
-                size: 20,
-              ),
+              icon: const Icon(Icons.history_rounded, size: 20),
               label: const Text(
                 'Buka PDF Tersimpan',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
-                side: BorderSide(
-                  color: Colors.white.withValues(alpha: 0.55),
-                ),
+                side: BorderSide(color: Colors.white.withValues(alpha: 0.55)),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
@@ -1777,16 +1622,11 @@ class ProfileScreen extends StatelessWidget {
     final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
-        final dialogColors =
-            Theme.of(dialogContext).colorScheme;
+        final dialogColors = Theme.of(dialogContext).colorScheme;
 
         return AlertDialog(
           backgroundColor: dialogColors.surface,
-          icon: Icon(
-            Icons.logout_rounded,
-            color: dialogColors.error,
-            size: 30,
-          ),
+          icon: Icon(Icons.logout_rounded, color: dialogColors.error, size: 30),
           title: Text(
             'Keluar dari akun?',
             style: TextStyle(
@@ -1797,10 +1637,7 @@ class ProfileScreen extends StatelessWidget {
           content: Text(
             'Kamu akan kembali ke halaman login. Progres belajar '
             'yang sudah tersimpan tidak akan dihapus.',
-            style: TextStyle(
-              height: 1.5,
-              color: dialogColors.onSurfaceVariant,
-            ),
+            style: TextStyle(height: 1.5, color: dialogColors.onSurfaceVariant),
           ),
           actions: [
             TextButton(
@@ -1844,23 +1681,15 @@ class ProfileScreen extends StatelessWidget {
       height: 53,
       child: OutlinedButton.icon(
         onPressed: () => _confirmLogout(context),
-        icon: const Icon(
-          Icons.logout_rounded,
-          size: 20,
-        ),
+        icon: const Icon(Icons.logout_rounded, size: 20),
         label: const Text(
           'Keluar dari Akun',
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
         ),
         style: OutlinedButton.styleFrom(
           foregroundColor: colors.error,
           backgroundColor: colors.errorContainer,
-          side: BorderSide(
-            color: colors.error.withValues(alpha: 0.25),
-          ),
+          side: BorderSide(color: colors.error.withValues(alpha: 0.25)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(17),
           ),

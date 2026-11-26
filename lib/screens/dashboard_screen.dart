@@ -7,12 +7,14 @@ class DashboardScreen extends StatelessWidget {
   final VoidCallback? onLearn;
   final VoidCallback? onQuiz;
   final VoidCallback? onChallenge;
+  final String userName;
 
   const DashboardScreen({
     super.key,
     this.onLearn,
     this.onQuiz,
     this.onChallenge,
+    this.userName = 'Pelajar',
   });
 
   @override
@@ -44,7 +46,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildSectionTitle(
                         context,
                         'Progress Belajar',
-                        subtitle: 'Pantau perkembangan belajarmu.',
+                        subtitle: 'Progres terbaru.',
                       ),
 
                       const SizedBox(height: 14),
@@ -56,7 +58,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildSectionTitle(
                         context,
                         'Materi Pembelajaran',
-                        subtitle: 'Tiga materi utama Sistem Komputer.',
+                        subtitle: 'Pilih topik.',
                       ),
 
                       const SizedBox(height: 14),
@@ -64,7 +66,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildMaterialCard(
                         context,
                         title: 'Hardware',
-                        subtitle: 'Kenali komponen fisik komputer.',
+                        subtitle: 'Komponen komputer.',
                         icon: Icons.memory_rounded,
                         progress: analytics.hardwareMastery / 100,
                         iconColor: const Color(0xFF5547E8),
@@ -77,7 +79,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildMaterialCard(
                         context,
                         title: 'Software',
-                        subtitle: 'Pelajari perangkat lunak komputer.',
+                        subtitle: 'Aplikasi dan program.',
                         icon: Icons.apps_rounded,
                         progress: analytics.softwareMastery / 100,
                         iconColor: const Color(0xFF239B70),
@@ -90,7 +92,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildMaterialCard(
                         context,
                         title: 'Sistem Operasi',
-                        subtitle: 'Pahami pengelolaan sumber daya komputer.',
+                        subtitle: 'Dasar sistem komputer.',
                         icon: Icons.desktop_windows_rounded,
                         progress: analytics.operatingSystemMastery / 100,
                         iconColor: const Color(0xFFB56A20),
@@ -103,7 +105,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildSectionTitle(
                         context,
                         'Mulai Belajar',
-                        subtitle: 'Pilih aktivitas yang ingin kamu lakukan.',
+                        subtitle: 'Pilih aktivitas.',
                       ),
 
                       const SizedBox(height: 14),
@@ -140,7 +142,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildSectionTitle(
                         context,
                         'Computer Challenge',
-                        subtitle: 'Tantang pemahamanmu melalui permainan.',
+                        subtitle: 'Uji kemampuan.',
                       ),
 
                       const SizedBox(height: 14),
@@ -152,7 +154,7 @@ class DashboardScreen extends StatelessWidget {
                       _buildSectionTitle(
                         context,
                         'Riwayat Aktivitas',
-                        subtitle: 'Lihat aktivitas belajar terakhirmu.',
+                        subtitle: 'Aktivitas terbaru.',
                       ),
 
                       const SizedBox(height: 14),
@@ -209,7 +211,7 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'TechStep',
+                'Hai, $userName',
                 style: textTheme.titleLarge?.copyWith(
                   fontSize: 22,
                   fontWeight: FontWeight.w800,
@@ -220,7 +222,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 3),
 
               Text(
-                'Belajar Informatika dengan langkahmu',
+                'Siap melanjutkan langkah belajarmu?',
                 style: textTheme.bodySmall?.copyWith(
                   color: scheme.onSurface.withValues(alpha: 0.65),
                 ),
@@ -362,8 +364,7 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 10),
 
               const Text(
-                'Pelajari materi, kerjakan quiz, dan '
-                'uji kemampuanmu melalui tantangan.',
+                'Belajar, quiz, dan challenge.',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 13,

@@ -24,6 +24,84 @@ class TechStepPageFrame extends StatelessWidget {
   }
 }
 
+/// Header gradient yang dipakai lintas halaman utama agar bahasa visual konsisten.
+class TechStepGradientHeader extends StatelessWidget {
+  final Widget child;
+  final EdgeInsetsGeometry padding;
+
+  const TechStepGradientHeader({
+    super.key,
+    required this.child,
+    this.padding = const EdgeInsets.fromLTRB(20, 20, 20, 24),
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final lighter = Color.lerp(scheme.primary, Colors.white, 0.24)!;
+
+    return Container(
+      width: double.infinity,
+      padding: padding,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [scheme.primary, lighter],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: scheme.primary.withValues(alpha: 0.18),
+            blurRadius: 22,
+            offset: const Offset(0, 9),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+}
+
+class TechStepMetricCard extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
+  final Color backgroundColor;
+
+  const TechStepMetricCard({
+    super.key,
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+    required this.backgroundColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TechStepCard(
+      padding: const EdgeInsets.all(14),
+      radius: 20,
+      backgroundColor: backgroundColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: color, size: 22),
+          const SizedBox(height: 15),
+          Text(value, style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: color,
+              )),
+          const SizedBox(height: 3),
+          Text(label, maxLines: 2, style: Theme.of(context).textTheme.bodySmall),
+        ],
+      ),
+    );
+  }
+}
+
 /// Kartu standar TechStep.
 class TechStepCard extends StatelessWidget {
   final Widget child;

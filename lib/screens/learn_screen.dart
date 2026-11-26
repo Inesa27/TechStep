@@ -1,9 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/learning_content.dart';
 import '../services/learning_analytics_service.dart';
 import '../services/techstep_database.dart';
+import '../widgets/techstep_components.dart';
 
 // ============================================================
 // LEARN SCREEN
@@ -38,30 +38,13 @@ class _LearnScreenState extends State<LearnScreen> {
       builder: (context, child) {
         return Scaffold(
           backgroundColor: _background,
-          appBar: AppBar(
-            backgroundColor: _background,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            titleSpacing: 20,
-            title: Text(
-              'Learn',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.bold,
-                color: _textPrimary,
-                letterSpacing: -0.5,
-              ),
-            ),
-          ),
           body: SafeArea(
             child: FutureBuilder<List<LearningMaterial>>(
               future: TechStepDatabase.instance.getMaterialsWithProgress(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
-                    child: CircularProgressIndicator(
-                      color: _primary,
-                    ),
+                    child: CircularProgressIndicator(color: _primary),
                   );
                 }
 
@@ -76,84 +59,150 @@ class _LearnScreenState extends State<LearnScreen> {
                 }
 
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 920),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      _buildIntroCard(analytics.learningProgress),
-                      SizedBox(height: 30),
-
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Pilih Materi',
-                                  style: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: _textPrimary,
-                                    letterSpacing: -0.4,
-                                  ),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  'Tentukan topik yang ingin kamu pelajari.',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    height: 1.5,
-                                    color: _textSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 9,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _primarySoft,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              '${materials.length} Topik',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                                color: _primary,
+                  padding: const EdgeInsets.only(bottom: 32),
+                  child: Column(
+                    children: [
+                      TechStepGradientHeader(
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.16),
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              child: const Icon(
+                                Icons.menu_book_rounded,
+                                color: Colors.white,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-
-                      SizedBox(height: 18),
-
-                      ...materials.map(
-                        (material) => Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: _buildMaterialCard(context, material),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: const [
+                                  Text(
+                                    'Ruang Belajar',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  SizedBox(height: 3),
+                                  Text(
+                                    'Belajar lebih terarah',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            _HeaderProgress(
+                              progress: analytics.learningProgress,
+                            ),
+                          ],
                         ),
                       ),
-
-                      SizedBox(height: 4),
-                      _buildLearningTip(),
-                        ],
+                      TechStepPageFrame(
+                        maxWidth: 920,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              TechStepSectionTitle(
+                                title: 'Kategori materi',
+                                subtitle: 'Pilih topik.',
+                                trailing: Text(
+                                  '${materials.length} topik',
+                                  style: TextStyle(
+                                    color: _primary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 14),
+                              _buildCategoryGrid(materials),
+                              const SizedBox(height: 28),
+                              const TechStepSectionTitle(
+                                title: 'Materi',
+                                subtitle: 'Lanjutkan belajar.',
+                              ),
+                              const SizedBox(height: 14),
+                              ...materials.map(
+                                (material) => Padding(
+                                  padding: const EdgeInsets.only(bottom: 14),
+                                  child: _buildMaterialCard(context, material),
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              _buildLearningTip(),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 );
               },
             ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildCategoryGrid(List<LearningMaterial> materials) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: materials.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 0.9,
+      ),
+      itemBuilder: (context, index) {
+        final material = materials[index];
+        final color = _colorFromHex(material.colorHex);
+        return TechStepCard(
+          padding: const EdgeInsets.all(13),
+          radius: 20,
+          backgroundColor: color.withValues(
+            alpha: Theme.of(context).brightness == Brightness.dark
+                ? 0.18
+                : 0.10,
+          ),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => MaterialDetailScreen(material: material),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(_iconFromKey(material.iconKey), color: color, size: 28),
+              const Spacer(),
+              Text(
+                material.title,
+                maxLines: 2,
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  color: _textPrimary,
+                ),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                '${(material.progress * 100).round()}% selesai',
+                style: TextStyle(fontSize: 11, color: _textSecondary),
+              ),
+            ],
           ),
         );
       },
@@ -167,11 +216,7 @@ class _LearnScreenState extends State<LearnScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.cloud_off_rounded,
-              size: 48,
-              color: _textSecondary,
-            ),
+            Icon(Icons.cloud_off_rounded, size: 48, color: _textSecondary),
             SizedBox(height: 14),
             Text(
               'Materi belum dapat dimuat',
@@ -204,11 +249,7 @@ class _LearnScreenState extends State<LearnScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.menu_book_rounded,
-              size: 48,
-              color: _primary,
-            ),
+            Icon(Icons.menu_book_rounded, size: 48, color: _primary),
             SizedBox(height: 14),
             Text(
               'Belum ada materi',
@@ -222,10 +263,7 @@ class _LearnScreenState extends State<LearnScreen> {
             Text(
               'Materi pembelajaran akan ditampilkan di sini.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: _textSecondary,
-              ),
+              style: TextStyle(fontSize: 13, color: _textSecondary),
             ),
           ],
         ),
@@ -237,9 +275,10 @@ class _LearnScreenState extends State<LearnScreen> {
   // KARTU PEMBUKA DAN RINGKASAN PROGRES
   // ------------------------------------------------------------
 
+  // Kept as a legacy private variant for existing screen references.
+  // ignore: unused_element
   Widget _buildIntroCard(int learningProgress) {
-    final progress =
-        (learningProgress / 100).clamp(0.0, 1.0).toDouble();
+    final progress = (learningProgress / 100).clamp(0.0, 1.0).toDouble();
 
     return Container(
       width: double.infinity,
@@ -374,12 +413,8 @@ class _LearnScreenState extends State<LearnScreen> {
                       child: LinearProgressIndicator(
                         value: progress,
                         minHeight: 8,
-                        backgroundColor:
-                            Colors.white.withValues(alpha: 0.2),
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(
-                          Colors.white,
-                        ),
+                        backgroundColor: Colors.white.withValues(alpha: 0.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                       ),
                     ),
                   ],
@@ -396,25 +431,21 @@ class _LearnScreenState extends State<LearnScreen> {
   // KARTU PILIHAN MATERI
   // ------------------------------------------------------------
 
-  Widget _buildMaterialCard(
-    BuildContext context,
-    LearningMaterial material,
-  ) {
+  Widget _buildMaterialCard(BuildContext context, LearningMaterial material) {
     final color = _colorFromHex(material.colorHex);
     final percentage = (material.progress * 100).round();
 
-    final isComplete = material.totalSubmaterials > 0 &&
+    final isComplete =
+        material.totalSubmaterials > 0 &&
         material.completedSubmaterials >= material.totalSubmaterials;
 
     final statusText = isComplete
         ? 'Selesai'
         : material.completedSubmaterials == 0
-            ? 'Belum dipelajari'
-            : 'Sedang dipelajari';
+        ? 'Belum dipelajari'
+        : 'Sedang dipelajari';
 
-    final statusColor = isComplete
-        ? _success
-        : _primary;
+    final statusColor = isComplete ? _success : _primary;
 
     final statusBackground = isComplete
         ? _success.withValues(alpha: 0.12)
@@ -429,9 +460,7 @@ class _LearnScreenState extends State<LearnScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => MaterialDetailScreen(
-                material: material,
-              ),
+              builder: (context) => MaterialDetailScreen(material: material),
             ),
           );
         },
@@ -534,10 +563,7 @@ class _LearnScreenState extends State<LearnScreen> {
                 children: [
                   Text(
                     'Progres materi',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 12, color: _textSecondary),
                   ),
                   Text(
                     '$percentage%',
@@ -553,8 +579,7 @@ class _LearnScreenState extends State<LearnScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
                 child: LinearProgressIndicator(
-                  value:
-                      material.progress.clamp(0.0, 1.0).toDouble(),
+                  value: material.progress.clamp(0.0, 1.0).toDouble(),
                   minHeight: 8,
                   backgroundColor: _surfaceMuted,
                   valueColor: AlwaysStoppedAnimation<Color>(color),
@@ -566,10 +591,7 @@ class _LearnScreenState extends State<LearnScreen> {
                   Expanded(
                     child: Text(
                       '${material.completedSubmaterials}/${material.totalSubmaterials} submateri dibuka',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: _textSecondary,
-                      ),
+                      style: TextStyle(fontSize: 11, color: _textSecondary),
                     ),
                   ),
                   Text(
@@ -581,11 +603,7 @@ class _LearnScreenState extends State<LearnScreen> {
                     ),
                   ),
                   SizedBox(width: 5),
-                  Icon(
-                    Icons.arrow_forward_rounded,
-                    size: 16,
-                    color: _primary,
-                  ),
+                  Icon(Icons.arrow_forward_rounded, size: 16, color: _primary),
                 ],
               ),
             ],
@@ -618,11 +636,7 @@ class _LearnScreenState extends State<LearnScreen> {
               color: _surface,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              Icons.lightbulb_rounded,
-              color: _primary,
-              size: 24,
-            ),
+            child: Icon(Icons.lightbulb_rounded, color: _primary, size: 24),
           ),
           SizedBox(width: 13),
           Expanded(
@@ -655,6 +669,48 @@ class _LearnScreenState extends State<LearnScreen> {
   }
 }
 
+class _HeaderProgress extends StatelessWidget {
+  final int progress;
+
+  const _HeaderProgress({required this.progress});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          width: 48,
+          height: 48,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              CircularProgressIndicator(
+                value: progress / 100,
+                strokeWidth: 4,
+                backgroundColor: Colors.white24,
+                valueColor: const AlwaysStoppedAnimation(Colors.white),
+              ),
+              Text(
+                '$progress%',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'progres',
+          style: TextStyle(color: Colors.white70, fontSize: 10),
+        ),
+      ],
+    );
+  }
+}
+
 // ============================================================
 // MATERIAL DETAIL SCREEN
 // ============================================================
@@ -662,14 +718,10 @@ class _LearnScreenState extends State<LearnScreen> {
 class MaterialDetailScreen extends StatefulWidget {
   final LearningMaterial material;
 
-  const MaterialDetailScreen({
-    super.key,
-    required this.material,
-  });
+  const MaterialDetailScreen({super.key, required this.material});
 
   @override
-  State<MaterialDetailScreen> createState() =>
-      _MaterialDetailScreenState();
+  State<MaterialDetailScreen> createState() => _MaterialDetailScreenState();
 }
 
 class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
@@ -723,17 +775,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
           future: _submaterialsFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: _primary,
-                ),
-              );
+              return Center(child: CircularProgressIndicator(color: _primary));
             }
 
             if (snapshot.hasError) {
-              return Center(
-                child: Text('Submateri belum dapat dimuat.'),
-              );
+              return Center(child: Text('Submateri belum dapat dimuat.'));
             }
 
             final submaterials = snapshot.data ?? [];
@@ -794,10 +840,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                   SizedBox(height: 7),
                   Text(
                     'Pilih bagian yang ingin kamu pelajari.',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: _textSecondary,
-                    ),
+                    style: TextStyle(fontSize: 12, color: _textSecondary),
                   ),
                   SizedBox(height: 16),
 
@@ -885,11 +928,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
           SizedBox(height: 7),
           Text(
             widget.material.subtitle,
-            style: TextStyle(
-              fontSize: 13,
-              height: 1.6,
-              color: _textSecondary,
-            ),
+            style: TextStyle(fontSize: 13, height: 1.6, color: _textSecondary),
           ),
           SizedBox(height: 18),
           Container(
@@ -900,11 +939,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
             ),
             child: Row(
               children: [
-                Icon(
-                  Icons.menu_book_rounded,
-                  color: color,
-                  size: 21,
-                ),
+                Icon(Icons.menu_book_rounded, color: color, size: 21),
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -940,11 +975,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       ),
       child: Text(
         widget.material.description,
-        style: TextStyle(
-          fontSize: 13,
-          height: 1.8,
-          color: _textSecondary,
-        ),
+        style: TextStyle(fontSize: 13, height: 1.8, color: _textSecondary),
       ),
     );
   }
@@ -960,18 +991,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.menu_book_rounded,
-            color: _textSecondary,
-            size: 36,
-          ),
+          Icon(Icons.menu_book_rounded, color: _textSecondary, size: 36),
           SizedBox(height: 10),
           Text(
             'Belum ada submateri',
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: _textPrimary,
-            ),
+            style: TextStyle(fontWeight: FontWeight.bold, color: _textPrimary),
           ),
         ],
       ),
@@ -993,8 +1017,9 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         child: InkWell(
           borderRadius: BorderRadius.circular(20),
           onTap: () async {
-            await LearningAnalyticsService.instance
-                .recordSubmaterialOpened(submaterial);
+            await LearningAnalyticsService.instance.recordSubmaterialOpened(
+              submaterial,
+            );
 
             if (!mounted) {
               return;
@@ -1039,11 +1064,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: submaterial.completed
-                      ? Icon(
-                          Icons.check_rounded,
-                          color: _success,
-                          size: 22,
-                        )
+                      ? Icon(Icons.check_rounded, color: _success, size: 22)
                       : Text(
                           number.toString().padLeft(2, '0'),
                           style: TextStyle(
@@ -1088,9 +1109,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                         style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
-                          color: submaterial.completed
-                              ? _success
-                              : color,
+                          color: submaterial.completed ? _success : color,
                         ),
                       ),
                     ],
@@ -1099,9 +1118,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                 SizedBox(width: 6),
                 Icon(
                   Icons.chevron_right_rounded,
-                  color: submaterial.completed
-                      ? color
-                      : _textSecondary,
+                  color: submaterial.completed ? color : _textSecondary,
                   size: 24,
                 ),
               ],
@@ -1129,15 +1146,10 @@ class SubmaterialScreen extends StatelessWidget {
     required this.currentIndex,
   });
 
-  Future<void> _openSubmaterialAt(
-    BuildContext context,
-    int targetIndex,
-  ) async {
+  Future<void> _openSubmaterialAt(BuildContext context, int targetIndex) async {
     final target = submaterials[targetIndex];
 
-    await LearningAnalyticsService.instance.recordSubmaterialOpened(
-      target,
-    );
+    await LearningAnalyticsService.instance.recordSubmaterialOpened(target);
 
     if (!context.mounted) {
       return;
@@ -1192,9 +1204,7 @@ class SubmaterialScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: colorScheme.surface,
                   borderRadius: BorderRadius.circular(24),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant,
-                  ),
+                  border: Border.all(color: colorScheme.outlineVariant),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1284,20 +1294,13 @@ class SubmaterialScreen extends StatelessWidget {
                   if (hasPrevious)
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () => _openSubmaterialAt(
-                          context,
-                          currentIndex - 1,
-                        ),
-                        icon: Icon(
-                          Icons.arrow_back_rounded,
-                          size: 18,
-                        ),
+                        onPressed: () =>
+                            _openSubmaterialAt(context, currentIndex - 1),
+                        icon: Icon(Icons.arrow_back_rounded, size: 18),
                         label: Text('Sebelumnya'),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: colorScheme.primary,
-                          side: BorderSide(
-                            color: colorScheme.outlineVariant,
-                          ),
+                          side: BorderSide(color: colorScheme.outlineVariant),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 10,
                             vertical: 14,
@@ -1317,10 +1320,7 @@ class SubmaterialScreen extends StatelessWidget {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         if (hasNext) {
-                          _openSubmaterialAt(
-                            context,
-                            currentIndex + 1,
-                          );
+                          _openSubmaterialAt(context, currentIndex + 1);
                         } else {
                           Navigator.of(context).pop();
                         }
@@ -1405,10 +1405,7 @@ class SubmaterialScreen extends StatelessWidget {
                 width: 8,
                 height: 8,
                 margin: const EdgeInsets.only(top: 7),
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
               ),
               SizedBox(width: 11),
               Expanded(
@@ -1446,10 +1443,7 @@ class SubmaterialScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildTextCard(
-    BuildContext context, {
-    required Widget child,
-  }) {
+  Widget _buildTextCard(BuildContext context, {required Widget child}) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
@@ -1457,9 +1451,7 @@ class SubmaterialScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(19),
-        border: Border.all(
-          color: colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: child,
     );
@@ -1473,9 +1465,7 @@ class SubmaterialScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(19),
-        border: Border.all(
-          color: colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1512,16 +1502,12 @@ class SubmaterialScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(19),
-        border: Border.all(
-          color: colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: DataTable(
-          headingRowColor: WidgetStatePropertyAll(
-            colorScheme.primaryContainer,
-          ),
+          headingRowColor: WidgetStatePropertyAll(colorScheme.primaryContainer),
           columnSpacing: 22,
           horizontalMargin: 12,
           columns: block.headers.map((header) {

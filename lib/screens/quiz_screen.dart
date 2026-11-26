@@ -55,19 +55,19 @@ class _QuizScreenState extends State<QuizScreen> {
     _QuizMaterial(
       id: 'hardware',
       title: 'Hardware',
-      subtitle: 'Perangkat keras komputer',
+      subtitle: 'Komponen komputer',
       icon: Icons.memory_rounded,
     ),
     _QuizMaterial(
       id: 'software',
       title: 'Software',
-      subtitle: 'Perangkat lunak komputer',
+      subtitle: 'Aplikasi dan program',
       icon: Icons.apps_rounded,
     ),
     _QuizMaterial(
       id: 'sistem_operasi',
       title: 'Sistem Operasi',
-      subtitle: 'Fungsi dan pengelolaan sistem operasi',
+      subtitle: 'Dasar sistem komputer',
       icon: Icons.desktop_windows_rounded,
     ),
   ];
@@ -418,98 +418,149 @@ class _QuizScreenState extends State<QuizScreen> {
 
     return Scaffold(
       backgroundColor: _background,
-      appBar: AppBar(
-        backgroundColor: _background,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        title: Text(
-          'Quiz',
-          style: TextStyle(
-            fontSize: 23,
-            fontWeight: FontWeight.bold,
-            color: _textPrimary,
-            letterSpacing: -0.5,
-          ),
-        ),
-      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: TechStepPageFrame(
-            maxWidth: 860,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildQuizIntro(loadedQuestions.length),
-                SizedBox(height: 28),
-
-                Row(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Column(
+            children: [
+              TechStepGradientHeader(
+                child: Row(
                   children: [
-                    Expanded(
+                    Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.16),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Icon(
+                        Icons.quiz_rounded,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    const Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pilih Kuis',
+                            'Quiz',
                             style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              color: _textPrimary,
-                              letterSpacing: -0.4,
+                              color: Colors.white70,
+                              fontSize: 12,
                             ),
                           ),
-                          SizedBox(height: 5),
+                          SizedBox(height: 3),
                           Text(
-                            'Uji pemahamanmu berdasarkan materi.',
+                            'Uji pemahaman',
                             style: TextStyle(
-                              fontSize: 12,
-                              height: 1.5,
-                              color: _textSecondary,
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w800,
                             ),
                           ),
                         ],
                       ),
                     ),
+                    Column(
+                      children: [
+                        Text(
+                          '${analytics.completedQuizMaterialIds.length}/${LearningAnalyticsService.totalQuizMaterials}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const Text(
+                          'selesai',
+                          style: TextStyle(color: Colors.white70, fontSize: 10),
+                        ),
+                      ],
+                    ),
                   ],
                 ),
+              ),
+              TechStepPageFrame(
+                maxWidth: 860,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 2),
 
-                SizedBox(height: 18),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Pilih Kuis',
+                                  style: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: _textPrimary,
+                                    letterSpacing: -0.4,
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                Text(
+                                  'Pilih topik quiz.',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    height: 1.5,
+                                    color: _textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
 
-                ..._quizMaterials.map((material) {
-                  final count = loadedQuestions
-                      .where((question) => question.materialId == material.id)
-                      .length;
+                      SizedBox(height: 18),
 
-                  final questionCount = count < questionsPerQuiz
-                      ? count
-                      : questionsPerQuiz;
+                      ..._quizMaterials.map((material) {
+                        final count = loadedQuestions
+                            .where(
+                              (question) => question.materialId == material.id,
+                            )
+                            .length;
 
-                  final completed = analytics.completedQuizMaterialIds.contains(
-                    material.id,
-                  );
+                        final questionCount = count < questionsPerQuiz
+                            ? count
+                            : questionsPerQuiz;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 15),
-                    child: _buildMaterialQuizCard(
-                      material: material,
-                      questionCount: questionCount,
-                      isCompleted: completed,
-                      latestScore: completed
-                          ? scoreByMaterial[material.id]
-                          : null,
-                      onTap: count == 0
-                          ? null
-                          : () => startQuiz(loadedQuestions, material.id),
-                    ),
-                  );
-                }),
+                        final completed = analytics.completedQuizMaterialIds
+                            .contains(material.id);
 
-                SizedBox(height: 4),
-                _buildProgressEntryCard(onTap: _openProgressPage),
-                SizedBox(height: 16),
-                _buildMappingInfo(),
-              ],
-            ),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 15),
+                          child: _buildMaterialQuizCard(
+                            material: material,
+                            questionCount: questionCount,
+                            isCompleted: completed,
+                            latestScore: completed
+                                ? scoreByMaterial[material.id]
+                                : null,
+                            onTap: count == 0
+                                ? null
+                                : () => startQuiz(loadedQuestions, material.id),
+                          ),
+                        );
+                      }),
+
+                      SizedBox(height: 4),
+                      _buildProgressEntryCard(onTap: _openProgressPage),
+                      SizedBox(height: 16),
+                      _buildMappingInfo(),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -520,6 +571,8 @@ class _QuizScreenState extends State<QuizScreen> {
   // KARTU PEMBUKA QUIZ
   // ==========================================================
 
+  // Legacy banner retained for compatibility; the active home layout no longer uses it.
+  // ignore: unused_element
   Widget _buildQuizIntro(int totalQuestions) {
     return Container(
       width: double.infinity,
@@ -558,7 +611,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       borderRadius: BorderRadius.circular(30),
                     ),
                     child: Text(
-                      'UJI KOMPETENSI',
+                      'QUIZ',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 10,
@@ -584,7 +637,7 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
               SizedBox(height: 19),
               Text(
-                'Saatnya Uji\nPemahamanmu!',
+                'Uji\npemahamanmu.',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 26,
@@ -595,8 +648,7 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                'Kerjakan latihan soal untuk mengetahui '
-                'seberapa jauh kamu memahami materi komputer.',
+                'Latihan soal materi komputer.',
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 13,
@@ -623,7 +675,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Bank soal tersedia',
+                            'Bank soal',
                             style: TextStyle(
                               fontSize: 12,
                               color: Colors.white70,
@@ -651,7 +703,7 @@ class _QuizScreenState extends State<QuizScreen> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        '3 Materi',
+                        '3 topik',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 11,
@@ -857,7 +909,7 @@ class _QuizScreenState extends State<QuizScreen> {
                     ),
                     SizedBox(height: 5),
                     Text(
-                      'Lihat nilai terbaru, rata-rata, dan riwayat kuis.',
+                      'Nilai dan riwayat kuis.',
                       style: TextStyle(
                         color: _textSecondary,
                         fontSize: 11,
