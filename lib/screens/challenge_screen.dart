@@ -1168,46 +1168,79 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     final question = levelQuestions[currentBox];
 
     return Scaffold(
-      backgroundColor: _background,
-      appBar: AppBar(
-        backgroundColor: _background,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          tooltip: 'Keluar dari level',
-          icon: Icon(Icons.arrow_back_rounded, color: _textPrimary),
-          onPressed: savingLevel ? null : exitLevel,
-        ),
-        title: Text(
-          'Level ${levels[selectedLevel].id}',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: _textPrimary,
-          ),
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 30),
-          child: TechStepPageFrame(
-            maxWidth: 860,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLevelTitle(),
-                SizedBox(height: 21),
-                _buildHopscotchMap(),
-                SizedBox(height: 24),
-                _buildCurrentQuestion(question),
-              ],
+      body: Stack(
+        children: [
+          Positioned.fill(child: _buildGameArena()),
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: Row(
+                  children: [
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.28),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        tooltip: 'Kembali',
+                        icon: const Icon(
+                          Icons.arrow_back_rounded,
+                          color: Colors.white,
+                        ),
+                        onPressed: savingLevel ? null : exitLevel,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Level ${levels[selectedLevel].id}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        shadows: [Shadow(color: Colors.black54, blurRadius: 5)],
+                      ),
+                    ),
+                    const Spacer(),
+                    _buildMinimalProgressHud(),
+                  ],
+                ),
+              ),
             ),
           ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: SafeArea(top: false, child: _buildCurrentQuestion(question)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMinimalProgressHud() {
+    final completed = completedBoxes.where((item) => item).length;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 7),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.28),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        '$completed/${levelQuestions.length}',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
         ),
       ),
     );
   }
 
+  // Legacy level card retained for compatibility; the arena uses a minimal HUD.
+  // ignore: unused_element
   Widget _buildLevelTitle() {
     final color = levelColors[selectedLevel % levelColors.length];
 
@@ -1316,6 +1349,148 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   // PAPAN ENGKLEK
   // ============================================================
 
+  Widget _buildGameArena() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final height = constraints.maxHeight.isFinite
+            ? constraints.maxHeight
+            : width * 2048 / 1143;
+        final tileSize = (width * 0.195).clamp(61.0, 95.0).toDouble();
+        final characterSize = tileSize * 0.82;
+        final gap = tileSize * 0.10;
+        final horizontalStep = (tileSize + gap) / width;
+        final verticalStep = (tileSize + gap) / height;
+        final panelTop = height * 0.58;
+        final maxBottomCenter = panelTop - gap - tileSize / 2;
+        final topY = (maxBottomCenter / height - verticalStep * 3)
+            .clamp(0.13, 0.225)
+            .toDouble();
+        final points = <int, Offset>{
+          4: Offset(0.50, topY),
+          2: Offset(0.50 - horizontalStep / 2, topY + verticalStep),
+          3: Offset(0.50 + horizontalStep / 2, topY + verticalStep),
+          1: Offset(0.50, topY + verticalStep * 2),
+          0: Offset(0.50, topY + verticalStep * 3),
+        };
+        final characterPoint = points[currentBox] ?? points[0]!;
+
+        return SizedBox(
+          width: width,
+          height: height,
+          child: Stack(
+            clipBehavior: Clip.hardEdge,
+            children: [
+              Positioned.fill(
+                child: Image.asset(
+                  'assets/images/engklekgame_scene.jpg',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              for (final entry in points.entries)
+                Positioned(
+                  left: entry.value.dx * width - tileSize / 2,
+                  top: entry.value.dy * height - tileSize / 2,
+                  child: _buildArenaTile(entry.key, tileSize),
+                ),
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 650),
+                curve: Curves.easeOutBack,
+                left: characterPoint.dx * width - characterSize / 2,
+                top: characterPoint.dy * height - characterSize / 2,
+                child: IgnorePointer(
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.96, end: 1),
+                    duration: const Duration(milliseconds: 650),
+                    curve: Curves.easeOutBack,
+                    builder: (context, scale, child) =>
+                        Transform.scale(scale: scale, child: child),
+                    child: Image.asset(
+                      'assets/images/player_character.png',
+                      width: characterSize,
+                      height: characterSize,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildArenaTile(int boxIndex, double size) {
+    final completed =
+        boxIndex < completedBoxes.length && completedBoxes[boxIndex];
+    final wrong = boxIndex < wrongBoxes.length && wrongBoxes[boxIndex];
+    final active = boxIndex == currentBox;
+    final locked = !completed && !wrong && !active;
+    final accent = completed
+        ? _success
+        : wrong
+        ? _danger
+        : _primary;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 220),
+      width: size,
+      height: size,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: completed
+            ? _success.withValues(alpha: 0.28)
+            : wrong
+            ? _danger.withValues(alpha: 0.24)
+            : active
+            ? _primary.withValues(alpha: 0.24)
+            : Colors.brown.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: active || completed || wrong
+              ? accent.withValues(alpha: 0.95)
+              : Colors.white.withValues(alpha: 0.62),
+          width: active ? 3 : 2,
+        ),
+        boxShadow: active
+            ? [
+                BoxShadow(
+                  color: _primary.withValues(alpha: 0.35),
+                  blurRadius: 15,
+                ),
+              ]
+            : null,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            '${boxIndex + 1}',
+            style: TextStyle(
+              color: locked ? const Color(0xFF6B554A) : accent,
+              fontSize: size * 0.28,
+              fontWeight: FontWeight.w900,
+              shadows: const [Shadow(color: Colors.white70, blurRadius: 2)],
+            ),
+          ),
+          if (completed || wrong || locked)
+            Icon(
+              completed
+                  ? Icons.check_rounded
+                  : wrong
+                  ? Icons.close_rounded
+                  : Icons.lock_outline_rounded,
+              size: size * 0.2,
+              color: locked ? const Color(0xFF6B554A) : accent,
+            ),
+        ],
+      ),
+    );
+  }
+
+  // Legacy card map retained for older references; the active level view uses _buildGameArena.
+  // ignore: unused_element
   Widget _buildHopscotchMap() {
     return Container(
       width: double.infinity,
