@@ -37,4 +37,6 @@ flutter:
     - assets/images/welcome_image.jpg
     - assets/images/onboarding_image.png
     - assets/images/logo_techstep.jpg
+    - assets/images/engklekgame_scene.jpg
+    - assets/images/player_character.png
     - assets/audio/
