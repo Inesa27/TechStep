@@ -11,7 +11,9 @@ import '../widgets/techstep_components.dart';
 // ============================================================
 
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key});
+  final ValueChanged<bool>? onSubpageChanged;
+
+  const QuizScreen({super.key, this.onSubpageChanged});
 
   @override
   State<QuizScreen> createState() => _QuizScreenState();
@@ -124,6 +126,7 @@ class _QuizScreenState extends State<QuizScreen> {
     }
 
     SoundService.instance.playClick();
+    widget.onSubpageChanged?.call(true);
 
     setState(() {
       questions = selectedQuestions;
@@ -251,6 +254,7 @@ class _QuizScreenState extends State<QuizScreen> {
   }
 
   void _backToQuizHome() {
+    widget.onSubpageChanged?.call(false);
     setState(() {
       quizStarted = false;
       quizFinished = false;

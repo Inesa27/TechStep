@@ -7,7 +7,9 @@ import '../services/techstep_database.dart';
 import '../widgets/techstep_components.dart';
 
 class ChallengeScreen extends StatefulWidget {
-  const ChallengeScreen({super.key});
+  final ValueChanged<bool>? onSubpageChanged;
+
+  const ChallengeScreen({super.key, this.onSubpageChanged});
 
   @override
   State<ChallengeScreen> createState() => _ChallengeScreenState();
@@ -117,6 +119,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         firstSelectedAnswers.clear();
         loadingLevel = false;
       });
+      widget.onSubpageChanged?.call(true);
     } catch (error) {
       if (!mounted) return;
 
@@ -134,6 +137,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   }
 
   void exitLevel() {
+    widget.onSubpageChanged?.call(false);
     setState(() {
       selectedLevel = -1;
       currentBox = 0;
@@ -156,7 +160,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     firstSelectedAnswers.putIfAbsent(question.id, () => selectedAnswerKey);
 
     if (selectedAnswerKey == question.correctOptionKey) {
-      SoundService.instance.playCorrect();
+      SoundService.instance.playChallengeCorrect();
       setState(() {
         completedBoxes[currentBox] = true;
         wrongBoxes[currentBox] = false;
@@ -164,7 +168,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 
       _showCorrectAnswerDialog();
     } else {
-      SoundService.instance.playIncorrect();
+      SoundService.instance.playChallengeWrong();
       setState(() {
         wrongBoxes[currentBox] = true;
       });
@@ -337,6 +341,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     final isLastBox = currentBox == levelQuestions.length - 1;
 
     if (!isLastBox) {
+      SoundService.instance.playJump();
       setState(() {
         currentBox++;
       });
@@ -361,6 +366,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         _reloadLevels();
       });
 
+      SoundService.instance.playJump();
       SoundService.instance.playComplete();
       _showLevelComplete();
     } catch (error) {
@@ -1682,137 +1688,91 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
   // ============================================================
 
   Widget _buildCurrentQuestion(LearningQuestion question) {
-    final color = levelColors[selectedLevel % levelColors.length];
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(19),
-      decoration: BoxDecoration(
-        color: _surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: _border),
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(context).height * 0.42,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  color: _primarySoft,
-                  borderRadius: BorderRadius.circular(11),
-                ),
-                child: Text(
-                  question.materialTitle,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: _primary,
-                  ),
-                ),
-              ),
-              Spacer(),
-              Text(
-                'Kotak ${currentBox + 1}/${levelQuestions.length}',
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  color: _textSecondary,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 14),
-          Row(
+      child: Material(
+        color: const Color.fromRGBO(239, 225, 203, 0.86),
+        elevation: 2,
+        shadowColor: Colors.brown.withValues(alpha: 0.16),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(14, 8, 14, 9),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.track_changes_rounded, size: 17, color: _primary),
-              SizedBox(width: 7),
-              Expanded(
-                child: Text(
-                  'Kompetensi: ${question.competencyTitle}',
-                  style: TextStyle(
-                    fontSize: 11,
-                    height: 1.5,
-                    color: _textSecondary,
+              Center(
+                child: Container(
+                  width: 38,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: _border,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 19),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(13),
-            ),
-            child: Icon(Icons.help_outline_rounded, color: color, size: 23),
-          ),
-          SizedBox(height: 15),
-          Text(
-            'TANTANGAN SAAT INI',
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.8,
-              color: _textSecondary,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            question.question,
-            style: TextStyle(
-              fontSize: 18,
-              height: 1.5,
-              fontWeight: FontWeight.bold,
-              color: _textPrimary,
-            ),
-          ),
-          SizedBox(height: 22),
-          Text(
-            'Pilih jawabanmu',
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: _textSecondary,
-            ),
-          ),
-          SizedBox(height: 12),
-          ...question.options.map(
-            (option) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _buildAnswerButton(option),
-            ),
-          ),
-          if (savingLevel) ...[
-            SizedBox(height: 12),
-            Center(
-              child: Column(
+              const SizedBox(height: 6),
+              Row(
                 children: [
-                  CircularProgressIndicator(color: _primary),
-                  SizedBox(height: 10),
                   Text(
-                    'Menyimpan hasil tantangan...',
-                    style: TextStyle(fontSize: 11, color: _textSecondary),
+                    'Kotak ${currentBox + 1}/${levelQuestions.length}',
+                    style: TextStyle(
+                      color: _primary,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const Spacer(),
+                  SizedBox(
+                    width: 78,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: LinearProgressIndicator(
+                        value: (currentBox + 1) / levelQuestions.length,
+                        minHeight: 5,
+                        backgroundColor: _surfaceMuted,
+                      ),
+                    ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ],
+              const SizedBox(height: 8),
+              Text(
+                question.question,
+                style: TextStyle(
+                  fontSize: 15,
+                  height: 1.25,
+                  fontWeight: FontWeight.w800,
+                  color: _textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ...question.options.map(
+                (option) => Padding(
+                  padding: const EdgeInsets.only(bottom: 5),
+                  child: _buildAnswerButton(option),
+                ),
+              ),
+              if (savingLevel)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: _primary,
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
   Widget _buildAnswerButton(AnswerOption option) {
     return Material(
-      color: _surface,
+      color: const Color.fromRGBO(255, 248, 235, 0.70),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: savingLevel
@@ -1823,7 +1783,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: _border),
@@ -1831,12 +1791,12 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
           child: Row(
             children: [
               Container(
-                width: 35,
-                height: 35,
+                width: 29,
+                height: 29,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   color: _primarySoft,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   option.key,
@@ -1847,23 +1807,23 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                   ),
                 ),
               ),
-              SizedBox(width: 12),
+              SizedBox(width: 9),
               Expanded(
                 child: Text(
                   option.text,
                   style: TextStyle(
-                    fontSize: 13,
-                    height: 1.5,
+                    fontSize: 12,
+                    height: 1.25,
                     fontWeight: FontWeight.w500,
                     color: _textPrimary,
                   ),
                 ),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 5),
               Icon(
                 Icons.chevron_right_rounded,
                 color: Color(0xFF9292A7),
-                size: 21,
+                size: 18,
               ),
             ],
           ),

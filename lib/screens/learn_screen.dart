@@ -10,7 +10,9 @@ import '../widgets/techstep_components.dart';
 // ============================================================
 
 class LearnScreen extends StatefulWidget {
-  const LearnScreen({super.key});
+  final ValueChanged<bool>? onSubpageChanged;
+
+  const LearnScreen({super.key, this.onSubpageChanged});
 
   @override
   State<LearnScreen> createState() => _LearnScreenState();
@@ -178,12 +180,7 @@ class _LearnScreenState extends State<LearnScreen> {
                 ? 0.18
                 : 0.10,
           ),
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => MaterialDetailScreen(material: material),
-            ),
-          ),
+          onTap: () => _openMaterial(context, material),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -207,6 +204,22 @@ class _LearnScreenState extends State<LearnScreen> {
         );
       },
     );
+  }
+
+  Future<void> _openMaterial(
+    BuildContext context,
+    LearningMaterial material,
+  ) async {
+    widget.onSubpageChanged?.call(true);
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MaterialDetailScreen(material: material),
+      ),
+    );
+    if (mounted) {
+      widget.onSubpageChanged?.call(false);
+    }
   }
 
   Widget _buildErrorState() {
@@ -456,14 +469,7 @@ class _LearnScreenState extends State<LearnScreen> {
       borderRadius: BorderRadius.circular(24),
       child: InkWell(
         borderRadius: BorderRadius.circular(24),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => MaterialDetailScreen(material: material),
-            ),
-          );
-        },
+        onTap: () => _openMaterial(context, material),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(18),

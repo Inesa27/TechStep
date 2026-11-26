@@ -656,6 +656,7 @@ class TechStepHome extends StatefulWidget {
 
 class _TechStepHomeState extends State<TechStepHome> {
   int currentIndex = 0;
+  bool showBottomNavigation = true;
 
   late final List<Widget> pages;
 
@@ -682,9 +683,18 @@ class _TechStepHomeState extends State<TechStepHome> {
           });
         },
       ),
-      const LearnScreen(),
-      const QuizScreen(),
-      const ChallengeScreen(),
+      LearnScreen(
+        onSubpageChanged: (hidden) =>
+            setState(() => showBottomNavigation = !hidden),
+      ),
+      QuizScreen(
+        onSubpageChanged: (hidden) =>
+            setState(() => showBottomNavigation = !hidden),
+      ),
+      ChallengeScreen(
+        onSubpageChanged: (hidden) =>
+            setState(() => showBottomNavigation = !hidden),
+      ),
       ProfileScreen(user: widget.user, onLogout: widget.onLogout),
     ];
   }
@@ -692,73 +702,73 @@ class _TechStepHomeState extends State<TechStepHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: IndexedStack(index: currentIndex, children: pages),
-      ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Align(
-          heightFactor: 1,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 760),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).colorScheme.primary
-                          .withValues(alpha: 0.12),
-                      blurRadius: 22,
-                      offset: const Offset(0, 8),
+      body: IndexedStack(index: currentIndex, children: pages),
+      bottomNavigationBar: showBottomNavigation
+          ? SafeArea(
+              top: false,
+              child: Align(
+                heightFactor: 1,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.surface,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(context).colorScheme.primary
+                                .withValues(alpha: 0.12),
+                            blurRadius: 22,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: NavigationBar(
+                          selectedIndex: currentIndex,
+                          onDestinationSelected: (index) {
+                            setState(() {
+                              currentIndex = index;
+                            });
+                          },
+                          destinations: const [
+                            NavigationDestination(
+                              icon: Icon(Icons.home_outlined),
+                              selectedIcon: Icon(Icons.home_rounded),
+                              label: 'Home',
+                            ),
+                            NavigationDestination(
+                              icon: Icon(Icons.menu_book_outlined),
+                              selectedIcon: Icon(Icons.menu_book_rounded),
+                              label: 'Learn',
+                            ),
+                            NavigationDestination(
+                              icon: Icon(Icons.quiz_outlined),
+                              selectedIcon: Icon(Icons.quiz_rounded),
+                              label: 'Quiz',
+                            ),
+                            NavigationDestination(
+                              icon: Icon(Icons.sports_esports_outlined),
+                              selectedIcon: Icon(Icons.sports_esports_rounded),
+                              label: 'Challenge',
+                            ),
+                            NavigationDestination(
+                              icon: Icon(Icons.person_outline_rounded),
+                              selectedIcon: Icon(Icons.person_rounded),
+                              label: 'Profil',
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(24),
-                  child: NavigationBar(
-                    selectedIndex: currentIndex,
-                    onDestinationSelected: (index) {
-                      setState(() {
-                        currentIndex = index;
-                      });
-                    },
-                    destinations: const [
-                      NavigationDestination(
-                        icon: Icon(Icons.home_outlined),
-                        selectedIcon: Icon(Icons.home_rounded),
-                        label: 'Home',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(Icons.menu_book_outlined),
-                        selectedIcon: Icon(Icons.menu_book_rounded),
-                        label: 'Learn',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(Icons.quiz_outlined),
-                        selectedIcon: Icon(Icons.quiz_rounded),
-                        label: 'Quiz',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(Icons.sports_esports_outlined),
-                        selectedIcon: Icon(Icons.sports_esports_rounded),
-                        label: 'Challenge',
-                      ),
-                      NavigationDestination(
-                        icon: Icon(Icons.person_outline_rounded),
-                        selectedIcon: Icon(Icons.person_rounded),
-                        label: 'Profil',
-                      ),
-                    ],
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
+            )
+          : null,
     );
   }
 }
