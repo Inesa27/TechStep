@@ -33,3 +33,5 @@ flutter:
   assets:
     - assets/data/techstep_seed.json
     - assets/images/learn/
+    - assets/images/welcome_image.jpg
+    - assets/images/onboarding_image.png
