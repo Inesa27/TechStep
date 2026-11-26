@@ -9,11 +9,7 @@ class LoginScreen extends StatefulWidget {
   /// Dipanggil ketika pengguna menekan "Daftar".
   final VoidCallback? onRegister;
 
-  const LoginScreen({
-    super.key,
-    this.onLogin,
-    this.onRegister,
-  });
+  const LoginScreen({super.key, this.onLogin, this.onRegister});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -93,9 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Halaman daftar belum dibuat.'),
-      ),
+      const SnackBar(content: Text('Halaman daftar belum dibuat.')),
     );
   }
 
@@ -108,11 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final scheme = Theme.of(context).colorScheme;
     return InputDecoration(
       hintText: hintText,
-      prefixIcon: Icon(
-        prefixIcon,
-        color: scheme.onSurfaceVariant,
-        size: 21,
-      ),
+      prefixIcon: Icon(prefixIcon, color: scheme.onSurfaceVariant, size: 21),
       suffixIcon: suffixIcon,
       filled: true,
       fillColor: scheme.surface,
@@ -145,38 +135,69 @@ class _LoginScreenState extends State<LoginScreen> {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 30, 24, 30),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 430,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildLogo(),
-                    const SizedBox(height: 26),
-                    const Text(
-                      'Selamat Datang di TechStep',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              scheme.primaryContainer,
+              Theme.of(context).scaffoldBackgroundColor,
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
+            stops: const [0, 0.45, 1],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 30, 24, 30),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 430),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
+                  decoration: BoxDecoration(
+                    color: scheme.surface.withValues(alpha: 0.96),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: scheme.primary.withValues(alpha: 0.12),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Masuk untuk melanjutkan pembelajaranmu.',
-                      textAlign: TextAlign.center,
-                      style: textTheme.bodyMedium?.copyWith(
-                        color: scheme.onSurfaceVariant,
+                    boxShadow: [
+                      BoxShadow(
+                        color: scheme.primary.withValues(alpha: 0.14),
+                        blurRadius: 30,
+                        offset: const Offset(0, 14),
                       ),
+                    ],
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildLogo(),
+                        const SizedBox(height: 26),
+                        const Text(
+                          'Selamat Datang di TechStep',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Masuk untuk melanjutkan pembelajaranmu.',
+                          textAlign: TextAlign.center,
+                          style: textTheme.bodyMedium?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+                        _buildLoginCard(context),
+                      ],
                     ),
-                    const SizedBox(height: 28),
-                    _buildLoginCard(context),
-                  ],
+                  ),
                 ),
               ),
             ),
@@ -203,10 +224,12 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ],
         ),
-        child: const Icon(
-          Icons.school_rounded,
-          color: Colors.white,
-          size: 38,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Image.asset(
+            'assets/images/logo_techstep.jpg',
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
@@ -220,9 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: scheme.outlineVariant,
-        ),
+        border: Border.all(color: scheme.outlineVariant),
         boxShadow: [
           BoxShadow(
             color: scheme.shadow.withValues(alpha: 0.08),
@@ -234,10 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Masuk',
-            style: textTheme.titleLarge,
-          ),
+          Text('Masuk', style: textTheme.titleLarge),
           const SizedBox(height: 6),
           Text(
             'Gunakan Username atau NIS yang sudah terdaftar.',
@@ -324,16 +342,11 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 14),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               decoration: BoxDecoration(
                 color: scheme.errorContainer,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: scheme.error.withValues(alpha: 0.35),
-                ),
+                border: Border.all(color: scheme.error.withValues(alpha: 0.35)),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,8 +392,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 21,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.2,
-                        valueColor:
-                            AlwaysStoppedAnimation<Color>(scheme.onPrimary),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          scheme.onPrimary,
+                        ),
                       ),
                     )
                   : const Text(
@@ -398,10 +412,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Text(
                 'Belum punya akun?',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: scheme.onSurfaceVariant,
-                ),
+                style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
               ),
               TextButton(
                 onPressed: _handleRegister,

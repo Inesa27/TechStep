@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/sound_service.dart';
+
 class OnboardingScreen extends StatelessWidget {
   final VoidCallback onContinue;
 
@@ -50,7 +52,10 @@ class OnboardingScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     child: FilledButton.icon(
-                      onPressed: onContinue,
+                      onPressed: () {
+                        SoundService.instance.playClick();
+                        onContinue();
+                      },
                       icon: const Icon(Icons.arrow_forward_rounded),
                       label: const Text('Mulai Belajar'),
                       style: FilledButton.styleFrom(

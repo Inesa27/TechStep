@@ -6,15 +6,12 @@ class RegisterScreen extends StatefulWidget {
     required String nis,
     required String className,
     required String password,
-  })? onRegister;
+  })?
+  onRegister;
 
   final VoidCallback? onBackToLogin;
 
-  const RegisterScreen({
-    super.key,
-    this.onRegister,
-    this.onBackToLogin,
-  });
+  const RegisterScreen({super.key, this.onRegister, this.onBackToLogin});
 
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
@@ -141,270 +138,290 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final scheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 24,
-            ),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: 500,
-              ),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Logo / nama aplikasi
-                    Container(
-                      width: 82,
-                      height: 82,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: scheme.primaryContainer,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.school_rounded,
-                        size: 42,
-                        color: scheme.primary,
-                      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              scheme.primaryContainer,
+              Theme.of(context).scaffoldBackgroundColor,
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
+            stops: const [0, 0.45, 1],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+                  decoration: BoxDecoration(
+                    color: scheme.surface.withValues(alpha: 0.96),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: scheme.primary.withValues(alpha: 0.12),
                     ),
-                    const SizedBox(height: 16),
-
-                    Text(
-                      'TechStep',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold,
-                        color: scheme.primary,
+                    boxShadow: [
+                      BoxShadow(
+                        color: scheme.primary.withValues(alpha: 0.14),
+                        blurRadius: 30,
+                        offset: const Offset(0, 14),
                       ),
-                    ),
-                    const SizedBox(height: 6),
-
-                    Text(
-                      'Buat akun untuk mulai belajar',
-                      textAlign: TextAlign.center,
-                      style: textTheme.bodyLarge?.copyWith(
-                        color: scheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-
-                    TextFormField(
-                      controller: _nameController,
-                      textCapitalization: TextCapitalization.words,
-                      decoration: _inputDecoration(
-                        context: context,
-                        label: 'Nama Lengkap',
-                        icon: Icons.person_outline_rounded,
-                      ),
-                      validator: (value) => _required(
-                        value,
-                        'Nama lengkap',
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    TextFormField(
-                      controller: _nisController,
-                      keyboardType: TextInputType.text,
-                      decoration: _inputDecoration(
-                        context: context,
-                        label: 'NIS / Username',
-                        icon: Icons.badge_outlined,
-                      ),
-                      validator: (value) {
-                        final error = _required(value, 'NIS/Username');
-                        if (error != null) return error;
-
-                        if (value!.trim().length < 3) {
-                          return 'NIS/Username minimal 3 karakter';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 14),
-
-                    TextFormField(
-                      controller: _classController,
-                      textCapitalization: TextCapitalization.characters,
-                      decoration: _inputDecoration(
-                        context: context,
-                        label: 'Kelas',
-                        icon: Icons.class_outlined,
-                        // Contoh: X TJKT 1
-                      ),
-                      validator: (value) => _required(
-                        value,
-                        'Kelas',
-                      ),
-                    ),
-                    const SizedBox(height: 14),
-
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: !_isPasswordVisible,
-                      decoration: _inputDecoration(
-                        context: context,
-                        label: 'Password',
-                        icon: Icons.lock_outline_rounded,
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _isPasswordVisible = !_isPasswordVisible;
-                            });
-                          },
-                          icon: Icon(
-                            _isPasswordVisible
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                    ],
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Logo / nama aplikasi
+                        Container(
+                          width: 82,
+                          height: 82,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: scheme.primaryContainer,
+                            shape: BoxShape.circle,
                           ),
-                        ),
-                      ),
-                      validator: (value) {
-                        final error = _required(value, 'Password');
-                        if (error != null) return error;
-
-                        if (value!.length < 6) {
-                          return 'Password minimal 6 karakter';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 14),
-
-                    TextFormField(
-                      controller: _confirmPasswordController,
-                      obscureText: !_isConfirmPasswordVisible,
-                      decoration: _inputDecoration(
-                        context: context,
-                        label: 'Konfirmasi Password',
-                        icon: Icons.lock_reset_outlined,
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _isConfirmPasswordVisible =
-                                  !_isConfirmPasswordVisible;
-                            });
-                          },
-                          icon: Icon(
-                            _isConfirmPasswordVisible
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        final error = _required(
-                          value,
-                          'Konfirmasi password',
-                        );
-                        if (error != null) return error;
-
-                        if (value != _passwordController.text) {
-                          return 'Konfirmasi password tidak sama';
-                        }
-
-                        return null;
-                      },
-                    ),
-                    const SizedBox(height: 14),
-
-                    if (_errorMessage != null) ...[
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: scheme.errorContainer,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: scheme.error.withValues(alpha: 0.35),
-                          ),
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(
-                              Icons.error_outline_rounded,
-                              color: scheme.error,
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/images/logo_techstep.jpg',
+                              fit: BoxFit.cover,
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        Text(
+                          'TechStep',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: scheme.primary,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+
+                        Text(
+                          'Buat akun untuk mulai belajar',
+                          textAlign: TextAlign.center,
+                          style: textTheme.bodyLarge?.copyWith(
+                            color: scheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 28),
+
+                        TextFormField(
+                          controller: _nameController,
+                          textCapitalization: TextCapitalization.words,
+                          decoration: _inputDecoration(
+                            context: context,
+                            label: 'Nama Lengkap',
+                            icon: Icons.person_outline_rounded,
+                          ),
+                          validator: (value) =>
+                              _required(value, 'Nama lengkap'),
+                        ),
+                        const SizedBox(height: 14),
+
+                        TextFormField(
+                          controller: _nisController,
+                          keyboardType: TextInputType.text,
+                          decoration: _inputDecoration(
+                            context: context,
+                            label: 'NIS / Username',
+                            icon: Icons.badge_outlined,
+                          ),
+                          validator: (value) {
+                            final error = _required(value, 'NIS/Username');
+                            if (error != null) return error;
+
+                            if (value!.trim().length < 3) {
+                              return 'NIS/Username minimal 3 karakter';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        TextFormField(
+                          controller: _classController,
+                          textCapitalization: TextCapitalization.characters,
+                          decoration: _inputDecoration(
+                            context: context,
+                            label: 'Kelas',
+                            icon: Icons.class_outlined,
+                            // Contoh: X TJKT 1
+                          ),
+                          validator: (value) => _required(value, 'Kelas'),
+                        ),
+                        const SizedBox(height: 14),
+
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: !_isPasswordVisible,
+                          decoration: _inputDecoration(
+                            context: context,
+                            label: 'Password',
+                            icon: Icons.lock_outline_rounded,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            final error = _required(value, 'Password');
+                            if (error != null) return error;
+
+                            if (value!.length < 6) {
+                              return 'Password minimal 6 karakter';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        TextFormField(
+                          controller: _confirmPasswordController,
+                          obscureText: !_isConfirmPasswordVisible,
+                          decoration: _inputDecoration(
+                            context: context,
+                            label: 'Konfirmasi Password',
+                            icon: Icons.lock_reset_outlined,
+                            suffixIcon: IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _isConfirmPasswordVisible =
+                                      !_isConfirmPasswordVisible;
+                                });
+                              },
+                              icon: Icon(
+                                _isConfirmPasswordVisible
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            final error = _required(
+                              value,
+                              'Konfirmasi password',
+                            );
+                            if (error != null) return error;
+
+                            if (value != _passwordController.text) {
+                              return 'Konfirmasi password tidak sama';
+                            }
+
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        if (_errorMessage != null) ...[
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: scheme.errorContainer,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: scheme.error.withValues(alpha: 0.35),
+                              ),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(
+                                  Icons.error_outline_rounded,
+                                  color: scheme.error,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                      color: scheme.onErrorContainer,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 14),
+                        ],
+
+                        SizedBox(
+                          height: 52,
+                          child: ElevatedButton(
+                            onPressed: _isLoading ? null : _register,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: scheme.primary,
+                              foregroundColor: scheme.onPrimary,
+                              disabledBackgroundColor:
+                                  scheme.surfaceContainerHighest,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: _isLoading
+                                ? SizedBox(
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2.5,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        scheme.onPrimary,
+                                      ),
+                                    ),
+                                  )
+                                : const Text(
+                                    'Daftar',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Sudah punya akun? ',
+                              style: TextStyle(color: scheme.onSurfaceVariant),
+                            ),
+                            TextButton(
+                              onPressed: widget.onBackToLogin,
                               child: Text(
-                                _errorMessage!,
+                                'Masuk',
                                 style: TextStyle(
-                                  color: scheme.onErrorContainer,
+                                  fontWeight: FontWeight.bold,
+                                  color: scheme.primary,
                                 ),
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 14),
-                    ],
-
-                    SizedBox(
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _register,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: scheme.primary,
-                          foregroundColor: scheme.onPrimary,
-                          disabledBackgroundColor: scheme.surfaceContainerHighest,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                        child: _isLoading
-                            ? SizedBox(
-                                width: 22,
-                                height: 22,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2.5,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    scheme.onPrimary,
-                                  ),
-                                ),
-                              )
-                            : const Text(
-                                'Daftar',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Sudah punya akun? ',
-                          style: TextStyle(
-                            color: scheme.onSurfaceVariant,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: widget.onBackToLogin,
-                          child: Text(
-                            'Masuk',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: scheme.primary,
-                            ),
-                          ),
-                        ),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),

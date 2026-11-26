@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/learning_content.dart';
 import '../services/learning_analytics_service.dart';
+import '../services/sound_service.dart';
 import '../services/techstep_database.dart';
 import '../widgets/techstep_components.dart';
 
@@ -80,6 +81,8 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
       return;
     }
 
+    SoundService.instance.playClick();
+
     setState(() {
       loadingLevel = true;
     });
@@ -153,6 +156,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
     firstSelectedAnswers.putIfAbsent(question.id, () => selectedAnswerKey);
 
     if (selectedAnswerKey == question.correctOptionKey) {
+      SoundService.instance.playCorrect();
       setState(() {
         completedBoxes[currentBox] = true;
         wrongBoxes[currentBox] = false;
@@ -160,6 +164,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
 
       _showCorrectAnswerDialog();
     } else {
+      SoundService.instance.playIncorrect();
       setState(() {
         wrongBoxes[currentBox] = true;
       });
@@ -356,6 +361,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
         _reloadLevels();
       });
 
+      SoundService.instance.playComplete();
       _showLevelComplete();
     } catch (error) {
       if (!mounted) return;
@@ -958,9 +964,7 @@ class _ChallengeScreenState extends State<ChallengeScreen> {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: unlocked
-                                    ? _textPrimary
-                                    : _textSecondary,
+                                color: unlocked ? _textPrimary : _textSecondary,
                               ),
                             ),
                             SizedBox(height: 5),

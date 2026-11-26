@@ -185,14 +185,20 @@ class DashboardScreen extends StatelessWidget {
         Container(
           width: 48,
           height: 48,
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: scheme.primary,
-            borderRadius: BorderRadius.circular(15),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: scheme.primary.withValues(alpha: 0.18),
+                blurRadius: 12,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
-          child: const Icon(
-            Icons.school_rounded,
-            color: Colors.white,
-            size: 27,
+          child: Image.asset(
+            'assets/images/logo_techstep.jpg',
+            fit: BoxFit.cover,
           ),
         ),
 
@@ -988,6 +994,13 @@ class _DashboardSurfaceCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: theme.dividerColor),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withValues(alpha: 0.06),
+                blurRadius: 18,
+                offset: const Offset(0, 7),
+              ),
+            ],
           ),
           child: child,
         ),

@@ -48,6 +48,8 @@ class TechStepCard extends StatelessWidget {
 
     return Material(
       color: backgroundColor ?? scheme.surface,
+      elevation: onTap == null ? 1 : 2,
+      shadowColor: scheme.primary.withValues(alpha: 0.08),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: borderRadius,

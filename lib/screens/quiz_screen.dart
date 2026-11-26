@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/learning_content.dart';
 import '../services/learning_analytics_service.dart';
+import '../services/sound_service.dart';
 import '../services/techstep_database.dart';
 import '../widgets/techstep_components.dart';
 
@@ -122,6 +123,8 @@ class _QuizScreenState extends State<QuizScreen> {
       return;
     }
 
+    SoundService.instance.playClick();
+
     setState(() {
       questions = selectedQuestions;
       selectedMaterialId = materialId;
@@ -149,6 +152,15 @@ class _QuizScreenState extends State<QuizScreen> {
         ),
       );
       return;
+    }
+
+    final isCorrect =
+        selectedAnswers[currentQuestion] ==
+        questions[currentQuestion].correctOptionKey;
+    if (isCorrect) {
+      SoundService.instance.playCorrect();
+    } else {
+      SoundService.instance.playIncorrect();
     }
 
     if (currentQuestion < questions.length - 1) {
@@ -187,6 +199,7 @@ class _QuizScreenState extends State<QuizScreen> {
         savingResult = false;
         _historyFuture = TechStepDatabase.instance.getQuizHistory(limit: 30);
       });
+      SoundService.instance.playComplete();
     } catch (error) {
       if (!mounted) return;
 
@@ -1098,11 +1111,7 @@ class _QuizScreenState extends State<QuizScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.track_changes_rounded,
-                color: _primary,
-                size: 17,
-              ),
+              Icon(Icons.track_changes_rounded, color: _primary, size: 17),
               SizedBox(width: 7),
               Expanded(
                 child: Text(
@@ -1140,11 +1149,7 @@ class _QuizScreenState extends State<QuizScreen> {
               color: _primarySoft,
               borderRadius: BorderRadius.circular(13),
             ),
-            child: Icon(
-              Icons.help_outline_rounded,
-              color: _primary,
-              size: 23,
-            ),
+            child: Icon(Icons.help_outline_rounded, color: _primary, size: 23),
           ),
           SizedBox(height: 16),
           Text(
@@ -1209,11 +1214,7 @@ class _QuizScreenState extends State<QuizScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: selected
-                    ? Icon(
-                        Icons.check_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      )
+                    ? Icon(Icons.check_rounded, color: Colors.white, size: 20)
                     : Text(
                         option.key,
                         style: TextStyle(
@@ -1237,11 +1238,7 @@ class _QuizScreenState extends State<QuizScreen> {
               ),
               if (selected) ...[
                 SizedBox(width: 8),
-                Icon(
-                  Icons.check_circle_rounded,
-                  color: _primary,
-                  size: 20,
-                ),
+                Icon(Icons.check_circle_rounded, color: _primary, size: 20),
               ],
             ],
           ),
@@ -1437,11 +1434,7 @@ class _QuizScreenState extends State<QuizScreen> {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-              height: 1.5,
-            ),
+            style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.5),
           ),
         ],
       ),
@@ -1658,9 +1651,7 @@ class _QuizScreenState extends State<QuizScreen> {
           ),
           body: SafeArea(
             child: snapshot.connectionState != ConnectionState.done
-                ? Center(
-                    child: CircularProgressIndicator(color: _primary),
-                  )
+                ? Center(child: CircularProgressIndicator(color: _primary))
                 : snapshot.hasError
                 ? Center(
                     child: Padding(
@@ -1883,10 +1874,7 @@ class _QuizScreenState extends State<QuizScreen> {
                       score == null
                           ? 'Belum dikerjakan'
                           : '$attemptCount percobaan tersimpan',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: _textSecondary,
-                      ),
+                      style: TextStyle(fontSize: 11, color: _textSecondary),
                     ),
                   ],
                 ),

@@ -112,15 +112,15 @@ class _TechStepPostLoginFlowState extends State<TechStepPostLoginFlow> {
 // ============================================================
 
 ThemeData _buildTechStepTheme() {
-  const primary = Color(0xFF5547E8);
-  const primarySoft = Color(0xFFEEEDFF);
+  const primary = Color(0xFF7C3AED);
+  const primarySoft = Color(0xFFF0E8FF);
 
-  const background = Color(0xFFF4F3FC);
+  const background = Color(0xFFF8F6FC);
   const surface = Color(0xFFFFFFFF);
 
-  const textPrimary = Color(0xFF242438);
-  const textSecondary = Color(0xFF77778B);
-  const border = Color(0xFFE7E5F2);
+  const textPrimary = Color(0xFF28243D);
+  const textSecondary = Color(0xFF77718D);
+  const border = Color(0xFFEAE5F4);
 
   const success = Color(0xFF239B70);
   const danger = Color(0xFFD93649);
@@ -210,7 +210,7 @@ ThemeData _buildTechStepTheme() {
       margin: EdgeInsets.zero,
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(22),
         side: const BorderSide(color: border),
       ),
     ),
@@ -242,7 +242,7 @@ ThemeData _buildTechStepTheme() {
       prefixIconColor: textSecondary,
       suffixIconColor: textSecondary,
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         borderSide: const BorderSide(color: border),
       ),
       enabledBorder: OutlineInputBorder(
@@ -302,12 +302,12 @@ ThemeData _buildTechStepTheme() {
 
     // BOTTOM NAVIGATION
     navigationBarTheme: NavigationBarThemeData(
-      height: 72,
+      height: 76,
       backgroundColor: surface,
       elevation: 0,
       indicatorColor: primarySoft,
       indicatorShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
       ),
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
@@ -531,12 +531,12 @@ ThemeData _buildTechStepDarkTheme() {
 
     // BOTTOM NAVIGATION
     navigationBarTheme: NavigationBarThemeData(
-      height: 72,
+      height: 76,
       backgroundColor: surface,
       elevation: 0,
       indicatorColor: primarySoft,
       indicatorShape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
       ),
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
       labelTextStyle: WidgetStateProperty.resolveWith<TextStyle?>((states) {
@@ -702,40 +702,57 @@ class _TechStepHomeState extends State<TechStepHome> {
             constraints: const BoxConstraints(maxWidth: 760),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(12, 0, 12, 8),
-              child: NavigationBar(
-                selectedIndex: currentIndex,
-                onDestinationSelected: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                },
-                destinations: const [
-                  NavigationDestination(
-                    icon: Icon(Icons.home_outlined),
-                    selectedIcon: Icon(Icons.home_rounded),
-                    label: 'Home',
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).colorScheme.primary
+                          .withValues(alpha: 0.12),
+                      blurRadius: 22,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(24),
+                  child: NavigationBar(
+                    selectedIndex: currentIndex,
+                    onDestinationSelected: (index) {
+                      setState(() {
+                        currentIndex = index;
+                      });
+                    },
+                    destinations: const [
+                      NavigationDestination(
+                        icon: Icon(Icons.home_outlined),
+                        selectedIcon: Icon(Icons.home_rounded),
+                        label: 'Home',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.menu_book_outlined),
+                        selectedIcon: Icon(Icons.menu_book_rounded),
+                        label: 'Learn',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.quiz_outlined),
+                        selectedIcon: Icon(Icons.quiz_rounded),
+                        label: 'Quiz',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.sports_esports_outlined),
+                        selectedIcon: Icon(Icons.sports_esports_rounded),
+                        label: 'Challenge',
+                      ),
+                      NavigationDestination(
+                        icon: Icon(Icons.person_outline_rounded),
+                        selectedIcon: Icon(Icons.person_rounded),
+                        label: 'Profil',
+                      ),
+                    ],
                   ),
-                  NavigationDestination(
-                    icon: Icon(Icons.menu_book_outlined),
-                    selectedIcon: Icon(Icons.menu_book_rounded),
-                    label: 'Learn',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.quiz_outlined),
-                    selectedIcon: Icon(Icons.quiz_rounded),
-                    label: 'Quiz',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.sports_esports_outlined),
-                    selectedIcon: Icon(Icons.sports_esports_rounded),
-                    label: 'Challenge',
-                  ),
-                  NavigationDestination(
-                    icon: Icon(Icons.person_outline_rounded),
-                    selectedIcon: Icon(Icons.person_rounded),
-                    label: 'Profil',
-                  ),
-                ],
+                ),
               ),
             ),
           ),
